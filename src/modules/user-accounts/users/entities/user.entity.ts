@@ -9,6 +9,8 @@ class EmailConfirmation {
 }
 
 export class User {
+  id: string;
+
   login: string;
 
   email: string;
@@ -19,7 +21,7 @@ export class User {
 
   createdAt: Date;
 
-  updatedAt: Date;
+  updated_at: Date;
 
   static createInstance(
     dto: CreateUserDto,

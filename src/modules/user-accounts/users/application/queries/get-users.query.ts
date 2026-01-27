@@ -14,6 +14,6 @@ export class GetUsersQueryHandler implements IQueryHandler<GetUsersQuery> {
 
   async execute({ query }: GetUsersQuery) {
     // : Promise<PaginatedViewDto<UsersMapper[]>>
-    // return this.usersQueryRepository.getAllUsers(query);
+    return this.usersQueryRepository.getAllUsers(query);
   }
 }

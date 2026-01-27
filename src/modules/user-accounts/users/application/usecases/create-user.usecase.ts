@@ -15,21 +15,10 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute({ dto }: CreateUserCommand): Promise<string> {
-    await new Promise((resolve) => {
-      resolve(dto);
-    });
-    // await this.usersRepository.findByLoginOrEmail(dto.login, dto.email);
-    //
-    // const hash: string = await this.hashAdapter.hashPassword(dto.password);
-    //
-    // const newUser = this.UserModel.createInstance(dto, hash, {
-    //   confirmationCode: 'superAdmin',
-    //   expirationDate: new Date(),
-    //   isConfirmed: true,
-    // });
-    //
-    // return this.usersRepository.createUser(newUser);
+    await this.usersRepository.findByLoginOrEmail(dto.login, dto.email);
 
-    return '123';
+    const hash: string = await this.hashAdapter.hashPassword(dto.password);
+
+    return this.usersRepository.createUser({ ...dto, password: hash });
   }
 }

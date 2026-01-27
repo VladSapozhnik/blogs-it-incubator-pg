@@ -1,12 +1,14 @@
+import { User } from '../entities/user.entity';
+
 export class UsersMapper {
   id: string;
   login: string;
   email: string;
   createdAt: string;
-  static mapToView(this: void, user): UsersMapper {
+  static mapToView(this: void, user: User): UsersMapper {
     const dto = new UsersMapper();
 
-    dto.id = user._id.toString();
+    dto.id = user.id;
     dto.login = user.login;
     dto.email = user.email;
     dto.createdAt = user.createdAt.toISOString();

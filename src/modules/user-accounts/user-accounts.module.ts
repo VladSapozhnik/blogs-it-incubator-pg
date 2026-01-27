@@ -9,24 +9,29 @@ import { JwtModule } from '@nestjs/jwt';
 import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
 import { UsersQueryExternalRepository } from './users/repositories/users.query.external.repository';
 import { UserAccountsConfig } from './config/user-accounts.config';
+import { CreateUserUseCase } from './users/application/usecases/create-user.usecase';
+import { RemoveUserUseCase } from './users/application/usecases/remove-user.usecase';
+import { HashAdapter } from '../../core/adapters/hash.adapter';
+import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
+import { GetUsersQueryHandler } from './users/application/queries/get-users.query';
 
-// const useCases = [
-//   RegistrationUseCase,
-//   LoginUseCase,
-//   ConfirmEmailUseCase,
-//   NewPasswordUseCase,
-//   PasswordRecoveryUseCase,
-//   ResendEmailUseCase,
-//   RefreshTokenUseCase,
-//   RemoveDeviceSessionUseCase,
-//   RemoveOtherDeviceSessionUseCase,
-//   GetDeviceSessionByUserIdQueryHandler,
-//   LogoutUseCase,
-//   CreateUserUseCase,
-//   RemoveUserUseCase,
-//   GetUsersQueryHandler,
-//   GetUserByIdQueryHandler,
-// ];
+const useCases = [
+  // RegistrationUseCase,
+  // LoginUseCase,
+  // ConfirmEmailUseCase,
+  // NewPasswordUseCase,
+  // PasswordRecoveryUseCase,
+  // ResendEmailUseCase,
+  // RefreshTokenUseCase,
+  // RemoveDeviceSessionUseCase,
+  // RemoveOtherDeviceSessionUseCase,
+  // GetDeviceSessionByUserIdQueryHandler,
+  // LogoutUseCase,
+  CreateUserUseCase,
+  RemoveUserUseCase,
+  GetUsersQueryHandler,
+  GetUserByIdQueryHandler,
+];
 
 @Module({
   imports: [JwtModule.register({}), PassportModule],
@@ -36,7 +41,7 @@ import { UserAccountsConfig } from './config/user-accounts.config';
   ],
   providers: [
     UserAccountsConfig,
-    // ...useCases,
+    ...useCases,
     UsersService,
     UsersRepository,
     UsersExternalRepository,
@@ -45,7 +50,7 @@ import { UserAccountsConfig } from './config/user-accounts.config';
     // AuthService,
     // PasswordRecoveryExternalRepository,
     // EmailAdapter,
-    // HashAdapter,
+    HashAdapter,
     // JwtAdapter,
     // CookieAdapter,
     // JwtStrategy,
