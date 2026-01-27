@@ -7,10 +7,24 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/core.config';
 import { TestingModule } from './modules/testing/testing.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     configModule,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        username: 'postgres',
+        password: '34299',
+        database: 'blogs_it-incubator',
+
+        // autoLoadEntities: true, // 🔥 важно
+        // synchronize: false, // ❌ не включай на проде
+      }),
+    }),
     ThrottlerModule.forRootAsync({
       useFactory: (coreConfig: CoreConfig) => {
         return {

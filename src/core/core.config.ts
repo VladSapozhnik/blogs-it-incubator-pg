@@ -15,9 +15,6 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set Env variable PORT' })
   port: number;
 
-  @IsNotEmpty({ message: 'Set Env variable MONGO_URI' })
-  mongoURI: string;
-
   @IsBoolean({
     message:
       'Set Env variable INCLUDE_TESTING_MODULE, available values: true, false, 0, 1',
@@ -47,8 +44,6 @@ export class CoreConfig {
 
   constructor(private configService: ConfigService) {
     this.port = Number(this.configService.get('PORT')) || 3005;
-
-    this.mongoURI = this.configService.get('MONGODB_URI') as string;
 
     this.includeTestingModule = configValidationUtility.convertToBoolean(
       this.configService.get('INCLUDE_TESTING_MODULE') as string,
