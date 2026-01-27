@@ -2,7 +2,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { HttpStatus } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
-class EmailConfirmation {
+export class EmailConfirmation {
   confirmationCode: string;
   expirationDate: Date;
   isConfirmed: boolean;

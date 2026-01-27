@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { EmailConfirmation, User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class UsersRepository {
     return user;
   }
 
-  async findByLoginOrEmail(login: string, email: string) {
+  async assertUserNotExists(login: string, email: string) {
     const [existUser]: User[] = await this.dataSource.query(
       'SELECT * FROM public.users WHERE login = $1 OR email = $2',
       [login, email],
@@ -49,10 +49,20 @@ export class UsersRepository {
     }
   }
 
-  async createUser(dto: CreateUserDto): Promise<string> {
+  async createUser(
+    dto: CreateUserDto,
+    emailConfirmation: EmailConfirmation,
+  ): Promise<string> {
     const [user]: User[] = await this.dataSource.query(
-      `INSERT INTO users(login, email, password) VALUES ($1, $2, $3) RETURNING id`,
-      [dto.login, dto.email, dto.password],
+      `INSERT INTO users(login, email, password, "confirmationCode", "expirationDate", "isConfirmed") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [
+        dto.login,
+        dto.email,
+        dto.password,
+        emailConfirmation.confirmationCode,
+        emailConfirmation.expirationDate,
+        emailConfirmation.isConfirmed,
+      ],
     );
 
     return user.id;

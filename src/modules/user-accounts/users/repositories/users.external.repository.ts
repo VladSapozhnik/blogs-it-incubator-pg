@@ -1,11 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UsersExternalRepository {
-  constructor() {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async getUserByLoginOrEmail(login: string, email: string) {
+    // return  await this.dataSource.query(``);
     // return this.UserModel.findOne({ $or: [{ login }, { email }] });
   }
 
@@ -66,7 +69,9 @@ export class UsersExternalRepository {
   //   return user._id.toString();
   // }
 
-  async removeUser() {
-    // await user.deleteOne();
+  async removeUser(id: string) {
+    await this.dataSource.query(`DELETE FROM public.users WHERE id = $1;`, [
+      id,
+    ]);
   }
 }

@@ -31,7 +31,7 @@ export class UsersQueryRepository {
 
   async getUserById(id: string) {
     const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE id = $1`,
+      `SELECT * FROM users WHERE id = $1 `,
       [id],
     );
 
