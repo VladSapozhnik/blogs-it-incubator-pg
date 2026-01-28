@@ -69,8 +69,9 @@ export class UsersRepository {
   }
 
   async removeUser(id: string): Promise<void> {
-    await this.dataSource.query(`DELETE FROM public.users WHERE id = $1;`, [
-      id,
-    ]);
+    await this.dataSource.query(
+      `DELETE FROM public.users WHERE id = $1 RETURNING id;`,
+      [id],
+    );
   }
 }

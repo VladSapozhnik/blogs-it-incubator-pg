@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-// import { ProfileMapper } from '../../auth/mappers/profile.mapper';
+import { ProfileMapper } from '../../auth/mappers/profile.mapper';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { User } from '../entities/user.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -26,6 +26,6 @@ export class UsersQueryExternalRepository {
         ],
       });
     }
-    // return ProfileMapper.mapToView(user);
+    return ProfileMapper.mapToView(user);
   }
 }

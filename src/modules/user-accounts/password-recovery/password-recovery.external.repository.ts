@@ -7,10 +7,15 @@ import { DataSource } from 'typeorm';
 @Injectable()
 export class PasswordRecoveryExternalRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-  async addPasswordRecoveryCode(dto: PasswordRecovery): Promise<string> {
+  async addPasswordRecoveryCode(
+    userId: string,
+    recoveryCode: string,
+    expirationDate: Date,
+    isUsed: boolean,
+  ): Promise<string> {
     const [passwordRecovery]: PasswordRecovery[] = await this.dataSource.query(
       `INSERT INTO public.password_recoveries(user_id, recovery_code, expiration_date, is_used) VALUES ($1, $2, $3, $4) RETURNING id`,
-      [dto.userId, dto.recoveryCode, dto.expirationDate, dto.isUsed],
+      [userId, recoveryCode, expirationDate, isUsed],
     );
 
     return passwordRecovery.id;
@@ -41,12 +46,10 @@ export class PasswordRecoveryExternalRepository {
 
   async markAsUsedById(userId: string): Promise<string> {
     const [passwordRecovery]: PasswordRecovery[] = await this.dataSource.query(
-      `UPDATE public.password_recoveries SET is_used = true WHERE user_id = $1`,
+      `UPDATE public.password_recoveries SET is_used = true WHERE user_id = $1 RETURNING id;`,
       [userId],
     );
 
-    // await passwordRecovery.save();
-
-    return passwordRecovery.id.toString();
+    return passwordRecovery.id;
   }
 }

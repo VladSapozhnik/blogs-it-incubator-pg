@@ -14,19 +14,43 @@ import { RemoveUserUseCase } from './users/application/usecases/remove-user.usec
 import { HashAdapter } from '../../core/adapters/hash.adapter';
 import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
 import { GetUsersQueryHandler } from './users/application/queries/get-users.query';
+import { AuthController } from './auth/auth.controller';
+import { SecurityDevicesController } from './security-devices/security-devices.controller';
+import { SecurityDevicesExternalRepository } from './security-devices/repositories/security-devices.external.repository';
+import { SecurityDevicesRepository } from './security-devices/repositories/security-devices.repository';
+import { SecurityDevicesQueryRepository } from './security-devices/repositories/security-devices.query.repository';
+import { SecurityDevicesService } from './security-devices/application/security-devices.service';
+import { JwtAdapter } from '../../core/adapters/jwt.adapter';
+import { CookieAdapter } from '../../core/adapters/cookie.adapter';
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './auth/strategies/jwt-refresh.strategy';
+import { EmailAdapter } from '../../core/adapters/email.adapter';
+import { AuthService } from './auth/application/auth.service';
+import { PasswordRecoveryExternalRepository } from './password-recovery/password-recovery.external.repository';
+import { RegistrationUseCase } from './auth/application/usecases/registration.usecase';
+import { LoginUseCase } from './auth/application/usecases/login.usecase';
+import { ConfirmEmailUseCase } from './auth/application/usecases/confirm-email.usecase';
+import { NewPasswordUseCase } from './auth/application/usecases/new-password.usecase';
+import { PasswordRecoveryUseCase } from './auth/application/usecases/password-recovery.usecase';
+import { ResendEmailUseCase } from './auth/application/usecases/resend-email.usecase';
+import { RefreshTokenUseCase } from './auth/application/usecases/refresh-token.usecase';
+import { RemoveDeviceSessionUseCase } from './security-devices/application/usecase/remove-device-session.usecase';
+import { RemoveOtherDeviceSessionUseCase } from './security-devices/application/usecase/remove-other-device-session.usecase';
+import { GetDeviceSessionByUserIdQueryHandler } from './security-devices/application/queries/get-device-session-by-user-id.query';
+import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
 
 const useCases = [
-  // RegistrationUseCase,
-  // LoginUseCase,
-  // ConfirmEmailUseCase,
-  // NewPasswordUseCase,
-  // PasswordRecoveryUseCase,
-  // ResendEmailUseCase,
-  // RefreshTokenUseCase,
-  // RemoveDeviceSessionUseCase,
-  // RemoveOtherDeviceSessionUseCase,
-  // GetDeviceSessionByUserIdQueryHandler,
-  // LogoutUseCase,
+  RegistrationUseCase,
+  LoginUseCase,
+  ConfirmEmailUseCase,
+  NewPasswordUseCase,
+  PasswordRecoveryUseCase,
+  ResendEmailUseCase,
+  RefreshTokenUseCase,
+  RemoveDeviceSessionUseCase,
+  RemoveOtherDeviceSessionUseCase,
+  GetDeviceSessionByUserIdQueryHandler,
+  LogoutUseCase,
   CreateUserUseCase,
   RemoveUserUseCase,
   GetUsersQueryHandler,
@@ -35,10 +59,7 @@ const useCases = [
 
 @Module({
   imports: [JwtModule.register({}), PassportModule],
-  controllers: [
-    UsersController,
-    // , AuthController, SecurityDevicesController
-  ],
+  controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
     UserAccountsConfig,
     ...useCases,
@@ -47,18 +68,19 @@ const useCases = [
     UsersExternalRepository,
     UsersQueryRepository,
     UsersQueryExternalRepository,
-    // AuthService,
-    // PasswordRecoveryExternalRepository,
-    // EmailAdapter,
+    AuthService,
+    PasswordRecoveryExternalRepository,
+    EmailAdapter,
     HashAdapter,
-    // JwtAdapter,
-    // CookieAdapter,
-    // JwtStrategy,
-    // JwtRefreshStrategy,
+    JwtAdapter,
+    CookieAdapter,
+    JwtStrategy,
+    JwtRefreshStrategy,
     SuperAdminStrategy,
-    // SecurityDevicesRepository,
-    // SecurityDevicesQueryRepository,
-    // SecurityDevicesService,
+    SecurityDevicesRepository,
+    SecurityDevicesQueryRepository,
+    SecurityDevicesExternalRepository,
+    SecurityDevicesService,
   ],
   exports: [UsersExternalRepository],
 })
