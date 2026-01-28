@@ -4,11 +4,14 @@ import { HttpStatus } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class PasswordRecovery {
+  id: string;
+
   userId: string;
 
   recoveryCode: string;
 
   expirationDate: Date;
+
   isUsed: boolean;
 
   static createForUser(userId: string) {

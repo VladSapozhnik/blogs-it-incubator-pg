@@ -12,6 +12,9 @@ export enum Environments {
 
 @Injectable()
 export class CoreConfig {
+  @IsNotEmpty({ message: 'Set Env variable DATABASE_URL' })
+  dbUrl: string;
+
   @IsNumber({}, { message: 'Set Env variable PORT' })
   port: number;
 
@@ -43,6 +46,8 @@ export class CoreConfig {
   throttleLimit: number;
 
   constructor(private configService: ConfigService) {
+    this.dbUrl = this.configService.get('DATABASE_URL') as string;
+
     this.port = Number(this.configService.get('PORT')) || 3005;
 
     this.includeTestingModule = configValidationUtility.convertToBoolean(
