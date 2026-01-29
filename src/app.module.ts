@@ -18,6 +18,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         url: coreConfig.dbUrl,
         // autoLoadEntities: true, // 🔥 важно
         // synchronize: false, // ❌ не включай на проде
+        // schema: 'public',
+        ssl: {
+          rejectUnauthorized: false, // важно для Neon
+        },
       }),
       inject: [CoreConfig],
     }),

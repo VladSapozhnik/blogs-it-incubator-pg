@@ -21,7 +21,7 @@ import { RemoveUserCommand } from './application/usecases/remove-user.usecase';
 import { GetUsersQuery } from './application/queries/get-users.query';
 import { GetUserByIdQuery } from './application/queries/get-user-by-id.query';
 
-@Controller('users')
+@Controller('sa/users')
 export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
