@@ -145,9 +145,24 @@ export class UsersExternalRepository {
     expirationDate: Date,
   ): Promise<string> {
     const [user]: User[] = await this.dataSource.query(
-      `UPDATE public.users SET "confirmationCode" = $1 AND "expirationDate" = $2 WHERE id = $3 RETURNING id;`,
+      `UPDATE public.users 
+     SET "confirmationCode" = $1, "expirationDate" = $2 
+     WHERE "id" = $3 
+     RETURNING "id";`,
       [code, expirationDate, id],
     );
+
+    if (!user) {
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'User with this email does not exist',
+            field: 'email',
+          },
+        ],
+      });
+    }
 
     return user.id;
   }
