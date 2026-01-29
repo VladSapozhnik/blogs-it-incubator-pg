@@ -36,7 +36,7 @@ export class SecurityDevicesExternalRepository {
 
   async removeDeviceSession(userId: string, deviceId: string): Promise<string> {
     const [session]: SecurityDevice[] = await this.dataSource.query(
-      `DELETE FROM public.security_devices WHERE "userId" = $1 AND "deviceId" = $2" RETURNING id;`,
+      `DELETE FROM public.security_devices WHERE "userId" = $1 AND "deviceId" = $2 RETURNING id;`,
       [userId, deviceId],
     );
 
