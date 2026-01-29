@@ -17,7 +17,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
   async execute({ code }: ConfirmEmailCommand): Promise<void> {
     const user: User = await this.usersExternalRepository.findUserByCode(code);
 
-    if (user.emailConfirmation.isConfirmed) {
+    if (user.isConfirmed) {
       throw new DomainException({
         status: HttpStatus.BAD_REQUEST,
         errorsMessages: [
@@ -29,7 +29,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
       });
     }
 
-    if (user.emailConfirmation.expirationDate < new Date()) {
+    if (user.expirationDate < new Date()) {
       throw new DomainException({
         status: HttpStatus.BAD_REQUEST,
         errorsMessages: [

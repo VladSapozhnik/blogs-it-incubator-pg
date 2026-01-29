@@ -17,7 +17,11 @@ export class User {
 
   password: string;
 
-  emailConfirmation: EmailConfirmation;
+  confirmationCode: string;
+
+  expirationDate: Date;
+
+  isConfirmed: boolean;
 
   createdAt: Date;
 
@@ -33,7 +37,9 @@ export class User {
     user.login = dto.login;
     user.password = hash;
     user.email = dto.email;
-    user.emailConfirmation = emailConfirmation;
+    user.confirmationCode = emailConfirmation.confirmationCode;
+    user.expirationDate = emailConfirmation.expirationDate;
+    user.isConfirmed = emailConfirmation.isConfirmed;
 
     return user;
   }
@@ -43,13 +49,13 @@ export class User {
   }
 
   resendEmail(code: string, expirationDate: Date) {
-    this.emailConfirmation.confirmationCode = code;
-    this.emailConfirmation.expirationDate = expirationDate;
-    this.emailConfirmation.isConfirmed = false;
+    this.confirmationCode = code;
+    this.expirationDate = expirationDate;
+    this.isConfirmed = false;
   }
 
   confirmEmail() {
-    if (this.emailConfirmation.isConfirmed) {
+    if (this.isConfirmed) {
       throw new DomainException({
         status: HttpStatus.BAD_REQUEST,
         errorsMessages: [
@@ -60,7 +66,7 @@ export class User {
         ],
       });
     }
-    if (this.emailConfirmation.expirationDate < new Date()) {
+    if (this.expirationDate < new Date()) {
       throw new DomainException({
         status: HttpStatus.BAD_REQUEST,
         errorsMessages: [
@@ -72,6 +78,6 @@ export class User {
       });
     }
 
-    this.emailConfirmation.isConfirmed = true;
+    this.isConfirmed = true;
   }
 }

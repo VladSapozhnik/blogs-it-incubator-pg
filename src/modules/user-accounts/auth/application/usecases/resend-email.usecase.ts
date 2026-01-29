@@ -29,7 +29,7 @@ export class ResendEmailUseCase implements ICommandHandler<
     const user: User =
       await this.usersExternalRepository.findUserByEmail(email);
 
-    if (user.emailConfirmation.isConfirmed) {
+    if (user.isConfirmed) {
       throw new DomainException({
         status: HttpStatus.BAD_REQUEST,
         errorsMessages: [
@@ -40,8 +40,6 @@ export class ResendEmailUseCase implements ICommandHandler<
         ],
       });
     }
-
-    // user.resendEmail(newCode, newExpiration);
 
     await this.usersExternalRepository.resendEmail(
       user.id,
