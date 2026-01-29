@@ -12,8 +12,9 @@ export class GetUsersQuery {
 export class GetUsersQueryHandler implements IQueryHandler<GetUsersQuery> {
   constructor(private readonly usersQueryRepository: UsersQueryRepository) {}
 
-  async execute({ query }: GetUsersQuery) {
-    // : Promise<PaginatedViewDto<UsersMapper[]>>
+  async execute({
+    query,
+  }: GetUsersQuery): Promise<PaginatedViewDto<UsersMapper[]>> {
     return this.usersQueryRepository.getAllUsers(query);
   }
 }
