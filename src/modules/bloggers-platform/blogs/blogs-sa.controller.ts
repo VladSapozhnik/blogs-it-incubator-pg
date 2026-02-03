@@ -11,7 +11,7 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { BlogsService } from './services/blogs.service';
+import { BlogsService } from './application/blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { BlogsQueryRepository } from './repositories/blogs.query.repository';
@@ -19,9 +19,9 @@ import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
-import { PostsQueryExternalService } from '../posts/services/posts.query.external.service';
+import { PostsQueryExternalService } from '../posts/application/posts.query.external.service';
 import { PostsMapper } from '../posts/mappers/blogs.mapper';
-import { PostsExternalService } from '../posts/services/posts.external.service';
+import { PostsExternalService } from '../posts/application/posts.external.service';
 import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';

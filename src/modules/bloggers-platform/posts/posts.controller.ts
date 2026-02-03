@@ -11,22 +11,22 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostsService } from './services/posts.service';
+import { PostsService } from './application/posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsMapper } from './mappers/blogs.mapper';
-import { PostsQueryService } from './services/posts.query.service';
+import { PostsQueryService } from './application/posts.query.service';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 // import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
-// import { CommentsQueryExternalService } from '../comments/services/comments.query.external.service';
+// import { CommentsQueryExternalService } from '../comments/application/comments.query.external.service';
 // import { CommentsMapper } from '../comments/mappers/comments.mapper';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
-// import { CommentsExternalService } from '../comments/services/comments.external.service';
+// import { CommentsExternalService } from '../comments/application/comments.external.service';
 // import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
-import { LikesExternalService } from '../likes/services/likes.external.service';
+import { LikesExternalService } from '../likes/application/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 

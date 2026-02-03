@@ -1,33 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { Post } from '../entities/post.entity';
 import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
-import { LikesQueryExternalService } from '../../likes/services/likes.query.external.service';
+import { PostsQueryRepository } from '../repositories/posts.query.repository';
+import { LikesQueryExternalService } from '../../likes/application/likes.query.external.service';
 import { ExtendedLikesInfoType } from '../../likes/mappers/like-info-for-post.mapper';
 import { PostsMapper } from '../mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
-import { PostsQueryExternalRepository } from '../repositories/posts.query.external.repository';
-import { Post } from '../entities/post.entity';
-import { BlogsExternalRepository } from '../../blogs/repositories/blogs.external.repository';
 
 @Injectable()
-export class PostsQueryExternalService {
+export class PostsQueryService {
   constructor(
-    private readonly postsQueryExternalRepository: PostsQueryExternalRepository,
-    private readonly blogsExternalRepository: BlogsExternalRepository,
+    private readonly postsQueryRepository: PostsQueryRepository,
     private readonly likesQueryExternalService: LikesQueryExternalService,
   ) {}
 
-  async getAllPostsForBlog(
+  async getPosts(
     queryDto: GetPostsQueryParamsDto,
     userId: string | null,
-    blogId: string,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
-    await this.blogsExternalRepository.getBlogById(blogId);
-
     const { posts, totalCount } =
-      await this.postsQueryExternalRepository.getPosts(queryDto, blogId);
+      await this.postsQueryRepository.getPosts(queryDto);
 
     const items: PostsMapper[] = await Promise.all(
-      posts.map(async (post: Post): Promise<PostsMapper> => {
+      posts.map(async (post) => {
         const extendedLikesInfoType: ExtendedLikesInfoType =
           await this.likesQueryExternalService.likesInfoForPosts(
             post.id,
@@ -50,7 +45,7 @@ export class PostsQueryExternalService {
     const likesInfo: ExtendedLikesInfoType =
       await this.likesQueryExternalService.likesInfoForPosts(id, userId);
 
-    const post: Post = await this.postsQueryExternalRepository.getPostById(id);
+    const post: Post = await this.postsQueryRepository.getPostById(id);
 
     return PostsMapper.mapToView(post, likesInfo);
   }

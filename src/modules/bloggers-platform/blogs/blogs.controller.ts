@@ -4,7 +4,7 @@ import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
-import { PostsQueryExternalService } from '../posts/services/posts.query.external.service';
+import { PostsQueryExternalService } from '../posts/application/posts.query.external.service';
 import { PostsMapper } from '../posts/mappers/blogs.mapper';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
