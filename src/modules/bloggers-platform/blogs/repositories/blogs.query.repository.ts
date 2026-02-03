@@ -16,7 +16,7 @@ export class BlogsQueryRepository {
     // const filter: Record<string, any> = queryDto.buildBlogsFilter();
 
     const blogs: BlogAndTotalCount[] = await this.dataSource.query(
-      `SELECT *, count(*) OVER() AS total_count FROM blogs WHERE ($1::text IS NULL OR name ILIKE '%' || $1 || '%') ORDER BY "${queryDto.sortBy}" "${queryDto.sortDirection.toUpperCase()}" LIMIT $2 OFFSET $3;`,
+      `SELECT *, count(*) OVER() AS total_count FROM blogs WHERE ($1::text IS NULL OR name ILIKE '%' || $1 || '%') ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $2 OFFSET $3;`,
       [queryDto.searchNameTerm, queryDto.pageSize, queryDto.calculateSkip()],
     );
 

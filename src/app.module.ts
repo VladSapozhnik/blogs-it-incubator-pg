@@ -8,6 +8,7 @@ import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/core.config';
 import { TestingModule } from './modules/testing/testing.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     CqrsModule.forRoot(),
     UserAccountsModule,
+    BloggersPlatformModule,
     CoreModule,
     TestingModule,
   ],

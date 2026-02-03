@@ -13,7 +13,7 @@ export class PostsQueryRepository {
 
   async getPosts(queryDto: GetPostsQueryParamsDto) {
     const posts: PostAndTotalCount[] = await this.dataSource.query(
-      `SELECT * FROM posts ORDER BY "${queryDto.sortBy}" "${queryDto.sortDirection.toUpperCase()}" LIMIT $1 OFFSET $2;`,
+      `SELECT * FROM posts ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $1 OFFSET $2;`,
       [queryDto.pageSize, queryDto.calculateSkip()],
     );
 

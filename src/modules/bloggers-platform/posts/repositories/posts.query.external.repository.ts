@@ -23,7 +23,7 @@ export class PostsQueryExternalRepository {
     //
     // const totalCount: number = await this.PostModel.countDocuments(filter);
     const posts: PostAndTotalCount[] = await this.dataSource.query(
-      `SELECT *, count(*) OVER() AS total_count FROM posts WHERE "blogId" = $1 ORDER BY "${queryDto.sortBy}" "${queryDto.sortDirection.toUpperCase()}" LIMIT $2 OFFSET $3;`,
+      `SELECT *, count(*) OVER() AS total_count FROM posts WHERE "blogId" = $1 ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $2 OFFSET $3;`,
       [blogId, queryDto.pageSize, queryDto.calculateSkip()],
     );
 
