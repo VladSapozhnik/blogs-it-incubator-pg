@@ -26,6 +26,7 @@ import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
+import { BlogIdParamDto } from './dto/blog-id-param.dto';
 
 @Controller('sa/blogs')
 @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
@@ -53,9 +54,10 @@ export class BlogsSaController {
   @Get(':blogId/posts')
   findAllPostByBlogId(
     @User('userId') userId: string,
-    @Param('blogId') blogId: string,
+    @Param() param: BlogIdParamDto,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
+    const { blogId } = param;
     return this.postsQueryExternalService.getAllPostsForBlog(
       query,
       userId,
@@ -66,9 +68,11 @@ export class BlogsSaController {
   @Post(':blogId/posts')
   async createPostForBlog(
     @User('userId') userId: string,
-    @Param('blogId') blogId: string,
+    @Param() param: BlogIdParamDto,
     @Body() createBlogDto: CreatePostForBlogDto,
   ): Promise<PostsMapper> {
+    const { blogId } = param;
+
     const id: string = await this.postsExternalService.createPostForBlog(
       createBlogDto,
       blogId,
