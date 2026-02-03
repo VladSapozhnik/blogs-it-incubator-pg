@@ -21,7 +21,7 @@ export class UsersQueryRepository {
           ($1::text IS NULL OR login ILIKE '%' || $1 || '%')
           OR ($2::text IS NULL OR email ILIKE '%' || $2 || '%')
         ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()}
-    LIMIT $3
+        LIMIT $3
         OFFSET $4;
       `,
       [
