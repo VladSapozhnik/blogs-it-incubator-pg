@@ -28,11 +28,13 @@ import { PostsExternalRepository } from './posts/repositories/posts.external.rep
 // import { CommentsService } from './comments/services/comments.service';
 // import { CommentsExternalService } from './comments/services/comments.external.service';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
+import { BlogsSaController } from './blogs/blogs-sa.controller';
 
 @Module({
   imports: [UserAccountsModule],
   controllers: [
     BlogsController,
+    BlogsSaController,
     PostsController,
     //CommentsController
   ],
