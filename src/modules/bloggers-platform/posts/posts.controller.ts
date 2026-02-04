@@ -9,7 +9,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostsService } from './application/posts.service';
 import { PostsMapper } from './mappers/blogs.mapper';
 import { PostsQueryService } from './application/posts.query.service';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
@@ -29,7 +28,6 @@ import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.gua
 @Controller('posts')
 export class PostsController {
   constructor(
-    private readonly postsService: PostsService,
     private readonly postQueryService: PostsQueryService,
     // private readonly commentsQueryExternalService: CommentsQueryExternalService,
     // private readonly commentsExternalService: CommentsExternalService,
@@ -47,17 +45,6 @@ export class PostsController {
     return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
   }
 
-  // @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
-  // @Post()
-  // async create(
-  //   @User('userId') userId: string,
-  //   @Body() createPostDto: CreatePostDto,
-  // ): Promise<PostsMapper> {
-  //   const id: string = await this.postsService.createPost(createPostDto);
-  //
-  //   return this.postQueryService.getPostById(id, userId);
-  // }
-
   @Get()
   findAll(
     @User('userId') userId: string,
@@ -66,6 +53,12 @@ export class PostsController {
     return this.postQueryService.getPosts(query, userId);
   }
 
+  @Get(':id')
+  findOne(@User('userId') userId: string, @Param('id') id: string) {
+    return this.postQueryService.getPostById(id, userId);
+  }
+
+  //COMMENTS
   // @Get(':postId/comments')
   // findCommentsForPost(
   //   @User('userId') userId: string,
@@ -94,9 +87,4 @@ export class PostsController {
   //
   //   return this.commentsQueryExternalService.getCommentById(commentId, userId);
   // }
-
-  @Get(':id')
-  findOne(@User('userId') userId: string, @Param('id') id: string) {
-    return this.postQueryService.getPostById(id, userId);
-  }
 }
