@@ -17,7 +17,7 @@ export class PostsExternalRepository {
     blogId: string,
   ): Promise<string> {
     const [createdPost]: WithId[] = await this.dataSource.query(
-      `INSERT INTO posts title, "shortDescription", content, "blogId", "blogName" VALUES ($1, $2, $3, $4, $5) RETURNING id;`,
+      `INSERT INTO posts (title, "shortDescription", content, "blogId", "blogName") VALUES ($1, $2, $3, $4, $5) RETURNING id;`,
       [dto.title, dto.shortDescription, dto.content, blogId, blogName],
     );
 
