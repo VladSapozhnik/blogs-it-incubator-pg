@@ -4,15 +4,14 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-
-type PostAndTotalCount = Post & { total_count: string };
+import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
 
 @Injectable()
 export class PostsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async getPosts(queryDto: GetPostsQueryParamsDto) {
-    const posts: PostAndTotalCount[] = await this.dataSource.query(
+    const posts: WithTotalCountType<Post>[] = await this.dataSource.query(
       `SELECT *, COUNT(*) OVER() AS total_count FROM posts ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $1 OFFSET $2;`,
       [queryDto.pageSize, queryDto.calculateSkip()],
     );

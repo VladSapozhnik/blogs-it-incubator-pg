@@ -6,14 +6,14 @@ import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
 
-type UserAndTotalCount = User & { total_count: string };
 export class UsersQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
   async getAllUsers(queryDto: GetUsersQueryParamsDto) {
-    const filter = queryDto.buildUserFilter();
+    // const filter = queryDto.buildUserFilter();
 
-    const users: UserAndTotalCount[] = await this.dataSource.query(
+    const users: WithTotalCountType<User>[] = await this.dataSource.query(
       `
         SELECT *, count(*) OVER() AS total_count
         FROM users

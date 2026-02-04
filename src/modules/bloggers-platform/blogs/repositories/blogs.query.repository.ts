@@ -6,16 +6,17 @@ import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-
-type BlogAndTotalCount = Blog & { total_count: string };
+import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
 
 @Injectable()
 export class BlogsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-  async getBlogs(queryDto: GetBlogsQueryParamsDto) {
+  async getBlogs(
+    queryDto: GetBlogsQueryParamsDto,
+  ): Promise<PaginatedViewDto<BlogsMapper[]>> {
     // const filter: Record<string, any> = queryDto.buildBlogsFilter();
 
-    const blogs: BlogAndTotalCount[] = await this.dataSource.query(
+    const blogs: WithTotalCountType<Blog>[] = await this.dataSource.query(
       `SELECT *, count(*) OVER() AS total_count FROM blogs WHERE ($1::text IS NULL OR name ILIKE '%' || $1 || '%') ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $2 OFFSET $3;`,
       [queryDto.searchNameTerm, queryDto.pageSize, queryDto.calculateSkip()],
     );
