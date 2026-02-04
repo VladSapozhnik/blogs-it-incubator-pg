@@ -29,6 +29,7 @@ import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { BlogIdParamDto } from './dto/blog-id-param.dto';
 import { UpdatePostDto } from '../posts/dto/update-post.dto';
 import { BlogIdAndPostIdParamDto } from './dto/blog-id-and-post-id-param.dto';
+import { WithIdDto } from '../../../core/dto/with-id.dto';
 
 @Controller('sa/blogs')
 @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
@@ -54,19 +55,25 @@ export class BlogsSaController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<BlogsMapper> {
+  findOne(@Param() params: WithIdDto): Promise<BlogsMapper> {
+    const { id } = params;
+
     return this.blogsQueryRepository.getBlogById(id);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+  update(@Param() params: WithIdDto, @Body() updateBlogDto: UpdateBlogDto) {
+    const { id } = params;
+
     return this.blogsService.updateBlog(id, updateBlogDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param() params: WithIdDto) {
+    const { id } = params;
+
     return this.blogsService.removeBlogById(id);
   }
 

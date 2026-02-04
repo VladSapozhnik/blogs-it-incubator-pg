@@ -23,6 +23,8 @@ import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 import { LikesExternalService } from '../likes/application/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
+import { PostIdDto } from './dto/post-id.dto';
+import { WithIdDto } from '../../../core/dto/with-id.dto';
 
 @UseGuards(OptionalJwtAuthGuard)
 @Controller('posts')
@@ -38,10 +40,12 @@ export class PostsController {
   @Put(':postId/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
   async makeStatus(
-    @Param('postId') postId: string,
+    @Param() params: PostIdDto,
     @User('userId') userId: string,
     @Body() dto: UpdateLikeDto,
   ) {
+    const { postId } = params;
+
     return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
   }
 
@@ -54,7 +58,9 @@ export class PostsController {
   }
 
   @Get(':id')
-  findOne(@User('userId') userId: string, @Param('id') id: string) {
+  findOne(@User('userId') userId: string, @Param() params: WithIdDto) {
+    const { id } = params;
+
     return this.postQueryService.getPostById(id, userId);
   }
 

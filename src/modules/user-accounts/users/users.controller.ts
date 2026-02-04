@@ -20,6 +20,7 @@ import { CreateUserCommand } from './application/usecases/create-user.usecase';
 import { RemoveUserCommand } from './application/usecases/remove-user.usecase';
 import { GetUsersQuery } from './application/queries/get-users.query';
 import { GetUserByIdQuery } from './application/queries/get-user-by-id.query';
+import { WithIdDto } from '../../../core/dto/with-id.dto';
 
 @Controller('sa/users')
 export class UsersController {
@@ -54,7 +55,9 @@ export class UsersController {
   @Delete(':id')
   @UseGuards(SuperAdminAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeUser(@Param('id') id: string) {
+  async removeUser(@Param() params: WithIdDto) {
+    const { id } = params;
+
     await this.commandBus.execute<RemoveUserCommand, void>(
       new RemoveUserCommand(id),
     );

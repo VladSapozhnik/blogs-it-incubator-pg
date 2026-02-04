@@ -8,6 +8,8 @@ import { PostsQueryExternalService } from '../posts/application/posts.query.exte
 import { PostsMapper } from '../posts/mappers/blogs.mapper';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
+import { WithIdDto } from '../../../core/dto/with-id.dto';
+import { BlogIdParamDto } from './dto/blog-id-param.dto';
 
 @Controller('blogs')
 @UseGuards(OptionalJwtAuthGuard)
@@ -26,9 +28,11 @@ export class BlogsController {
   @Get(':blogId/posts')
   findAllPostByBlogId(
     @User('userId') userId: string,
-    @Param('blogId') blogId: string,
+    @Param() params: BlogIdParamDto,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
+    const { blogId } = params;
+
     return this.postsQueryExternalService.getAllPostsForBlog(
       query,
       userId,
@@ -37,7 +41,8 @@ export class BlogsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<BlogsMapper> {
+  findOne(@Param() params: WithIdDto): Promise<BlogsMapper> {
+    const { id } = params;
     return this.blogsQueryRepository.getBlogById(id);
   }
 }

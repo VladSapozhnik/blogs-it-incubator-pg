@@ -15,6 +15,7 @@ import { User } from '../auth/decorator/user.decorator';
 import { type JwtPayload } from '../../../core/types/jwt-payload.type';
 import { RefreshAuthGuard } from '../auth/guards/refresh-token.guard';
 import { SecurityDevicesMapper } from './mappers/security-devices.mapper';
+import { DeviceIdDto } from './dto/device-id.dto';
 
 @UseGuards(RefreshAuthGuard)
 @Controller('security/devices')
@@ -34,10 +35,8 @@ export class SecurityDevicesController {
 
   @Delete(':deviceId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeDeviceSession(
-    @User() user: JwtPayload,
-    @Param('deviceId') deviceId: string,
-  ) {
+  removeDeviceSession(@User() user: JwtPayload, @Param() params: DeviceIdDto) {
+    const { deviceId } = params;
     return this.commandBus.execute<RemoveDeviceSessionCommand, void>(
       new RemoveDeviceSessionCommand(user, deviceId),
     );
