@@ -17,7 +17,6 @@ import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
-import { PostsQueryExternalService } from '../posts/application/posts.query.external.service';
 import { PostsMapper } from '../posts/mappers/blogs.mapper';
 import { PostsExternalService } from '../posts/application/posts.external.service';
 import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
@@ -34,6 +33,8 @@ import { RemoveBlogIdCommand } from './application/usecases/remove-blog-id.useca
 import { UpdateBlogCommand } from './application/usecases/update-blog.usecase';
 import { GetBlogsQuery } from './application/queries/get-blogs.query';
 import { GetBlogIdQuery } from './application/queries/get-blog-id.query';
+import { GetPostsWithLikesForBlogQuery } from '../posts/application/queries/get-posts-with-likes-for-blog.query';
+import { GetPostByIdQuery } from '../posts/application/queries/get-post-by-id.query';
 
 @Controller('sa/blogs')
 @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
@@ -42,7 +43,6 @@ export class BlogsSaController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly postsExternalService: PostsExternalService,
-    private readonly postsQueryExternalService: PostsQueryExternalService,
   ) {}
   @Post()
   async create(@Body() createBlogDto: CreateBlogDto): Promise<BlogsMapper> {
@@ -102,11 +102,10 @@ export class BlogsSaController {
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
     const { blogId } = param;
-    return this.postsQueryExternalService.getAllPostsForBlog(
-      query,
-      userId,
-      blogId,
-    );
+    return this.queryBus.execute<
+      GetPostsWithLikesForBlogQuery,
+      PaginatedViewDto<PostsMapper[]>
+    >(new GetPostsWithLikesForBlogQuery(query, userId, blogId));
   }
 
   @Post(':blogId/posts')
@@ -122,7 +121,9 @@ export class BlogsSaController {
       blogId,
     );
 
-    return this.postsQueryExternalService.getPostById(id, userId);
+    return this.queryBus.execute<GetPostByIdQuery, PostsMapper>(
+      new GetPostByIdQuery(id, userId),
+    );
   }
 
   @Put(':blogId/posts/:postId')

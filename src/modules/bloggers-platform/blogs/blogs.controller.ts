@@ -3,7 +3,6 @@ import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
-import { PostsQueryExternalService } from '../posts/application/posts.query.external.service';
 import { PostsMapper } from '../posts/mappers/blogs.mapper';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
@@ -12,14 +11,12 @@ import { BlogIdParamDto } from './dto/blog-id-param.dto';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetBlogsQuery } from './application/queries/get-blogs.query';
 import { GetBlogIdQuery } from './application/queries/get-blog-id.query';
+import { GetPostsWithLikesForBlogQuery } from '../posts/application/queries/get-posts-with-likes-for-blog.query';
 
 @Controller('blogs')
 @UseGuards(OptionalJwtAuthGuard)
 export class BlogsController {
-  constructor(
-    private readonly queryBus: QueryBus,
-    private readonly postsQueryExternalService: PostsQueryExternalService,
-  ) {}
+  constructor(private readonly queryBus: QueryBus) {}
   @Get()
   findAll(
     @Query() query: GetBlogsQueryParamsDto,
@@ -48,10 +45,9 @@ export class BlogsController {
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
     const { blogId } = params;
 
-    return this.postsQueryExternalService.getAllPostsForBlog(
-      query,
-      userId,
-      blogId,
-    );
+    return this.queryBus.execute<
+      GetPostsWithLikesForBlogQuery,
+      PaginatedViewDto<PostsMapper[]>
+    >(new GetPostsWithLikesForBlogQuery(query, userId, blogId));
   }
 }

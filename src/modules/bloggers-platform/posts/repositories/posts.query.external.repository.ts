@@ -1,7 +1,6 @@
 import { Post } from '../entities/post.entity';
 import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -33,26 +32,5 @@ export class PostsQueryExternalRepository {
       posts,
       totalCount,
     };
-  }
-
-  async getPostById(id: string): Promise<Post> {
-    const [existPost]: Post[] = await this.dataSource.query(
-      `SELECT * FROM posts WHERE id = $1`,
-      [id],
-    );
-
-    if (!existPost) {
-      throw new DomainException({
-        status: HttpStatus.NOT_FOUND,
-        errorsMessages: [
-          {
-            message: 'Post with id ${id} not found',
-            field: 'post',
-          },
-        ],
-      });
-    }
-
-    return existPost;
   }
 }

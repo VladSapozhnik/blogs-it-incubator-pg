@@ -15,7 +15,6 @@ import { LikesQueryExternalService } from './likes/application/likes.query.exter
 import { LikesQueryExternalRepository } from './likes/repositories/likes.query.external.repository';
 import { LikesExternalRepository } from './likes/repositories/likes.external.repository';
 import { PostsQueryExternalRepository } from './posts/repositories/posts.query.external.repository';
-import { PostsQueryExternalService } from './posts/application/posts.query.external.service';
 import { PostsExternalRepository } from './posts/repositories/posts.external.repository';
 // import { CommentsController } from './comments/comments.controller';
 // import { CommentsQueryService } from './comments/application/comments.query.service';
@@ -34,6 +33,9 @@ import { UpdateBlogUseCase } from './blogs/application/usecases/update-blog.usec
 import { RemoveBlogIdUseCase } from './blogs/application/usecases/remove-blog-id.usecase';
 import { GetBlogsQueryHandler } from './blogs/application/queries/get-blogs.query';
 import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-id.query';
+import { GetPostsQueryHandler } from './posts/application/queries/get-posts.query';
+import { GetPostByIdQueryHandler } from './posts/application/queries/get-post-by-id.query';
+import { GetPostsWithLikesForBlogQueryHandler } from './posts/application/queries/get-posts-with-likes-for-blog.query';
 
 const useCases = [
   //blogs
@@ -42,6 +44,10 @@ const useCases = [
   RemoveBlogIdUseCase,
   GetBlogsQueryHandler,
   GetBlogByIdQueryHandler,
+  //POSTS
+  GetPostsQueryHandler,
+  GetPostByIdQueryHandler,
+  GetPostsWithLikesForBlogQueryHandler,
 ];
 
 @Module({
@@ -62,7 +68,6 @@ const useCases = [
     PostsExternalService,
     PostsQueryService,
     PostsExternalService,
-    PostsQueryExternalService,
     PostsRepository,
     PostsExternalRepository,
     PostsQueryRepository,

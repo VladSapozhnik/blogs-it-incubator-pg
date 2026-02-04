@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsMapper } from './mappers/blogs.mapper';
-import { PostsQueryService } from './application/posts.query.service';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 // import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
@@ -25,12 +24,15 @@ import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { PostIdDto } from './dto/post-id.dto';
 import { WithIdDto } from '../../../core/dto/with-id.dto';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetPostsQuery } from './application/queries/get-posts.query';
+import { GetPostByIdQuery } from './application/queries/get-post-by-id.query';
 
 @UseGuards(OptionalJwtAuthGuard)
 @Controller('posts')
 export class PostsController {
   constructor(
-    private readonly postQueryService: PostsQueryService,
+    private readonly queryBus: QueryBus,
     // private readonly commentsQueryExternalService: CommentsQueryExternalService,
     // private readonly commentsExternalService: CommentsExternalService,
     private readonly likesExternalService: LikesExternalService,
@@ -54,14 +56,22 @@ export class PostsController {
     @User('userId') userId: string,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
-    return this.postQueryService.getPosts(query, userId);
+    return this.queryBus.execute<
+      GetPostsQuery,
+      PaginatedViewDto<PostsMapper[]>
+    >(new GetPostsQuery(query, userId));
   }
 
   @Get(':id')
-  findOne(@User('userId') userId: string, @Param() params: WithIdDto) {
+  findOne(
+    @User('userId') userId: string,
+    @Param() params: WithIdDto,
+  ): Promise<PostsMapper> {
     const { id } = params;
 
-    return this.postQueryService.getPostById(id, userId);
+    return this.queryBus.execute<GetPostByIdQuery, PostsMapper>(
+      new GetPostByIdQuery(id, userId),
+    );
   }
 
   //COMMENTS
