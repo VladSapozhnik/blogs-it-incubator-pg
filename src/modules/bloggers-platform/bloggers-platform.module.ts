@@ -29,6 +29,20 @@ import { PostsExternalRepository } from './posts/repositories/posts.external.rep
 // import { CommentsExternalService } from './comments/application/comments.external.service';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { BlogsSaController } from './blogs/blogs-sa.controller';
+import { CreateBlogUseCase } from './blogs/application/usecases/create-blog.usecase';
+import { UpdateBlogUseCase } from './blogs/application/usecases/update-blog.usecase';
+import { RemoveBlogIdUseCase } from './blogs/application/usecases/remove-blog-id.usecase';
+import { GetBlogsQueryHandler } from './blogs/application/queries/get-blogs.query';
+import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-id.query';
+
+const useCases = [
+  //blogs
+  CreateBlogUseCase,
+  UpdateBlogUseCase,
+  RemoveBlogIdUseCase,
+  GetBlogsQueryHandler,
+  GetBlogByIdQueryHandler,
+];
 
 @Module({
   imports: [UserAccountsModule],
@@ -39,6 +53,7 @@ import { BlogsSaController } from './blogs/blogs-sa.controller';
     //CommentsController
   ],
   providers: [
+    ...useCases,
     BlogsService,
     BlogsRepository,
     BlogsQueryRepository,

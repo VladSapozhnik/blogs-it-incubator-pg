@@ -11,10 +11,8 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { BlogsService } from './application/blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { BlogsQueryRepository } from './repositories/blogs.query.repository';
 import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
@@ -30,35 +28,50 @@ import { BlogIdParamDto } from './dto/blog-id-param.dto';
 import { UpdatePostDto } from '../posts/dto/update-post.dto';
 import { BlogIdAndPostIdParamDto } from './dto/blog-id-and-post-id-param.dto';
 import { WithIdDto } from '../../../core/dto/with-id.dto';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateBlogCommand } from './application/usecases/create-blog.usecase';
+import { RemoveBlogIdCommand } from './application/usecases/remove-blog-id.usecase';
+import { UpdateBlogCommand } from './application/usecases/update-blog.usecase';
+import { GetBlogsQuery } from './application/queries/get-blogs.query';
+import { GetBlogIdQuery } from './application/queries/get-blog-id.query';
 
 @Controller('sa/blogs')
 @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
 export class BlogsSaController {
   constructor(
-    private readonly blogsService: BlogsService,
-    private readonly blogsQueryRepository: BlogsQueryRepository,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly postsExternalService: PostsExternalService,
     private readonly postsQueryExternalService: PostsQueryExternalService,
   ) {}
   @Post()
   async create(@Body() createBlogDto: CreateBlogDto): Promise<BlogsMapper> {
-    const id: string = await this.blogsService.createBlog(createBlogDto);
+    const id: string = await this.commandBus.execute<CreateBlogCommand, string>(
+      new CreateBlogCommand(createBlogDto),
+    );
 
-    return this.blogsQueryRepository.getBlogById(id);
+    return this.queryBus.execute<GetBlogIdQuery, BlogsMapper>(
+      new GetBlogIdQuery(id),
+    );
   }
 
   @Get()
   findAll(
     @Query() query: GetBlogsQueryParamsDto,
   ): Promise<PaginatedViewDto<BlogsMapper[]>> {
-    return this.blogsQueryRepository.getBlogs(query);
+    return this.queryBus.execute<
+      GetBlogsQuery,
+      PaginatedViewDto<BlogsMapper[]>
+    >(new GetBlogsQuery(query));
   }
 
   @Get(':id')
   findOne(@Param() params: WithIdDto): Promise<BlogsMapper> {
     const { id } = params;
 
-    return this.blogsQueryRepository.getBlogById(id);
+    return this.queryBus.execute<GetBlogIdQuery, BlogsMapper>(
+      new GetBlogIdQuery(id),
+    );
   }
 
   @Put(':id')
@@ -66,7 +79,9 @@ export class BlogsSaController {
   update(@Param() params: WithIdDto, @Body() updateBlogDto: UpdateBlogDto) {
     const { id } = params;
 
-    return this.blogsService.updateBlog(id, updateBlogDto);
+    return this.commandBus.execute<UpdateBlogCommand, void>(
+      new UpdateBlogCommand(id, updateBlogDto),
+    );
   }
 
   @Delete(':id')
@@ -74,7 +89,9 @@ export class BlogsSaController {
   remove(@Param() params: WithIdDto) {
     const { id } = params;
 
-    return this.blogsService.removeBlogById(id);
+    return this.commandBus.execute<RemoveBlogIdCommand, void>(
+      new RemoveBlogIdCommand(id),
+    );
   }
 
   //POSTS

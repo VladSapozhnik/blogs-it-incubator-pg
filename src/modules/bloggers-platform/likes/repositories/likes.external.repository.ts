@@ -20,7 +20,6 @@ export class LikesExternalRepository {
       likeStatus,
     };
 
-    console.log(info);
     // const result: UpdateResult = await this.LikeModel.updateOne(
     //   {
     //     userId: new Types.ObjectId(user._id),
