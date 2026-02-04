@@ -52,49 +52,4 @@ export class PostsRepository {
 
     return existPost;
   }
-  async updatePost(
-    id: string,
-    dto: UpdatePostDto,
-    blogName: string,
-  ): Promise<string> {
-    const [updatedPostId]: WithId[] = await this.dataSource.query(
-      `UPDATE public.posts SET title = $1, "shortDescription" = $2, content=$3, "blogName" = $4 WHERE id = $5 AND "blogId" = $6 RETURNING id;`,
-      [dto.title, dto.shortDescription, dto.content, blogName, id, dto.blogId],
-    );
-
-    if (!updatedPostId) {
-      throw new DomainException({
-        status: HttpStatus.NOT_FOUND,
-        errorsMessages: [
-          {
-            message: 'Failed to update Post',
-            field: 'post',
-          },
-        ],
-      });
-    }
-
-    return updatedPostId.id;
-  }
-
-  async removePost(id: string): Promise<string> {
-    const [removedPostId]: WithId[] = await this.dataSource.query(
-      `DELETE FROM posts WHERE id = $1 RETURNING id;`,
-      [id],
-    );
-
-    if (!removedPostId) {
-      throw new DomainException({
-        status: HttpStatus.NOT_FOUND,
-        errorsMessages: [
-          {
-            message: 'Failed to remove Post',
-            field: 'post',
-          },
-        ],
-      });
-    }
-
-    return removedPostId.id;
-  }
 }

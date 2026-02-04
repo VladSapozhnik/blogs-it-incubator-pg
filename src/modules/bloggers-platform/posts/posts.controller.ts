@@ -1,19 +1,15 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Put,
   Param,
-  Delete,
   HttpCode,
   HttpStatus,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './application/posts.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsMapper } from './mappers/blogs.mapper';
 import { PostsQueryService } from './application/posts.query.service';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
@@ -21,7 +17,6 @@ import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 // import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
 // import { CommentsQueryExternalService } from '../comments/application/comments.query.external.service';
 // import { CommentsMapper } from '../comments/mappers/comments.mapper';
-import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 // import { CommentsExternalService } from '../comments/application/comments.external.service';
 // import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
@@ -52,23 +47,22 @@ export class PostsController {
     return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
   }
 
-  @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
-  @Post()
-  async create(
-    @User('userId') userId: string,
-    @Body() createPostDto: CreatePostDto,
-  ): Promise<PostsMapper> {
-    const id: string = await this.postsService.createPost(createPostDto);
-
-    return this.postQueryService.getPostById(id, userId);
-  }
+  // @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
+  // @Post()
+  // async create(
+  //   @User('userId') userId: string,
+  //   @Body() createPostDto: CreatePostDto,
+  // ): Promise<PostsMapper> {
+  //   const id: string = await this.postsService.createPost(createPostDto);
+  //
+  //   return this.postQueryService.getPostById(id, userId);
+  // }
 
   @Get()
   findAll(
     @User('userId') userId: string,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
-    console.log(userId);
     return this.postQueryService.getPosts(query, userId);
   }
 
@@ -104,19 +98,5 @@ export class PostsController {
   @Get(':id')
   findOne(@User('userId') userId: string, @Param('id') id: string) {
     return this.postQueryService.getPostById(id, userId);
-  }
-
-  @UseGuards(SuperAdminAuthGuard)
-  @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.updatePost(id, updatePostDto);
-  }
-
-  @UseGuards(SuperAdminAuthGuard)
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.postsService.removePost(id);
   }
 }

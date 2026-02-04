@@ -27,6 +27,8 @@ import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admi
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { BlogIdParamDto } from './dto/blog-id-param.dto';
+import { UpdatePostDto } from '../posts/dto/update-post.dto';
+import { BlogIdAndPostIdParamDto } from './dto/blog-id-and-post-id-param.dto';
 
 @Controller('sa/blogs')
 @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
@@ -51,6 +53,24 @@ export class BlogsSaController {
     return this.blogsQueryRepository.getBlogs(query);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<BlogsMapper> {
+    return this.blogsQueryRepository.getBlogById(id);
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+    return this.blogsService.updateBlog(id, updateBlogDto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: string) {
+    return this.blogsService.removeBlogById(id);
+  }
+
+  //POSTS
   @Get(':blogId/posts')
   findAllPostByBlogId(
     @User('userId') userId: string,
@@ -81,20 +101,21 @@ export class BlogsSaController {
     return this.postsQueryExternalService.getPostById(id, userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<BlogsMapper> {
-    return this.blogsQueryRepository.getBlogById(id);
+  @Put(':blogId/posts/:postId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  updatePost(
+    @Param() params: BlogIdAndPostIdParamDto,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    const { blogId, postId } = params;
+
+    return this.postsExternalService.updatePost(blogId, postId, updatePostDto);
   }
 
-  @Put(':id')
+  @Delete(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this.blogsService.updateBlog(id, updateBlogDto);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.blogsService.removeBlogById(id);
+  removePost(@Param() params: BlogIdAndPostIdParamDto) {
+    const { blogId, postId } = params;
+    return this.postsExternalService.removePost(blogId, postId);
   }
 }

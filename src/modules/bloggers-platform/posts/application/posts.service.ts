@@ -19,20 +19,4 @@ export class PostsService {
 
     return await this.postsRepository.createPost(dto, blog.name);
   }
-
-  async updatePost(id: string, dto: UpdatePostDto): Promise<void> {
-    const blog: Blog = await this.blogsExternalRepository.getBlogById(
-      dto.blogId,
-    );
-
-    await this.postsRepository.findPostById(id);
-
-    await this.postsRepository.updatePost(id, dto, blog.name);
-  }
-
-  async removePost(id: string): Promise<void> {
-    await this.postsRepository.findPostById(id);
-
-    await this.postsRepository.removePost(id);
-  }
 }

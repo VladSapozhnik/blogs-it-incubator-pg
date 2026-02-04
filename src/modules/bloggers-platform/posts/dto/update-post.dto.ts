@@ -18,9 +18,4 @@ export class UpdatePostDto {
   @IsString()
   @MaxLength(1000)
   content: string;
-  @Trim()
-  @IsNotEmpty()
-  @IsUUID()
-  @IsString()
-  blogId: string;
 }

@@ -3,6 +3,7 @@ import { PostsExternalRepository } from '../repositories/posts.external.reposito
 import { BlogsExternalRepository } from '../../blogs/repositories/blogs.external.repository';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
 import { Blog } from '../../blogs/entities/blog.entity';
+import { UpdatePostDto } from '../dto/update-post.dto';
 
 @Injectable()
 export class PostsExternalService {
@@ -22,5 +23,29 @@ export class PostsExternalService {
       blog.name,
       blogId,
     );
+  }
+
+  async updatePost(
+    blogId: string,
+    postId: string,
+    dto: UpdatePostDto,
+  ): Promise<void> {
+    const blog: Blog = await this.blogsExternalRepository.getBlogById(blogId);
+
+    await this.postsExternalRepository.findPostById(postId);
+
+    await this.postsExternalRepository.updatePost(
+      blogId,
+      postId,
+      blog.name,
+      dto,
+    );
+  }
+
+  async removePost(blogId: string, postId: string): Promise<void> {
+    await this.blogsExternalRepository.getBlogById(blogId);
+    await this.postsExternalRepository.findPostById(postId);
+
+    await this.postsExternalRepository.removePost(blogId, postId);
   }
 }
