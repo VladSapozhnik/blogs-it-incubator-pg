@@ -3,8 +3,6 @@ export class Comment {
   postId: string;
   content: string;
   userId: string;
-  likesCount: number;
-  dislikesCount: number;
   createdAt: Date;
   updatedAt?: Date;
 

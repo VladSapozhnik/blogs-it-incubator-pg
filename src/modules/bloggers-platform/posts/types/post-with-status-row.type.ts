@@ -9,5 +9,7 @@ export type NewestLikeRow = {
 
 export type PostWithStatusRowType = Post & {
   myStatus: LikeStatusEnum;
+  likesCount: number;
+  dislikesCount: number;
   newestLikes: NewestLikeRow[];
 };

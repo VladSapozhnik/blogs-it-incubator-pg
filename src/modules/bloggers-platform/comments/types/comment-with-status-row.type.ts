@@ -4,4 +4,6 @@ import { Comment } from '../entities/comment.entity';
 export type CommentWithStatusRowType = Comment & {
   userLogin: string;
   myStatus: LikeStatusEnum;
+  likesCount: number;
+  dislikesCount: number;
 };
