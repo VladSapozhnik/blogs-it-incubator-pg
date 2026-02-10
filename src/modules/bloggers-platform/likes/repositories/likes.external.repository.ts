@@ -16,32 +16,30 @@ export class LikesExternalRepository {
     userId: string,
     commentId: string,
     likeStatus: LikeStatusEnum,
-  ): Promise<boolean> {
-    const [result]: IsModified[] = await this.dataSource.query(
-      `INSERT INTO public.comment_likes("userId", "commentId", status) 
-                VALUES ($1, $2, $3) ON CONFLICT("userId", "commentId")
-                DO UPDATE SET status = $3 
-                  RETURNING (comment_likes.status IS DISTINCT FROM EXCLUDED.status) as "isModified";`,
-      [userId, commentId, likeStatus],
-    );
+  ) {
+    const query = `
+        INSERT INTO public.comment_likes("userId", "commentId", "status") 
+        VALUES ($1, $2, $3) 
+        ON CONFLICT("userId", "commentId")
+        DO UPDATE SET "status" = $3;
+    `;
 
-    return result ? result.isModified : true;
+    await this.dataSource.query(query, [userId, commentId, likeStatus]);
   }
 
   async updatePostLikeStatus(
     userId: string,
     postId: string,
     likeStatus: LikeStatusEnum,
-  ): Promise<boolean> {
-    const [result]: IsModified[] = await this.dataSource.query(
-      `INSERT INTO public.post_likes("userId", "postId", status) 
-                VALUES ($1, $2, $3) ON CONFLICT("userId", "postId")
-                DO UPDATE SET status = $3 
-                  RETURNING (post_likes.status IS DISTINCT FROM EXCLUDED.status) as "isModified";`,
-      [userId, postId, likeStatus],
-    );
+  ) {
+    const query = `
+        INSERT INTO public.post_likes("userId", "postId", "status") 
+        VALUES ($1, $2, $3) 
+        ON CONFLICT("userId", "postId")
+        DO UPDATE SET "status" = $3;
+    `;
 
-    return result ? result.isModified : true;
+    await this.dataSource.query(query, [userId, postId, likeStatus]);
   }
 
   // updatePostLikeStatus(
