@@ -14,21 +14,18 @@ export class TestingController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAll() {
     // Получаем все таблицы в схеме public
-    const tables: TableRow[] = await this.dataSource.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';`,
+    const tables: { table_name: string }[] = await this.dataSource.query(
+      `SELECT table_name FROM information_schema.tables
+             WHERE table_schema='public' AND table_type='BASE TABLE';`,
     );
 
     // Чистим все таблицы параллельно
-    await Promise.all(
-      tables.map((t: { table_name: string }) =>
-        this.dataSource.query(
-          `TRUNCATE TABLE "public"."${t.table_name}" RESTART IDENTITY CASCADE;`,
-        ),
-      ),
-    );
+    if (tables.length > 0) {
+      const tableNames = tables.map((t) => `"${t.table_name}"`).join(', ');
 
-    return {
-      status: 'succeeded',
-    };
+      await this.dataSource.query(
+        `TRUNCATE TABLE ${tableNames} RESTART IDENTITY CASCADE;`,
+      );
+    }
   }
 }

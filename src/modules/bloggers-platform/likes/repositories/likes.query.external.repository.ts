@@ -2,7 +2,6 @@ import { CommentLikes, PostLikes } from '../entities/like.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { LikeStatusEnum } from '../enums/like-status.enum';
 
 @Injectable()
 export class LikesQueryExternalRepository {
@@ -38,25 +37,5 @@ export class LikesQueryExternalRepository {
     }
 
     return postLike;
-  }
-
-  async findNewestLikesForComment(
-    commentId: string,
-    likeCounts: number = 3,
-  ): Promise<CommentLikes[]> {
-    return this.dataSource.query(
-      `SELECT * FROM comment_likes WHERE status = $1 AND "commentId" = $2 ORDER BY "createdAt" DESC LIMIT $3`,
-      [LikeStatusEnum.Like, commentId, likeCounts],
-    );
-  }
-
-  async findNewestLikesForPost(
-    postId: string,
-    likeCounts: number = 3,
-  ): Promise<CommentLikes[]> {
-    return this.dataSource.query(
-      `SELECT * FROM post_likes WHERE status = $1 AND "postId" = $2 ORDER BY "createdAt" DESC LIMIT $3`,
-      [LikeStatusEnum.Like, postId, likeCounts],
-    );
   }
 }

@@ -11,7 +11,6 @@ import { PostsExternalService } from './posts/application/posts.external.service
 import { PostsRepository } from './posts/repositories/posts.repository';
 import { PostsQueryRepository } from './posts/repositories/posts.query.repository';
 import { LikesExternalService } from './likes/application/likes.external.service';
-import { LikesQueryExternalService } from './likes/application/likes.query.external.service';
 import { LikesQueryExternalRepository } from './likes/repositories/likes.query.external.repository';
 import { LikesExternalRepository } from './likes/repositories/likes.external.repository';
 import { PostsQueryExternalRepository } from './posts/repositories/posts.query.external.repository';
@@ -72,7 +71,6 @@ const useCases = [
     PostsQueryRepository,
     PostsQueryExternalRepository,
     LikesExternalService,
-    LikesQueryExternalService,
     LikesExternalRepository,
     LikesQueryExternalRepository,
     CommentsService,
