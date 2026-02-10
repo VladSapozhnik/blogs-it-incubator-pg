@@ -40,8 +40,8 @@ export class PostsQueryExternalRepository {
 
     const posts: WithTotalCountType<PostWithStatusRowType>[] =
       await this.dataSource.query(query, [
-        blogId,
         userId,
+        blogId,
         queryDto.pageSize,
         queryDto.calculateSkip(),
       ]);
