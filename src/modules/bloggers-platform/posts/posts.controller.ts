@@ -79,12 +79,14 @@ export class PostsController {
   @Get(':postId/comments')
   findCommentsForPost(
     @User('userId') userId: string,
-    @Param('postId') postsId: string,
+    @Param() params: PostIdDto,
     @Query() query: GetCommentQueryParamsDto,
   ): Promise<PaginatedViewDto<CommentsMapper[]>> {
+    const { postId } = params;
+
     return this.commentsQueryExternalService.getCommentsByPostId(
       query,
-      postsId,
+      postId,
       userId,
     );
   }
@@ -92,13 +94,15 @@ export class PostsController {
   @Post(':postId/comments')
   @UseGuards(JwtAuthGuard)
   async createCommentForPost(
-    @Param('postId') postsId: string,
+    @Param() params: PostIdDto,
     @User('userId') userId: string,
     @Body() createCommentDto: CreateCommentDto,
   ): Promise<CommentsMapper> {
+    const { postId } = params;
+
     const commentId: string = await this.commentsExternalService.createComment(
       userId,
-      postsId,
+      postId,
       createCommentDto,
     );
 
