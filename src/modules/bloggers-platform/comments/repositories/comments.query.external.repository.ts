@@ -19,7 +19,7 @@ export class CommentsQueryExternalRepository {
         SELECT c.*, u.login AS "userLogin", COALESCE(cl.status, 'None') as "myStatus", count(*) OVER() as total_count FROM comments AS c 
           INNER JOIN users AS u ON c."userId" = u.id
           LEFT JOIN comment_likes cl ON c."id" = cl."commentId" AND cl."userId" = $1
-        WHERE c.postId = $2
+        WHERE c."postId" = $2
         ORDER BY c."${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $3 OFFSET $4;
       `;
 
