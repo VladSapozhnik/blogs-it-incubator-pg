@@ -16,16 +16,15 @@ import { LikesQueryExternalRepository } from './likes/repositories/likes.query.e
 import { LikesExternalRepository } from './likes/repositories/likes.external.repository';
 import { PostsQueryExternalRepository } from './posts/repositories/posts.query.external.repository';
 import { PostsExternalRepository } from './posts/repositories/posts.external.repository';
-// import { CommentsController } from './comments/comments.controller';
-// import { CommentsQueryService } from './comments/application/comments.query.service';
-// import { CommentsQueryRepository } from './comments/repositories/comments.query.repository';
-// import { Comment, CommentSchema } from './comments/entities/comment.entity';
-// import { CommentsQueryExternalRepository } from './comments/repositories/comments.query.external.repository';
-// import { CommentsQueryExternalService } from './comments/application/comments.query.external.service';
-// import { CommentsExternalRepository } from './comments/repositories/comments.external.repository';
-// import { CommentsRepository } from './comments/repositories/comments.repository';
-// import { CommentsService } from './comments/application/comments.service';
-// import { CommentsExternalService } from './comments/application/comments.external.service';
+import { CommentsController } from './comments/comments.controller';
+import { CommentsQueryService } from './comments/application/comments.query.service';
+import { CommentsQueryRepository } from './comments/repositories/comments.query.repository';
+import { CommentsQueryExternalRepository } from './comments/repositories/comments.query.external.repository';
+import { CommentsQueryExternalService } from './comments/application/comments.query.external.service';
+import { CommentsExternalRepository } from './comments/repositories/comments.external.repository';
+import { CommentsRepository } from './comments/repositories/comments.repository';
+import { CommentsService } from './comments/application/comments.service';
+import { CommentsExternalService } from './comments/application/comments.external.service';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { BlogsSaController } from './blogs/blogs-sa.controller';
 import { CreateBlogUseCase } from './blogs/application/usecases/create-blog.usecase';
@@ -56,7 +55,7 @@ const useCases = [
     BlogsController,
     BlogsSaController,
     PostsController,
-    //CommentsController
+    CommentsController,
   ],
   providers: [
     ...useCases,
@@ -76,14 +75,14 @@ const useCases = [
     LikesQueryExternalService,
     LikesExternalRepository,
     LikesQueryExternalRepository,
-    // CommentsService,
-    // CommentsExternalService,
-    // CommentsQueryService,
-    // CommentsExternalRepository,
-    // CommentsRepository,
-    // CommentsQueryExternalService,
-    // CommentsQueryRepository,
-    // CommentsQueryExternalRepository,
+    CommentsService,
+    CommentsExternalService,
+    CommentsQueryService,
+    CommentsExternalRepository,
+    CommentsRepository,
+    CommentsQueryExternalService,
+    CommentsQueryRepository,
+    CommentsQueryExternalRepository,
   ],
 })
 export class BloggersPlatformModule {}

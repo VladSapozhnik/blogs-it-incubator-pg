@@ -76,6 +76,18 @@ export class UsersExternalRepository {
       [id],
     );
 
+    if (!user) {
+      throw new DomainException({
+        status: HttpStatus.UNAUTHORIZED,
+        errorsMessages: [
+          {
+            message: 'Unauthorized',
+            field: 'user',
+          },
+        ],
+      });
+    }
+
     return user;
   }
 

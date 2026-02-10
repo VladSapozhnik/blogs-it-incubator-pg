@@ -1,81 +1,62 @@
-import { LikeTargetEnum } from '../enums/like-target.enum';
-import { Like } from '../entities/like.entity';
+import { CommentLikes, PostLikes } from '../entities/like.entity';
 import { Injectable } from '@nestjs/common';
-import { LikeStatusEnum } from '../enums/like-status.enum';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from '../../../user-accounts/users/entities/user.entity';
+import { LikeStatusEnum } from '../enums/like-status.enum';
 
 @Injectable()
 export class LikesQueryExternalRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async getLikesAndDislikesComment(
-    targetId: string,
-    targetType: LikeTargetEnum,
-  ) {
-    console.log(targetId, targetType);
-    // const [likesCount, dislikesCount] = await Promise.all([
-    //   this.LikeModel.countDocuments({
-    //     targetId: new Types.ObjectId(targetId),
-    //     targetType,
-    //     status: LikeStatusEnum.Like,
-    //   }),
-    //   this.LikeModel.countDocuments({
-    //     targetId: new Types.ObjectId(targetId),
-    //     targetType,
-    //     status: LikeStatusEnum.Dislike,
-    //   }),
-    // ]);
-    const likesCount = 0;
-    const dislikesCount = 0;
-
-    return Promise.resolve({
-      likesCount,
-      dislikesCount,
-    });
-  }
-
-  async findLike(
+  async getMyStatusLikeForComment(
+    commentId: string,
     userId: string,
-    targetId: string,
-    targetType: LikeTargetEnum,
-  ): Promise<Like | null> {
-    // return this.LikeModel.findOne({
-    //   userId: new Types.ObjectId(userId),
-    //   targetId: new Types.ObjectId(targetId),
-    //   targetType,
-    // });
-
-    const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE userId = $1`,
-      [userId],
+  ): Promise<CommentLikes | null> {
+    const [commentLike]: CommentLikes[] = await this.dataSource.query(
+      `SELECT * FROM comment_likes WHERE "userId" = $1 AND "commentId" = $2`,
+      [userId, commentId],
     );
 
-    return {
-      userId,
-      login: user.login,
-      targetId,
-      targetType,
-      status: LikeStatusEnum.None,
-      createdAt: new Date(),
-    };
+    if (!commentLike.status) {
+      return null;
+    }
+
+    return commentLike;
   }
 
-  async findNewestLikes(
-    targetId: string,
-    targetType: LikeTargetEnum,
-    likeCounts: number = 3,
-  ): Promise<[]> {
-    console.log(likeCounts);
-    // return this.LikeModel.find({
-    //   targetId: new Types.ObjectId(targetId),
-    //   targetType,
-    //   status: LikeStatusEnum.Like,
-    // })
-    //   .sort({ createdAt: -1 })
-    //   .limit(likeCounts);
+  async getMyStatusLikeForPost(
+    postId: string,
+    userId: string,
+  ): Promise<PostLikes | null> {
+    const [postLike]: PostLikes[] = await this.dataSource.query(
+      `SELECT * FROM post_likes WHERE "userId" = $1 AND "postId" = $2`,
+      [userId, postId],
+    );
 
-    return Promise.resolve([]);
+    if (!postLike.status) {
+      return null;
+    }
+
+    return postLike;
+  }
+
+  async findNewestLikesForComment(
+    commentId: string,
+    likeCounts: number = 3,
+  ): Promise<CommentLikes[]> {
+    return this.dataSource.query(
+      `SELECT * FROM comment_likes WHERE status = $1 AND "commentId" = $2 ORDER BY "createdAt" DESC LIMIT $3`,
+      [LikeStatusEnum.Like, commentId, likeCounts],
+    );
+  }
+
+  async findNewestLikesForPost(
+    postId: string,
+    likeCounts: number = 3,
+  ): Promise<CommentLikes[]> {
+    return this.dataSource.query(
+      `SELECT * FROM post_likes WHERE status = $1 AND "postId" = $2 ORDER BY "createdAt" DESC LIMIT $3`,
+      [LikeStatusEnum.Like, postId, likeCounts],
+    );
   }
 }

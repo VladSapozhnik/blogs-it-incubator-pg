@@ -1,11 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PostsMapper } from '../../mappers/blogs.mapper';
-import { Post } from '../../entities/post.entity';
-import { ExtendedLikesInfoType } from '../../../likes/mappers/like-info-for-post.mapper';
+import { PostsMapper } from '../../mappers/posts.mapper';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view.dto';
 import { PostsQueryExternalRepository } from '../../repositories/posts.query.external.repository';
 import { BlogsExternalRepository } from '../../../blogs/repositories/blogs.external.repository';
-import { LikesQueryExternalService } from '../../../likes/application/likes.query.external.service';
 import { GetPostsQueryParamsDto } from '../../dto/post-query-input.dto';
 
 export class GetPostsWithLikesForBlogQuery {
@@ -21,7 +18,6 @@ export class GetPostsWithLikesForBlogQueryHandler implements IQueryHandler<GetPo
   constructor(
     private readonly postsQueryExternalRepository: PostsQueryExternalRepository,
     private readonly blogsExternalRepository: BlogsExternalRepository,
-    private readonly likesQueryExternalService: LikesQueryExternalService,
   ) {}
 
   async execute({
@@ -32,19 +28,13 @@ export class GetPostsWithLikesForBlogQueryHandler implements IQueryHandler<GetPo
     await this.blogsExternalRepository.getBlogById(blogId);
 
     const { posts, totalCount } =
-      await this.postsQueryExternalRepository.getPosts(queryDto, blogId);
+      await this.postsQueryExternalRepository.getPostsAndStatus(
+        queryDto,
+        blogId,
+        userId,
+      );
 
-    const items: PostsMapper[] = await Promise.all(
-      posts.map(async (post: Post): Promise<PostsMapper> => {
-        const extendedLikesInfoType: ExtendedLikesInfoType =
-          await this.likesQueryExternalService.likesInfoForPosts(
-            post.id,
-            userId,
-          );
-
-        return PostsMapper.mapToView(post, extendedLikesInfoType);
-      }),
-    );
+    const items: PostsMapper[] = posts.map(PostsMapper.mapToView);
 
     return PaginatedViewDto.mapToView({
       items,

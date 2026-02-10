@@ -17,7 +17,7 @@ import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
-import { PostsMapper } from '../posts/mappers/blogs.mapper';
+import { PostsMapper } from '../posts/mappers/posts.mapper';
 import { PostsExternalService } from '../posts/application/posts.external.service';
 import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';

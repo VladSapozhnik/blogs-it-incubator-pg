@@ -3,7 +3,7 @@ import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
-import { PostsMapper } from '../posts/mappers/blogs.mapper';
+import { PostsMapper } from '../posts/mappers/posts.mapper';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { WithIdDto } from '../../../core/dto/with-id.dto';

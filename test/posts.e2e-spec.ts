@@ -9,7 +9,7 @@ import { errorMessageHelper } from './ helpers/error-message.helper';
 import { constantHelper } from './ helpers/constant.helper';
 import { createStringHelper } from './ helpers/create-string.helper';
 import { BlogsMapper } from '../src/modules/bloggers-platform/blogs/mappers/blogs.mapper';
-import { PostsMapper } from '../src/modules/bloggers-platform/posts/mappers/blogs.mapper';
+import { PostsMapper } from '../src/modules/bloggers-platform/posts/mappers/posts.mapper';
 import { getAllForPaginationHelper } from './ helpers/get-all-for-pagination.helper';
 
 describe('PostsController (e2e)', () => {

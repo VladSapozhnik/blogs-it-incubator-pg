@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LikesQueryExternalRepository } from '../repositories/likes.query.external.repository';
-import { LikeTargetEnum } from '../enums/like-target.enum';
 import { LikeStatusEnum } from '../enums/like-status.enum';
-import { Like } from '../entities/like.entity';
-import {
-  ExtendedLikesInfoType,
-  LikeInfoForPostMapper,
-} from '../mappers/like-info-for-post.mapper';
+import { CommentLikes, PostLikes } from '../entities/like.entity';
 
 @Injectable()
 export class LikesQueryExternalService {
@@ -14,61 +9,76 @@ export class LikesQueryExternalService {
     private readonly likesQueryExternalRepository: LikesQueryExternalRepository,
   ) {}
 
-  // async likesInfoForComment(commentId: string, userId: string | null) {
-  //   const { likesCount, dislikesCount } =
-  //     await this.likesQueryExternalRepository.getLikesAndDislikesComment(
-  //       commentId,
-  //       LikeTargetEnum.Comment,
-  //     );
-  //
-  //   let myStatus: LikeStatusEnum = LikeStatusEnum.None;
-  //
-  //   if (userId) {
-  //     const myLike: LikeDocument | null =
-  //       await this.likesQueryExternalRepository.findLike(
-  //         userId,
-  //         commentId,
-  //         LikeTargetEnum.Comment,
-  //       );
-  //     myStatus = myLike ? myLike.status : LikeStatusEnum.None;
-  //   }
-  //
-  //   return { likesCount, dislikesCount, myStatus };
-  // }
-
-  async likesInfoForPosts(
-    postsId: string,
+  // likesInfoForComment;
+  async getMyStatusLikeComment(
+    commentId: string,
     userId: string | null,
-  ): Promise<ExtendedLikesInfoType> {
-    const { likesCount, dislikesCount } =
-      await this.likesQueryExternalRepository.getLikesAndDislikesComment(
-        postsId,
-        LikeTargetEnum.Post,
-      );
-
+  ): Promise<LikeStatusEnum> {
     let myStatus: LikeStatusEnum = LikeStatusEnum.None;
-    if (userId) {
-      const myLike: Like | null =
-        await this.likesQueryExternalRepository.findLike(
-          userId,
-          postsId,
-          LikeTargetEnum.Post,
-        );
 
+    if (userId) {
+      const myLike: CommentLikes | null =
+        await this.likesQueryExternalRepository.getMyStatusLikeForComment(
+          commentId,
+          userId,
+        );
       myStatus = myLike ? myLike.status : LikeStatusEnum.None;
     }
 
-    const newestLikes: Like[] =
-      await this.likesQueryExternalRepository.findNewestLikes(
-        postsId,
-        LikeTargetEnum.Post,
-      );
-
-    return LikeInfoForPostMapper(
-      likesCount,
-      dislikesCount,
-      myStatus,
-      newestLikes,
-    );
+    return myStatus;
   }
+
+  async getMyStatusLikePost(
+    postId: string,
+    userId: string | null,
+  ): Promise<LikeStatusEnum> {
+    let myStatus: LikeStatusEnum = LikeStatusEnum.None;
+
+    if (userId) {
+      const myLike: PostLikes | null =
+        await this.likesQueryExternalRepository.getMyStatusLikeForPost(
+          postId,
+          userId,
+        );
+      myStatus = myLike ? myLike.status : LikeStatusEnum.None;
+    }
+
+    return myStatus;
+  }
+
+  // async likesInfoForPosts(
+  //   postsId: string,
+  //   userId: string | null,
+  // ): Promise<ExtendedLikesInfoType> {
+  //   const { likesCount, dislikesCount } =
+  //     await this.likesQueryExternalRepository.getLikesAndDislikesComment(
+  //       postsId,
+  //       LikeTargetEnum.Post,
+  //     );
+  //
+  //   let myStatus: LikeStatusEnum = LikeStatusEnum.None;
+  //   if (userId) {
+  //     const myLike: Like | null =
+  //       await this.likesQueryExternalRepository.findLike(
+  //         userId,
+  //         postsId,
+  //         LikeTargetEnum.Post,
+  //       );
+  //
+  //     myStatus = myLike ? myLike.status : LikeStatusEnum.None;
+  //   }
+  //
+  //   const newestLikes: Like[] =
+  //     await this.likesQueryExternalRepository.findNewestLikes(
+  //       postsId,
+  //       LikeTargetEnum.Post,
+  //     );
+  //
+  //   return LikeInfoForPostMapper(
+  //     likesCount,
+  //     dislikesCount,
+  //     myStatus,
+  //     newestLikes,
+  //   );
+  // }
 }

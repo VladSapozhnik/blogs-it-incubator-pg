@@ -1,11 +1,18 @@
 import { LikeStatusEnum } from '../enums/like-status.enum';
-import { LikeTargetEnum } from '../enums/like-target.enum';
 
-export class Like {
+export class PostLikes {
+  id: string;
   userId: string;
-  login: string;
-  targetId: string;
-  targetType: LikeTargetEnum;
+  postId: string;
+  status: LikeStatusEnum;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export class CommentLikes {
+  id: string;
+  userId: string;
+  commentId: string;
   status: LikeStatusEnum;
   createdAt: Date;
   updatedAt?: Date;

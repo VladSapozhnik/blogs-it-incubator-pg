@@ -7,6 +7,8 @@ export class Post {
   title: string;
   shortDescription: string;
   content: string;
+  likesCount: number;
+  dislikesCount: number;
   blogId: string;
   blogName: string;
   createdAt: Date;

@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Body,
+  Post,
   Put,
   Param,
   HttpCode,
@@ -9,14 +10,14 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostsMapper } from './mappers/blogs.mapper';
+import { PostsMapper } from './mappers/posts.mapper';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
-// import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
-// import { CommentsQueryExternalService } from '../comments/application/comments.query.external.service';
-// import { CommentsMapper } from '../comments/mappers/comments.mapper';
-// import { CommentsExternalService } from '../comments/application/comments.external.service';
-// import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
+import { CommentsQueryExternalService } from '../comments/application/comments.query.external.service';
+import { CommentsMapper } from '../comments/mappers/comments.mapper';
+import { CommentsExternalService } from '../comments/application/comments.external.service';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 import { LikesExternalService } from '../likes/application/likes.external.service';
@@ -33,8 +34,8 @@ import { GetPostByIdQuery } from './application/queries/get-post-by-id.query';
 export class PostsController {
   constructor(
     private readonly queryBus: QueryBus,
-    // private readonly commentsQueryExternalService: CommentsQueryExternalService,
-    // private readonly commentsExternalService: CommentsExternalService,
+    private readonly commentsQueryExternalService: CommentsQueryExternalService,
+    private readonly commentsExternalService: CommentsExternalService,
     private readonly likesExternalService: LikesExternalService,
   ) {}
 
@@ -74,33 +75,33 @@ export class PostsController {
     );
   }
 
-  //COMMENTS
-  // @Get(':postId/comments')
-  // findCommentsForPost(
-  //   @User('userId') userId: string,
-  //   @Param('postId') postsId: string,
-  //   @Query() query: GetCommentQueryParamsDto,
-  // ): Promise<PaginatedViewDto<CommentsMapper[]>> {
-  //   return this.commentsQueryExternalService.getCommentsByPostId(
-  //     query,
-  //     postsId,
-  //     userId,
-  //   );
-  // }
+  // COMMENTS
+  @Get(':postId/comments')
+  findCommentsForPost(
+    @User('userId') userId: string,
+    @Param('postId') postsId: string,
+    @Query() query: GetCommentQueryParamsDto,
+  ): Promise<PaginatedViewDto<CommentsMapper[]>> {
+    return this.commentsQueryExternalService.getCommentsByPostId(
+      query,
+      postsId,
+      userId,
+    );
+  }
 
-  // @Post(':postId/comments')
-  // @UseGuards(JwtAuthGuard)
-  // async createCommentForPost(
-  //   @Param('postId') postsId: string,
-  //   @User('userId') userId: string,
-  //   @Body() createCommentDto: CreateCommentDto,
-  // ): Promise<CommentsMapper> {
-  //   const commentId: string = await this.commentsExternalService.createComment(
-  //     userId,
-  //     postsId,
-  //     createCommentDto,
-  //   );
-  //
-  //   return this.commentsQueryExternalService.getCommentById(commentId, userId);
-  // }
+  @Post(':postId/comments')
+  @UseGuards(JwtAuthGuard)
+  async createCommentForPost(
+    @Param('postId') postsId: string,
+    @User('userId') userId: string,
+    @Body() createCommentDto: CreateCommentDto,
+  ): Promise<CommentsMapper> {
+    const commentId: string = await this.commentsExternalService.createComment(
+      userId,
+      postsId,
+      createCommentDto,
+    );
+
+    return this.commentsQueryExternalService.getCommentById(commentId, userId);
+  }
 }
