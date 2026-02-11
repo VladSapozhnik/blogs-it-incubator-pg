@@ -20,6 +20,8 @@ export class PostsQueryExternalRepository {
     const query = `SELECT p.*, 
         b.name as "blogName", 
         COALESCE(pl_user.status, 'None') as "myStatus",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Like')::int as "likesCount",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Dislike')::int as "dislikeCount",
         (
             SELECT COALESCE(json_agg(last_likes), '[]')
             FROM (
@@ -48,20 +50,6 @@ export class PostsQueryExternalRepository {
 
     const totalCount: number =
       posts.length > 0 ? Number(posts[0].total_count) : 0;
-
-    return {
-      posts,
-      totalCount,
-    };
-  }
-
-  async getPosts(queryDto: GetPostsQueryParamsDto, blogId: string) {
-    const posts: PostAndTotalCount[] = await this.dataSource.query(
-      `SELECT *, count(*) OVER() AS total_count FROM posts WHERE "blogId" = $1 ORDER BY "${queryDto.sortBy}" ${queryDto.sortDirection.toUpperCase()} LIMIT $2 OFFSET $3;`,
-      [blogId, queryDto.pageSize, queryDto.calculateSkip()],
-    );
-
-    const totalCount: number = Number(posts[0]?.total_count || 0);
 
     return {
       posts,

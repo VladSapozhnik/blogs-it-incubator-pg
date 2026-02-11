@@ -16,7 +16,9 @@ export class PostsQueryRepository {
     userId: string | null,
   ) {
     const query = `SELECT p.*, 
-        b.name as "blogName", 
+        b.name as "blogName",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Like')::int as "likesCount",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Dislike')::int as "dislikeCount",
         COALESCE(pl_user.status, 'None') as "myStatus",
         (
             SELECT COALESCE(json_agg(last_likes), '[]')
@@ -78,7 +80,9 @@ export class PostsQueryRepository {
     userId: string | null,
   ): Promise<PostWithStatusRowType> {
     const query = `SELECT p.*, 
-        b.name as "blogName", 
+        b.name as "blogName",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Like')::int as "likesCount",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Dislike')::int as "dislikeCount",
         COALESCE(pl_user.status, 'None') as "myStatus",
         (
             SELECT COALESCE(json_agg(last_likes), '[]')

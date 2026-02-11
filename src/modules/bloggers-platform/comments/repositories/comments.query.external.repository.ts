@@ -16,7 +16,14 @@ export class CommentsQueryExternalRepository {
     userId: string | null,
   ) {
     const query = `
-        SELECT c.*, u.login AS "userLogin", COALESCE(cl.status, 'None') as "myStatus", count(*) OVER() as total_count FROM comments AS c 
+        SELECT c.*, u.login AS "userLogin",
+        (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Like')::int as "likesCount",
+        (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Dislike')::int as "dislikeCount",
+        COALESCE(
+            (SELECT status FROM comment_likes WHERE "commentId" = c.id AND "userId" = $2),
+            'None'
+        ) as "myStatus"
+        count(*) OVER() as total_count FROM comments AS c 
           INNER JOIN users AS u ON c."userId" = u.id
           LEFT JOIN comment_likes cl ON c."id" = cl."commentId" AND cl."userId" = $1
         WHERE c."postId" = $2
