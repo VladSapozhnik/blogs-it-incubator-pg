@@ -33,13 +33,13 @@ export class CommentsRepository {
     id: string,
     userId: string,
     dto: UpdateCommentDto,
-  ): Promise<string> {
-    const [updateCommentId]: WithId[] = await this.dataSource.query(
-      `UPDATE comments SET content = $1 WHERE id = $2 AND userId = $3 RETURNING id`,
+  ): Promise<boolean> {
+    const updateCommentId: WithId[] = await this.dataSource.query(
+      `UPDATE comments SET content = $1 WHERE id = $2 AND "userId" = $3 RETURNING id`,
       [dto.content, id, userId],
     );
 
-    return updateCommentId.id;
+    return updateCommentId.length > 0;
   }
   async removeComment(id: string, userId: string): Promise<boolean> {
     const result: WithId[] = await this.dataSource.query(
