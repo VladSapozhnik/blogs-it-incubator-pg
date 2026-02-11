@@ -20,10 +20,11 @@ export class CommentsQueryExternalRepository {
         (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Like')::int as "likesCount",
         (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Dislike')::int as "dislikesCount",
         COALESCE(
-            (SELECT status FROM comment_likes WHERE "commentId" = c.id AND "userId" = $2),
+            (SELECT status FROM comment_likes WHERE "commentId" = c.id AND "userId" = $1),
             'None'
-        ) as "myStatus"
-        count(*) OVER() as total_count FROM comments AS c 
+        ) as "myStatus",
+        count(*) OVER() as total_count 
+        FROM comments AS c 
           INNER JOIN users AS u ON c."userId" = u.id
           LEFT JOIN comment_likes cl ON c."id" = cl."commentId" AND cl."userId" = $1
         WHERE c."postId" = $2
