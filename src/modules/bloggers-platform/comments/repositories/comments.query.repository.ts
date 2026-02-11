@@ -15,7 +15,7 @@ export class CommentsQueryRepository {
     const query = `
         SELECT c.*, u.login AS "userLogin",
         (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Like')::int as "likesCount",
-        (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Dislike')::int as "dislikeCount",
+        (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Dislike')::int as "dislikesCount",
         COALESCE(
             (SELECT status FROM comment_likes WHERE "commentId" = c.id AND "userId" = $2),
             'None'

@@ -1,12 +1,9 @@
-import { Post } from '../entities/post.entity';
 import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
 import { PostWithStatusRowType } from '../types/post-with-status-row.type';
-
-type PostAndTotalCount = Post & { total_count: string };
 
 @Injectable()
 export class PostsQueryExternalRepository {
@@ -21,7 +18,7 @@ export class PostsQueryExternalRepository {
         b.name as "blogName", 
         COALESCE(pl_user.status, 'None') as "myStatus",
         (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Like')::int as "likesCount",
-        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Dislike')::int as "dislikeCount",
+        (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Dislike')::int as "dislikesCount",
         (
             SELECT COALESCE(json_agg(last_likes), '[]')
             FROM (
