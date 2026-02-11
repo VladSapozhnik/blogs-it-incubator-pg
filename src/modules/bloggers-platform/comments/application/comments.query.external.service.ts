@@ -37,26 +37,6 @@ export class CommentsQueryExternalService {
     });
   }
 
-  // async getCommentById(
-  //   commentId: string,
-  //   userId: string | null = null,
-  // ): Promise<CommentsMapper> {
-  //   const comment: Comment | null =
-  //     await this.commentsQueryExternalRepository.getCommentById(commentId);
-  //
-  //   const commentOwner: User = await this.usersExternalRepository.getUserById(
-  //     comment.userId,
-  //   );
-  //
-  //   const myLikeStatus: LikeStatusEnum =
-  //     await this.likesQueryExternalServices.getMyStatusLikeComment(
-  //       commentId,
-  //       userId,
-  //     );
-  //
-  //   return CommentsMapper.mapToView(comment, commentOwner, myLikeStatus);
-  // }
-
   async getCommentById(
     commentId: string,
     userId: string | null = null,

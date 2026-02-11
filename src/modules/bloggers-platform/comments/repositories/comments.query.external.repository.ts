@@ -46,33 +46,19 @@ export class CommentsQueryExternalRepository {
     };
   }
 
-  // async getCommentById(id: string): Promise<Comment> {
-  //   const [comment]: Comment[] = await this.dataSource.query(
-  //     `SELECT * FROM comments WHERE id = $1`,
-  //     [id],
-  //   );
-  //
-  //   if (!comment) {
-  //     throw new DomainException({
-  //       status: HttpStatus.NOT_FOUND,
-  //       errorsMessages: [
-  //         {
-  //           message: 'Comment not found',
-  //           field: 'comment',
-  //         },
-  //       ],
-  //     });
-  //   }
-  //
-  //   return comment;
-  // }
-
   async getCommentAndUserLikeStatus(
     commentId: string,
     userId: string | null,
   ): Promise<CommentWithStatusRowType> {
     const query = `
-        SELECT c.*, u.login AS "userLogin", COALESCE(cl.status, 'None') as "myStatus" FROM comments AS c 
+        SELECT c.*, u.login AS "userLogin",
+        (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Like')::int as "likesCount",
+        (SELECT COUNT(*) FROM comment_likes WHERE "commentId" = c.id AND status = 'Dislike')::int as "dislikesCount",
+        COALESCE(
+            (SELECT status FROM comment_likes WHERE "commentId" = c.id AND "userId" = $2),
+            'None'
+        ) as "myStatus"
+        FROM comments AS c 
           INNER JOIN users AS u ON c."userId" = u.id
           LEFT JOIN comment_likes cl ON c."id" = cl."commentId" AND cl."userId" = $2
         WHERE c.id = $1;
