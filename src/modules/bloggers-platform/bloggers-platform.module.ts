@@ -15,14 +15,10 @@ import { LikesExternalRepository } from './likes/repositories/likes.external.rep
 import { PostsQueryExternalRepository } from './posts/repositories/posts.query.external.repository';
 import { PostsExternalRepository } from './posts/repositories/posts.external.repository';
 import { CommentsController } from './comments/comments.controller';
-import { CommentsQueryService } from './comments/application/comments.query.service';
 import { CommentsQueryRepository } from './comments/repositories/comments.query.repository';
 import { CommentsQueryExternalRepository } from './comments/repositories/comments.query.external.repository';
-import { CommentsQueryExternalService } from './comments/application/comments.query.external.service';
 import { CommentsExternalRepository } from './comments/repositories/comments.external.repository';
 import { CommentsRepository } from './comments/repositories/comments.repository';
-import { CommentsService } from './comments/application/comments.service';
-import { CommentsExternalService } from './comments/application/comments.external.service';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { BlogsSaController } from './blogs/blogs-sa.controller';
 import { CreateBlogUseCase } from './blogs/application/usecases/create-blog.usecase';
@@ -35,6 +31,12 @@ import { GetPostByIdQueryHandler } from './posts/application/queries/get-post-by
 import { GetPostsWithLikesForBlogQueryHandler } from './posts/application/queries/get-posts-with-likes-for-blog.query';
 import { UpdateCommentLikeStatusUseCase } from './likes/application/usecases/update-comment-like-status.usecase';
 import { UpdatePostLikeStatusUseCase } from './likes/application/usecases/update-post-like-status.usecase';
+import { GetCommentByIdQueryHandler } from './comments/application/queries/get-comment-by-id.query';
+import { UpdateCommentUseCase } from './comments/application/usecases/update-comment.usecase';
+import { RemoveCommentUseCase } from './comments/application/usecases/remove-comment.usecase';
+import { CommentsService } from './comments/application/comments.service';
+import { GetCommentsByPostIdQueryHandler } from './comments/application/queries/get-comments-by-post-id.query';
+import { CreateCommentUseCase } from './comments/application/usecases/create-comment.usecase';
 
 const useCases = [
   //blogs
@@ -47,6 +49,12 @@ const useCases = [
   GetPostsQueryHandler,
   GetPostByIdQueryHandler,
   GetPostsWithLikesForBlogQueryHandler,
+  //COMMENTS
+  GetCommentsByPostIdQueryHandler,
+  CreateCommentUseCase,
+  GetCommentByIdQueryHandler,
+  UpdateCommentUseCase,
+  RemoveCommentUseCase,
   //LIKES
   UpdateCommentLikeStatusUseCase,
   UpdatePostLikeStatusUseCase,
@@ -77,11 +85,8 @@ const useCases = [
     LikesExternalRepository,
     LikesQueryExternalRepository,
     CommentsService,
-    CommentsExternalService,
-    CommentsQueryService,
     CommentsExternalRepository,
     CommentsRepository,
-    CommentsQueryExternalService,
     CommentsQueryRepository,
     CommentsQueryExternalRepository,
   ],
