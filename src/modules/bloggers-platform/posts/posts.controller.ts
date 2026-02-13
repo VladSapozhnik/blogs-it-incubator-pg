@@ -20,23 +20,23 @@ import { CommentsExternalService } from '../comments/application/comments.extern
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
-import { LikesExternalService } from '../likes/application/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { PostIdDto } from './dto/post-id.dto';
 import { WithIdDto } from '../../../core/dto/with-id.dto';
-import { QueryBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetPostsQuery } from './application/queries/get-posts.query';
 import { GetPostByIdQuery } from './application/queries/get-post-by-id.query';
+import { UpdatePostLikeStatusCommand } from '../likes/application/usecases/update-post-like-status.usecase';
 
 @UseGuards(OptionalJwtAuthGuard)
 @Controller('posts')
 export class PostsController {
   constructor(
+    private readonly commendBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly commentsQueryExternalService: CommentsQueryExternalService,
     private readonly commentsExternalService: CommentsExternalService,
-    private readonly likesExternalService: LikesExternalService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -49,7 +49,9 @@ export class PostsController {
   ) {
     const { postId } = params;
 
-    return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
+    return this.commendBus.execute<UpdatePostLikeStatusCommand, void>(
+      new UpdatePostLikeStatusCommand(userId, postId, dto),
+    );
   }
 
   @Get()

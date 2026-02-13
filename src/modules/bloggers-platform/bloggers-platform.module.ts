@@ -10,7 +10,6 @@ import { PostsQueryService } from './posts/application/posts.query.service';
 import { PostsExternalService } from './posts/application/posts.external.service';
 import { PostsRepository } from './posts/repositories/posts.repository';
 import { PostsQueryRepository } from './posts/repositories/posts.query.repository';
-import { LikesExternalService } from './likes/application/likes.external.service';
 import { LikesQueryExternalRepository } from './likes/repositories/likes.query.external.repository';
 import { LikesExternalRepository } from './likes/repositories/likes.external.repository';
 import { PostsQueryExternalRepository } from './posts/repositories/posts.query.external.repository';
@@ -34,6 +33,8 @@ import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-id
 import { GetPostsQueryHandler } from './posts/application/queries/get-posts.query';
 import { GetPostByIdQueryHandler } from './posts/application/queries/get-post-by-id.query';
 import { GetPostsWithLikesForBlogQueryHandler } from './posts/application/queries/get-posts-with-likes-for-blog.query';
+import { UpdateCommentLikeStatusUseCase } from './likes/application/usecases/update-comment-like-status.usecase';
+import { UpdatePostLikeStatusUseCase } from './likes/application/usecases/update-post-like-status.usecase';
 
 const useCases = [
   //blogs
@@ -46,6 +47,9 @@ const useCases = [
   GetPostsQueryHandler,
   GetPostByIdQueryHandler,
   GetPostsWithLikesForBlogQueryHandler,
+  //LIKES
+  UpdateCommentLikeStatusUseCase,
+  UpdatePostLikeStatusUseCase,
 ];
 
 @Module({
@@ -70,7 +74,6 @@ const useCases = [
     PostsExternalRepository,
     PostsQueryRepository,
     PostsQueryExternalRepository,
-    LikesExternalService,
     LikesExternalRepository,
     LikesQueryExternalRepository,
     CommentsService,

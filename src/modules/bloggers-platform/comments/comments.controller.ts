@@ -16,19 +16,20 @@ import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 import { Public } from '../../../core/decorators/public.decorator';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
-import { LikesExternalService } from '../likes/application/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 import { CommentIdDto } from './dto/comment-id.dto';
 import { WithIdDto } from '../../../core/dto/with-id.dto';
+import { CommandBus } from '@nestjs/cqrs';
+import { UpdateCommentLikeStatusCommand } from '../likes/application/usecases/update-comment-like-status.usecase';
 
 @UseGuards(JwtAuthGuard, OptionalJwtAuthGuard)
 @Controller('comments')
 export class CommentsController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly commentsQueryService: CommentsQueryService,
     private readonly commentsService: CommentsService,
-    private readonly likesExternalService: LikesExternalService,
   ) {}
 
   @Put(':commentId/like-status')
@@ -40,10 +41,8 @@ export class CommentsController {
   ) {
     const { commentId } = params;
 
-    return this.likesExternalService.updateCommentLikeStatus(
-      userId,
-      commentId,
-      dto,
+    return this.commandBus.execute<UpdateCommentLikeStatusCommand, void>(
+      new UpdateCommentLikeStatusCommand(userId, commentId, dto),
     );
   }
 
