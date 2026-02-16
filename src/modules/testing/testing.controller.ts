@@ -9,29 +9,23 @@ export class TestingController {
   @Delete('all-data')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAll(): Promise<void> {
-    // Получаем все таблицы в схеме public
-    // const tables: { table_name: string }[] = await this.dataSource.query(
-    //   `SELECT table_name FROM information_schema.tables
-    //          WHERE table_schema='public' AND table_type='BASE TABLE';`,
-    // );
-    //
-    // // Чистим все таблицы параллельно
-    // if (tables.length > 0) {
-    //   for (const table of tables) {
-    //     await this.dataSource.query(
-    //       `DELETE FROM "${table.table_name}" CASCADE;`,
-    //     );
-    //   }
-    // }
-    const tables: { table_name: string }[] = await this.dataSource.query(`
-      SELECT table_name
-      FROM information_schema.tables
-      WHERE table_schema = 'public'
-        AND table_type = 'BASE TABLE';
-    `);
+    try {
+      // Получаем список всех таблиц, если их много,
+      // либо перечисляем вручную:
+      const entities = this.dataSource.entityMetadatas;
+      const tableNames = entities
+        .map((entity) => `"${entity.tableName}"`)
+        .join(', ');
 
-    for (const { table_name } of tables) {
-      await this.dataSource.query(`DELETE FROM "${table_name}";`);
+      // Выполняем очистку
+      if (tableNames.length > 0) {
+        await this.dataSource.query(
+          `TRUNCATE ${tableNames} RESTART IDENTITY CASCADE;`,
+        );
+      }
+    } catch (e) {
+      console.error('Ошибка при очистке БД:', e);
+      throw e; // Это пробросит ошибку выше и поможет увидеть её в логах
     }
   }
 }
