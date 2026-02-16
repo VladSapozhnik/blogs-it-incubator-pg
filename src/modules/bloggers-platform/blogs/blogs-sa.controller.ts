@@ -18,7 +18,6 @@ import { BlogsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetPostsQueryParamsDto } from '../posts/dto/post-query-input.dto';
 import { PostsMapper } from '../posts/mappers/posts.mapper';
-import { PostsExternalService } from '../posts/application/posts.external.service';
 import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
@@ -35,6 +34,9 @@ import { GetBlogsQuery } from './application/queries/get-blogs.query';
 import { GetBlogIdQuery } from './application/queries/get-blog-id.query';
 import { GetPostsWithLikesForBlogQuery } from '../posts/application/queries/get-posts-with-likes-for-blog.query';
 import { GetPostByIdQuery } from '../posts/application/queries/get-post-by-id.query';
+import { CreatePostForBlogCommand } from '../posts/application/usecases/create-post-for-blog.usecase';
+import { UpdatePostCommand } from '../posts/application/usecases/update-post.usecase';
+import { RemovePostCommand } from '../posts/application/usecases/remove-post.usecase';
 
 @Controller('sa/blogs')
 @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
@@ -42,7 +44,6 @@ export class BlogsSaController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly postsExternalService: PostsExternalService,
   ) {}
   @Post()
   async create(@Body() createBlogDto: CreateBlogDto): Promise<BlogsMapper> {
@@ -116,10 +117,10 @@ export class BlogsSaController {
   ): Promise<PostsMapper> {
     const { blogId } = param;
 
-    const id: string = await this.postsExternalService.createPostForBlog(
-      createBlogDto,
-      blogId,
-    );
+    const id: string = await this.commandBus.execute<
+      CreatePostForBlogCommand,
+      string
+    >(new CreatePostForBlogCommand(createBlogDto, blogId));
 
     return this.queryBus.execute<GetPostByIdQuery, PostsMapper>(
       new GetPostByIdQuery(id, userId),
@@ -134,13 +135,18 @@ export class BlogsSaController {
   ) {
     const { blogId, postId } = params;
 
-    return this.postsExternalService.updatePost(blogId, postId, updatePostDto);
+    return this.commandBus.execute<UpdatePostCommand, void>(
+      new UpdatePostCommand(blogId, postId, updatePostDto),
+    );
   }
 
   @Delete(':blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
   removePost(@Param() params: BlogIdAndPostIdParamDto) {
     const { blogId, postId } = params;
-    return this.postsExternalService.removePost(blogId, postId);
+
+    return this.commandBus.execute<RemovePostCommand, void>(
+      new RemovePostCommand(blogId, postId),
+    );
   }
 }
