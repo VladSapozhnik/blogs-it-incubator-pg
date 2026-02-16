@@ -18,10 +18,9 @@ import { RegistrationConfirmationCodeDto } from './dto/registration-confirmation
 import { RegistrationDto } from './dto/registration.dto';
 import { RegistrationEmailResendingDto } from './dto/registration-email-resending.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { UsersQueryExternalRepository } from '../users/repositories/users.query.external.repository';
 import { ProfileMapper } from './mappers/profile.mapper';
 import { User } from './decorator/user.decorator';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from './application/usecases/registration.usecase';
 import { LoginCommand } from './application/usecases/login.usecase';
 import { AccessAndRefreshTokensType } from './types/access-and-refresh-tokens.type';
@@ -35,13 +34,14 @@ import { RefreshTokenCommand } from './application/usecases/refresh-token.usecas
 import { AccessTokenType } from './types/access-token.type';
 import { LogOutCommand } from './application/usecases/logout.usecase';
 import { IpThrottlerGuard } from '../../../core/guards/Ip-throttler.guard';
+import { GetProfileQuery } from './application/queries/get-profile.query';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly cookieAdapter: CookieAdapter,
-    private readonly userQueryExternalRepository: UsersQueryExternalRepository,
   ) {}
 
   @UseGuards(IpThrottlerGuard)
@@ -117,7 +117,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async profile(@User('userId') userId: string): Promise<ProfileMapper> {
-    return this.userQueryExternalRepository.getProfile(userId);
+    return this.queryBus.execute<GetProfileQuery, ProfileMapper>(
+      new GetProfileQuery(userId),
+    );
   }
 
   @UseGuards(RefreshAuthGuard)

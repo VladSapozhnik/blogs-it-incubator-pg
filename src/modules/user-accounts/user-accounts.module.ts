@@ -38,6 +38,7 @@ import { RemoveDeviceSessionUseCase } from './security-devices/application/useca
 import { RemoveOtherDeviceSessionUseCase } from './security-devices/application/usecase/remove-other-device-session.usecase';
 import { GetDeviceSessionByUserIdQueryHandler } from './security-devices/application/queries/get-device-session-by-user-id.query';
 import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
+import { GetProfileQueryHandler } from './auth/application/queries/get-profile.query';
 
 const useCases = [
   RegistrationUseCase,
@@ -55,6 +56,7 @@ const useCases = [
   RemoveUserUseCase,
   GetUsersQueryHandler,
   GetUserByIdQueryHandler,
+  GetProfileQueryHandler,
 ];
 
 @Module({
