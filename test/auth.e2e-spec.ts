@@ -4,9 +4,9 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { appSetup } from '../src/setup/app.setup';
-import { deleteAllData } from './ helpers/delete-all-data';
-import { errorMessageHelper } from './ helpers/error-message.helper';
-import { constantHelper } from './ helpers/constant.helper';
+import { deleteAllData } from './helpers/delete-all-data';
+import { constantHelper } from './helpers/constant.helper';
+import { errorMessageHelper } from './helpers/error-message.helper';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;

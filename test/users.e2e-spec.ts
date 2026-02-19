@@ -4,11 +4,11 @@ import request, { Response } from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { appSetup } from '../src/setup/app.setup';
-import { deleteAllData } from './ helpers/delete-all-data';
 import { type UsersMapper } from '../src/modules/user-accounts/users/mappers/users.mapper';
-import { errorMessageHelper } from './ helpers/error-message.helper';
-import { constantHelper } from './ helpers/constant.helper';
-import { getAllForPaginationHelper } from './ helpers/get-all-for-pagination.helper';
+import { deleteAllData } from './helpers/delete-all-data';
+import { constantHelper } from './helpers/constant.helper';
+import { errorMessageHelper } from './helpers/error-message.helper';
+import { getAllForPaginationHelper } from './helpers/get-all-for-pagination.helper';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication<App>;

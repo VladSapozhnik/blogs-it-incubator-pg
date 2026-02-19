@@ -4,13 +4,13 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { appSetup } from '../src/setup/app.setup';
-import { deleteAllData } from './ helpers/delete-all-data';
-import { errorMessageHelper } from './ helpers/error-message.helper';
-import { constantHelper } from './ helpers/constant.helper';
-import { createStringHelper } from './ helpers/create-string.helper';
 import { BlogsMapper } from '../src/modules/bloggers-platform/blogs/mappers/blogs.mapper';
 import { PostsMapper } from '../src/modules/bloggers-platform/posts/mappers/posts.mapper';
-import { getAllForPaginationHelper } from './ helpers/get-all-for-pagination.helper';
+import { createStringHelper } from './helpers/create-string.helper';
+import { constantHelper } from './helpers/constant.helper';
+import { getAllForPaginationHelper } from './helpers/get-all-for-pagination.helper';
+import { errorMessageHelper } from './helpers/error-message.helper';
+import { deleteAllData } from './helpers/delete-all-data';
 
 describe('PostsController (e2e)', () => {
   let app: INestApplication<App>;
