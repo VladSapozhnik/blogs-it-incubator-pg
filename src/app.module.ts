@@ -20,9 +20,12 @@ import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-pla
         // autoLoadEntities: true, // 🔥 важно
         // synchronize: false, // ❌ не включай на проде
         // schema: 'public',
-        ssl: {
-          rejectUnauthorized: false, // важно для Neon
-        },
+        ssl:
+          coreConfig.env !== 'testing'
+            ? {
+                rejectUnauthorized: false, // важно для Neon
+              }
+            : false,
       }),
       inject: [CoreConfig],
     }),

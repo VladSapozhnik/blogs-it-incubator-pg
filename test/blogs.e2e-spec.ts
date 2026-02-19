@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import request, { Response } from 'supertest';
+import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { appSetup } from '../src/setup/app.setup';
@@ -24,18 +24,17 @@ describe('BlogsController (e2e)', () => {
     isMembership: expect.any(Boolean) as boolean,
   };
 
-  beforeEach(async () => {});
-
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     appSetup(app);
-
     await app.init();
+  });
 
+  beforeEach(async () => {
     await deleteAllData(app);
 
     const response = await request(app.getHttpServer())
@@ -57,9 +56,7 @@ describe('BlogsController (e2e)', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   describe('GET /blogs', () => {

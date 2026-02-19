@@ -14,20 +14,21 @@ describe('UserController (e2e)', () => {
   let app: INestApplication<App>;
   let createdUserId: string;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     appSetup(app);
-
     await app.init();
+  });
 
+  beforeEach(async () => {
     await deleteAllData(app);
 
     const userResponse = await request(app.getHttpServer())
-      .post('/users')
+      .post('/sa/users')
       .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
       .send({ ...constantHelper.users[0] })
       .expect(HttpStatus.CREATED);
@@ -39,14 +40,12 @@ describe('UserController (e2e)', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
-  it('/users (POST) should return 401 when non-admin tries to create a user', async () => {
+  it('/sa/users (POST) should return 401 when non-admin tries to create a user', async () => {
     const response = await request(app.getHttpServer())
-      .post('/users')
+      .post('/sa/users')
       .auth(
         constantHelper.invalidSuperAdmin.user,
         constantHelper.invalidSuperAdmin.pass,
@@ -57,9 +56,9 @@ describe('UserController (e2e)', () => {
     expect(response.body).toEqual(errorMessageHelper());
   });
 
-  it('/users (POST) returns 400 when sending invalid user data', async () => {
+  it('/sa/users (POST) returns 400 when sending invalid user data', async () => {
     const response = await request(app.getHttpServer())
-      .post('/users')
+      .post('/sa/users')
       .auth('admin', 'qwerty')
       .send({
         login: 'us',
@@ -71,18 +70,18 @@ describe('UserController (e2e)', () => {
     expect(response.body).toEqual(errorMessageHelper(3));
   });
 
-  it('/users (GET) returns users with pagination and status 200', async () => {
+  it('/sa/users (GET) returns users with pagination and status 200', async () => {
     const response: Response = await request(app.getHttpServer())
-      .get('/users')
+      .get('/sa/users')
       .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
       .expect(HttpStatus.OK);
 
     expect(response.body).toEqual(getAllForPaginationHelper(response));
   });
 
-  it('/users (GET) returns 401 when unauthorized super admin', async () => {
+  it('/sa/users (GET) returns 401 when unauthorized super admin', async () => {
     const response = await request(app.getHttpServer())
-      .get('/users')
+      .get('/sa/users')
       .auth(
         constantHelper.invalidSuperAdmin.user,
         constantHelper.invalidSuperAdmin.pass,
@@ -92,9 +91,9 @@ describe('UserController (e2e)', () => {
     expect(response.body).toEqual(errorMessageHelper());
   });
 
-  it('/users/id (DELETE) returns 401 when unauthorized user tries to delete', async () => {
+  it('/sa/users/id (DELETE) returns 401 when unauthorized user tries to delete', async () => {
     const response = await request(app.getHttpServer())
-      .delete('/users/' + createdUserId)
+      .delete('/sa/users/' + createdUserId)
       .auth(
         constantHelper.invalidSuperAdmin.user,
         constantHelper.invalidSuperAdmin.pass,
@@ -104,16 +103,16 @@ describe('UserController (e2e)', () => {
     expect(response.body).toEqual(errorMessageHelper());
   });
 
-  it('/users/id (DELETE returns 204 when super admin deletes an existing user)', async () => {
+  it('/sa/users/id (DELETE returns 204 when super admin deletes an existing user)', async () => {
     await request(app.getHttpServer())
-      .delete('/users/' + createdUserId)
+      .delete('/sa/users/' + createdUserId)
       .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
       .expect(HttpStatus.NO_CONTENT);
   });
 
-  it('/users/id (DELETE) returns 404 when user does not exist', async () => {
+  it('/sa/users/id (DELETE) returns 404 when user does not exist', async () => {
     const response = await request(app.getHttpServer())
-      .delete('/users/' + constantHelper.invalidId)
+      .delete('/sa/users/' + constantHelper.invalidId)
       .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
       .expect(HttpStatus.NOT_FOUND);
 

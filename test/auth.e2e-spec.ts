@@ -12,20 +12,21 @@ describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;
   let token: string;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     appSetup(app);
-
     await app.init();
+  });
 
+  beforeEach(async () => {
     await deleteAllData(app);
 
     await request(app.getHttpServer())
-      .post('/users')
+      .post('/sa/users')
       .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
       .send({ ...constantHelper.users[0] })
       .expect(HttpStatus.CREATED);
@@ -44,9 +45,7 @@ describe('AuthController (e2e)', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   it('/auth/login (POST) should return access token for valid credentials', async () => {

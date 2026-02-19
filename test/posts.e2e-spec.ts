@@ -33,18 +33,17 @@ describe('PostsController (e2e)', () => {
     },
   };
 
-  beforeEach(async () => {});
-
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     appSetup(app);
-
     await app.init();
+  });
 
+  beforeEach(async () => {
     await deleteAllData(app);
 
     const response = await request(app.getHttpServer())
