@@ -3,13 +3,16 @@ import { UsersMapper } from '../mappers/users.mapper';
 import { HttpStatus } from '@nestjs/common';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
 
 export class UsersQueryRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectDataSource() private readonly dataSource: DataSource,
+  ) {}
   async getAllUsers(queryDto: GetUsersQueryParamsDto) {
     // const filter = queryDto.buildUserFilter();
 
@@ -44,11 +47,8 @@ export class UsersQueryRepository {
     });
   }
 
-  async getUserById(id: string) {
-    const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE id = $1 `,
-      [id],
-    );
+  async getUserById(id: string): Promise<UsersMapper> {
+    const user: User | null = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new DomainException({

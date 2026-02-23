@@ -1,45 +1,67 @@
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HttpStatus } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Generated,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export class EmailConfirmation {
-  confirmationCode: string;
+  confirmationCode?: string;
   expirationDate: Date;
-  isConfirmed: boolean;
+  isConfirmed?: boolean;
 }
 
+@Entity('users')
 export class User {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', unique: true })
   login: string;
 
+  @Column({ type: 'varchar', unique: true })
   email: string;
 
+  @Column({ type: 'varchar', select: false })
   password: string;
 
+  @Column({ type: 'uuid' })
+  @Generated('uuid')
   confirmationCode: string;
 
+  @Column({ type: 'timestamp with time zone' })
   expirationDate: Date;
 
+  @Column({ type: 'boolean', default: false })
   isConfirmed: boolean;
 
+  @CreateDateColumn()
   createdAt: Date;
 
-  updated_at: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   static createInstance(
     dto: CreateUserDto,
     hash: string,
     emailConfirmation: EmailConfirmation,
-  ) {
+  ): User {
     const user = new this();
 
     user.login = dto.login;
     user.password = hash;
     user.email = dto.email;
-    user.confirmationCode = emailConfirmation.confirmationCode;
+    if (emailConfirmation.confirmationCode) {
+      user.confirmationCode = emailConfirmation.confirmationCode;
+    }
     user.expirationDate = emailConfirmation.expirationDate;
-    user.isConfirmed = emailConfirmation.isConfirmed;
+
+    user.isConfirmed = emailConfirmation?.isConfirmed ?? false;
 
     return user;
   }

@@ -2,18 +2,17 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { ProfileMapper } from '../../auth/mappers/profile.mapper';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { User } from '../entities/user.entity';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersQueryExternalRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
 
-  async getProfile(id: string) {
-    const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE id = $1`,
-      [id],
-    );
+  async getProfile(id: string): Promise<ProfileMapper> {
+    const user: User | null = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new DomainException({
@@ -26,6 +25,7 @@ export class UsersQueryExternalRepository {
         ],
       });
     }
+
     return ProfileMapper.mapToView(user);
   }
 }

@@ -2,6 +2,7 @@ import { UsersRepository } from '../../repositories/users.repository';
 import { HashAdapter } from '../../../../../core/adapters/hash.adapter';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { User } from '../../entities/user.entity';
 
 export class CreateUserCommand {
   constructor(public readonly dto: CreateUserDto) {}
@@ -19,13 +20,11 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
 
     const hash: string = await this.hashAdapter.hashPassword(dto.password);
 
-    return this.usersRepository.createUser(
-      { ...dto, password: hash },
-      {
-        confirmationCode: 'super-admin',
-        expirationDate: new Date(),
-        isConfirmed: true,
-      },
-    );
+    const user: User = User.createInstance(dto, hash, {
+      expirationDate: new Date(),
+      isConfirmed: true,
+    });
+
+    return await this.usersRepository.saveUser(user);
   }
 }

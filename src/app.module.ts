@@ -17,8 +17,8 @@ import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-pla
       useFactory: (coreConfig: CoreConfig) => ({
         type: 'postgres',
         url: coreConfig.dbUrl,
-        // autoLoadEntities: true, // 🔥 важно
-        // synchronize: false, // ❌ не включай на проде
+        autoLoadEntities: true,
+        synchronize: true, // ❌ не включай на проде
         // schema: 'public',
         ssl:
           coreConfig.env !== 'testing'

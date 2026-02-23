@@ -1,19 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { EmailConfirmation, User } from '../entities/user.entity';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
 
   async getUserById(id: string): Promise<User> {
-    const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE id = $1`,
-      [id],
-    );
+    const user: User | null = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new DomainException({
@@ -31,10 +29,9 @@ export class UsersRepository {
   }
 
   async assertUserNotExists(login: string, email: string) {
-    const [existUser]: User[] = await this.dataSource.query(
-      'SELECT * FROM public.users WHERE login = $1 OR email = $2',
-      [login, email],
-    );
+    const existUser: User | null = await this.userRepository.findOne({
+      where: [{ email }, { login }],
+    });
 
     if (existUser) {
       throw new DomainException({
@@ -49,29 +46,13 @@ export class UsersRepository {
     }
   }
 
-  async createUser(
-    dto: CreateUserDto,
-    emailConfirmation: EmailConfirmation,
-  ): Promise<string> {
-    const [user]: User[] = await this.dataSource.query(
-      `INSERT INTO users(login, email, password, "confirmationCode", "expirationDate", "isConfirmed") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-      [
-        dto.login,
-        dto.email,
-        dto.password,
-        emailConfirmation.confirmationCode,
-        emailConfirmation.expirationDate,
-        emailConfirmation.isConfirmed,
-      ],
-    );
+  async saveUser(user: User): Promise<string> {
+    await this.userRepository.save(user);
 
     return user.id;
   }
 
   async removeUser(id: string): Promise<void> {
-    await this.dataSource.query(
-      `DELETE FROM public.users WHERE id = $1 RETURNING id;`,
-      [id],
-    );
+    await this.userRepository.delete({ id });
   }
 }

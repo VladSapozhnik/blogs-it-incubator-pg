@@ -1,59 +1,55 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { EmailConfirmation, User } from '../entities/user.entity';
-import { RegistrationDto } from '../../auth/dto/registration.dto';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UsersExternalRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-  async registration(
-    dto: RegistrationDto,
-    hash: string,
-    emailConfirmation: EmailConfirmation,
-  ): Promise<string> {
-    const [user]: User[] = await this.dataSource.query(
-      `INSERT INTO public.users(login, email, password, "confirmationCode", "isConfirmed", "expirationDate") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;`,
-      [
-        dto.login,
-        dto.email,
-        hash,
-        emailConfirmation.confirmationCode,
-        emailConfirmation.isConfirmed,
-        emailConfirmation.expirationDate,
-      ],
-    );
-
-    if (!user) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'User already exists',
-            field: 'email',
-          },
-        ],
-      });
-    }
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectDataSource() private readonly dataSource: DataSource,
+  ) {}
+  async saveUser(user: User): Promise<string> {
+    await this.userRepository.save(user);
 
     return user.id;
   }
 
-  async getUserByLoginOrEmail(login: string, email: string) {
-    const [existUser]: User[] = await this.dataSource.query(
-      'SELECT * FROM public.users WHERE login = $1 OR email = $2',
-      [login, email],
-    );
+  async getUserByLoginOrEmail(login: string, email: string): Promise<void> {
+    const existUser: User | null = await this.userRepository.findOne({
+      where: [{ login }, { email }],
+    });
 
-    return existUser;
+    if (existUser) {
+      if (existUser.login === login) {
+        throw new DomainException({
+          status: HttpStatus.BAD_REQUEST,
+          errorsMessages: [
+            {
+              message: 'Login already exists',
+              field: 'login',
+            },
+          ],
+        });
+      } else if (existUser.email === email) {
+        throw new DomainException({
+          status: HttpStatus.BAD_REQUEST,
+          errorsMessages: [
+            {
+              message: 'Email already exists',
+              field: 'email',
+            },
+          ],
+        });
+      }
+    }
   }
 
   async findUserByCode(code: string): Promise<User> {
-    const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE "confirmationCode" = $1;`,
-      [code],
-    );
+    const user: User | null = await this.userRepository.findOneBy({
+      confirmationCode: code,
+    });
 
     if (!user) {
       throw new DomainException({
@@ -70,11 +66,8 @@ export class UsersExternalRepository {
     return user;
   }
 
-  async getUserById(id: string) {
-    const [user]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE id = $1`,
-      [id],
-    );
+  async getUserById(id: string): Promise<User> {
+    const user: User | null = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new DomainException({
@@ -91,11 +84,10 @@ export class UsersExternalRepository {
     return user;
   }
 
-  async findUserByEmail(email: string) {
-    const [existUser]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE email = $1`,
-      [email],
-    );
+  async findUserByEmail(email: string): Promise<User> {
+    const existUser: User | null = await this.userRepository.findOneBy({
+      email,
+    });
 
     if (!existUser) {
       throw new DomainException({
@@ -112,11 +104,10 @@ export class UsersExternalRepository {
     return existUser;
   }
 
-  async findByLoginOrEmail(loginOrEmail: string) {
-    const [existUser]: User[] = await this.dataSource.query(
-      `SELECT * FROM users WHERE login = $1 OR email = $1;`,
-      [loginOrEmail],
-    );
+  async findByLoginOrEmail(loginOrEmail: string): Promise<User> {
+    const existUser: User | null = await this.userRepository.findOne({
+      where: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
 
     if (!existUser) {
       throw new DomainException({

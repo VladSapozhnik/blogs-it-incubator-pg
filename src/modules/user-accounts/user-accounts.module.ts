@@ -39,6 +39,8 @@ import { RemoveOtherDeviceSessionUseCase } from './security-devices/application/
 import { GetDeviceSessionByUserIdQueryHandler } from './security-devices/application/queries/get-device-session-by-user-id.query';
 import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
 import { GetProfileQueryHandler } from './auth/application/queries/get-profile.query';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './users/entities/user.entity';
 
 const useCases = [
   RegistrationUseCase,
@@ -60,7 +62,11 @@ const useCases = [
 ];
 
 @Module({
-  imports: [JwtModule.register({}), PassportModule],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    JwtModule.register({}),
+    PassportModule,
+  ],
   controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
     UserAccountsConfig,
