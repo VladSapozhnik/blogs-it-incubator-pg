@@ -66,12 +66,10 @@ export class RefreshTokenUseCase implements ICommandHandler<
     const lastActiveDate = new Date(newPayload.iat * 1000);
     const expiresAt = new Date(newPayload.exp * 1000);
 
-    await this.securityDevicesExternalRepository.updateSession(
-      isActiveSession.id,
-      ip,
-      title,
-      lastActiveDate,
-      expiresAt,
+    isActiveSession.updateSession(ip, title, lastActiveDate, expiresAt);
+
+    await this.securityDevicesExternalRepository.saveDeviceSession(
+      isActiveSession,
     );
 
     return {

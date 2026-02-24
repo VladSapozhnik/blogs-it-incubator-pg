@@ -6,9 +6,12 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PasswordRecovery } from '../../password-recovery/entities/password-recovery.entity';
+import { SecurityDevice } from '../../security-devices/entities/security-device.entity';
 
 export class EmailConfirmation {
   confirmationCode?: string;
@@ -46,6 +49,12 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @OneToMany(() => PasswordRecovery, (recovery) => recovery.user)
+  passwordRecoveries: PasswordRecovery[];
+
+  @OneToMany(() => SecurityDevice, (securityDevice) => securityDevice.user)
+  securityDevices: SecurityDevice[];
+
   static createInstance(
     dto: CreateUserDto,
     hash: string,
@@ -71,6 +80,18 @@ export class User {
   }
 
   resendEmail(code: string, expirationDate: Date) {
+    if (this.isConfirmed) {
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Email already confirmed',
+            field: 'email',
+          },
+        ],
+      });
+    }
+
     this.confirmationCode = code;
     this.expirationDate = expirationDate;
     this.isConfirmed = false;

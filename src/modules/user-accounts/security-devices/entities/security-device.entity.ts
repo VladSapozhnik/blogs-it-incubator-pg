@@ -1,16 +1,37 @@
+import {
+  Column,
+  Entity,
+  Generated,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+
+@Entity({ name: 'security_devices' })
 export class SecurityDevice {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ManyToOne(() => User, (u) => u.securityDevices)
+  user: User;
+
+  @Column({ type: 'uuid' })
   userId: string;
 
+  @Column({ type: 'uuid' })
+  @Generated('uuid')
   deviceId: string;
 
+  @Column({ type: 'varchar' })
   ip: string;
 
+  @Column({ type: 'varchar' })
   title: string;
 
+  @Column({ type: 'timestamp with time zone' })
   lastActiveDate: Date;
 
+  @Column({ type: 'timestamp with time zone' })
   expiresAt: Date;
 
   static createInstance(

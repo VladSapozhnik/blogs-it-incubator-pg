@@ -1,14 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UsersExternalRepository {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
   async saveUser(user: User): Promise<string> {
     await this.userRepository.save(user);
@@ -122,60 +121,5 @@ export class UsersExternalRepository {
     }
 
     return existUser;
-  }
-
-  async confirmEmail(code: string): Promise<string> {
-    const [user]: User[] = await this.dataSource.query(
-      `UPDATE public.users SET "isConfirmed" = true WHERE "confirmationCode" = $1 RETURNING id;`,
-      [code],
-    );
-
-    if (!user) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          { message: 'Invalid confirmation code', field: 'code' },
-        ],
-      });
-    }
-
-    return user.id;
-  }
-
-  async resendEmail(
-    id: string,
-    code: string,
-    expirationDate: Date,
-  ): Promise<string> {
-    const [user]: User[] = await this.dataSource.query(
-      `UPDATE public.users 
-     SET "confirmationCode" = $1, "expirationDate" = $2 
-     WHERE "id" = $3 
-     RETURNING "id";`,
-      [code, expirationDate, id],
-    );
-
-    if (!user) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'User with this email does not exist',
-            field: 'email',
-          },
-        ],
-      });
-    }
-
-    return user.id;
-  }
-
-  async updatePassword(id: string, password: string) {
-    const [user]: User[] = await this.dataSource.query(
-      `UPDATE public.users SET password = $1 WHERE id = $2 RETURNING id`,
-      [password, id],
-    );
-
-    return user.id;
   }
 }

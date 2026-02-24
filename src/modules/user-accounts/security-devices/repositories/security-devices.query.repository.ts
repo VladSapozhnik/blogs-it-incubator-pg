@@ -2,19 +2,20 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { SecurityDevice } from '../entities/security-device.entity';
 import { SecurityDevicesMapper } from '../mappers/security-devices.mapper';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SecurityDevicesQueryRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(SecurityDevice)
+    private readonly securityDeviceRepository: Repository<SecurityDevice>,
+  ) {}
   async findDeviceSessionByUserId(
     userId: string,
   ): Promise<SecurityDevicesMapper[]> {
-    const sessions: SecurityDevice[] = await this.dataSource.query(
-      `SELECT * FROM security_devices WHERE "userId" = $1`,
-      [userId],
-    );
+    const sessions: SecurityDevice[] =
+      await this.securityDeviceRepository.findBy({ userId });
 
     if (sessions.length === 0) {
       throw new DomainException({

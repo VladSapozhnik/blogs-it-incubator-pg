@@ -5,7 +5,7 @@ import { UsersExternalRepository } from '../../../users/repositories/users.exter
 import { EmailAdapter } from '../../../../../core/adapters/email.adapter';
 import { PasswordRecoveryExternalRepository } from '../../../password-recovery/password-recovery.external.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { add } from 'date-fns/add';
+import { PasswordRecovery } from '../../../password-recovery/entities/password-recovery.entity';
 
 export class PasswordRecoveryCommand {
   constructor(public readonly email: string) {}
@@ -20,7 +20,7 @@ export class PasswordRecoveryUseCase implements ICommandHandler<PasswordRecovery
   ) {}
 
   async execute({ email }: PasswordRecoveryCommand): Promise<void> {
-    const randomUUID = generateId();
+    const randomUUID: string = generateId();
 
     const existUser: User =
       await this.usersExternalRepository.findUserByEmail(email);
@@ -33,11 +33,11 @@ export class PasswordRecoveryUseCase implements ICommandHandler<PasswordRecovery
           emailExamples.passwordRecovery,
         );
 
-        await this.passwordRecoveryExternalRepository.addPasswordRecoveryCode(
-          existUser.id,
-          randomUUID,
-          add(new Date(), { minutes: 30 }),
-          false,
+        const passwordRecovery: PasswordRecovery =
+          PasswordRecovery.createForUser(existUser.id, randomUUID);
+
+        await this.passwordRecoveryExternalRepository.savePasswordRecovery(
+          passwordRecovery,
         );
       } catch (e) {
         console.log(e);

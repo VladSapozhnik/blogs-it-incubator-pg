@@ -41,6 +41,8 @@ import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
 import { GetProfileQueryHandler } from './auth/application/queries/get-profile.query';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
+import { PasswordRecovery } from './password-recovery/entities/password-recovery.entity';
+import { SecurityDevice } from './security-devices/entities/security-device.entity';
 
 const useCases = [
   RegistrationUseCase,
@@ -63,7 +65,7 @@ const useCases = [
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, PasswordRecovery, SecurityDevice]),
     JwtModule.register({}),
     PassportModule,
   ],

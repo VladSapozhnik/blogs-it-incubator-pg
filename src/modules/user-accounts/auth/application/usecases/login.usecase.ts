@@ -10,6 +10,7 @@ import { AccessAndRefreshTokensType } from '../../types/access-and-refresh-token
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtRefreshPayload } from '../../../../../core/types/jwt-payload.type';
 import { SecurityDevicesExternalRepository } from '../../../security-devices/repositories/security-devices.external.repository';
+import { SecurityDevice } from '../../../security-devices/entities/security-device.entity';
 
 export class LoginCommand {
   constructor(
@@ -94,7 +95,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
     const lastActiveDate = new Date(payload.iat * 1000);
     const expiresAt = new Date(payload.exp * 1000);
 
-    await this.securityDevicesExternalRepository.addDeviceSession(
+    const session: SecurityDevice = SecurityDevice.createInstance(
       payload.userId,
       deviceId,
       ip,
@@ -102,6 +103,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
       lastActiveDate,
       expiresAt,
     );
+
+    await this.securityDevicesExternalRepository.saveDeviceSession(session);
 
     return {
       accessToken,

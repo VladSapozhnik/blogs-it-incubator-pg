@@ -25,29 +25,14 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
         dto.recoveryCode,
       );
 
-    if (
-      passwordRecovery.isUsed ||
-      passwordRecovery.expirationDate < new Date()
-    ) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Code is invalid',
-            field: 'code',
-          },
-        ],
-      });
-    }
+    passwordRecovery.validateRecoveryCode();
 
     const newHash: string = await this.hashAdapter.hashPassword(
       dto.newPassword,
     );
 
     const existUser: User | null =
-      await this.usersExternalRepository.getUserById(
-        passwordRecovery.userId.toString(),
-      );
+      await this.usersExternalRepository.getUserById(passwordRecovery.userId);
 
     if (!existUser) {
       throw new DomainException({
@@ -61,8 +46,14 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
       });
     }
 
-    await this.usersExternalRepository.updatePassword(existUser.id, newHash);
+    existUser.setPassword(newHash);
 
-    await this.passwordRecoveryExternalRepository.markAsUsedById(existUser.id);
+    await this.usersExternalRepository.saveUser(existUser);
+
+    passwordRecovery.markAsUsed();
+
+    await this.passwordRecoveryExternalRepository.savePasswordRecovery(
+      passwordRecovery,
+    );
   }
 }

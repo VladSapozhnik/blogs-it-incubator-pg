@@ -23,29 +23,15 @@ export class ResendEmailUseCase implements ICommandHandler<
   ) {}
 
   async execute({ email }: ResendEmailCommand): Promise<void> {
-    const newExpiration: Date = add(new Date(), { hours: 1, minutes: 30 });
-    const newCode = generateId();
+    const newExpirationDate: Date = add(new Date(), { hours: 1, minutes: 30 });
+    const newCode: string = generateId();
 
     const user: User =
       await this.usersExternalRepository.findUserByEmail(email);
 
-    if (user.isConfirmed) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Email already confirmed',
-            field: 'email',
-          },
-        ],
-      });
-    }
+    user.resendEmail(newCode, newExpirationDate);
 
-    await this.usersExternalRepository.resendEmail(
-      user.id,
-      newCode,
-      newExpiration,
-    );
+    await this.usersExternalRepository.saveUser(user);
 
     try {
       await this.emailAdapter.sendEmail(

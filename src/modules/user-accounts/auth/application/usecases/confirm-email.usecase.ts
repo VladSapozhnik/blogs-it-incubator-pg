@@ -1,6 +1,4 @@
 import { User } from '../../../users/entities/user.entity';
-import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { HttpStatus } from '@nestjs/common';
 import { UsersExternalRepository } from '../../../users/repositories/users.external.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
@@ -17,30 +15,8 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
   async execute({ code }: ConfirmEmailCommand): Promise<void> {
     const user: User = await this.usersExternalRepository.findUserByCode(code);
 
-    if (user.isConfirmed) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Email already confirmed',
-            field: 'code',
-          },
-        ],
-      });
-    }
+    user.confirmEmail();
 
-    if (user.expirationDate < new Date()) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Confirmation code expired',
-            field: 'code',
-          },
-        ],
-      });
-    }
-
-    await this.usersExternalRepository.confirmEmail(code);
+    await this.usersExternalRepository.saveUser(user);
   }
 }

@@ -1,40 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { SecurityDevice } from '../entities/security-device.entity';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class SecurityDevicesRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(SecurityDevice)
+    private readonly securityDeviceRepository: Repository<SecurityDevice>,
+  ) {}
   async findDeviceSessionByDeviceId(
     deviceId: string,
   ): Promise<SecurityDevice | null> {
-    const [device]: SecurityDevice[] = await this.dataSource.query(
-      `SELECT * FROM public.security_devices WHERE "deviceId" = $1`,
-      [deviceId],
-    );
-
-    return device;
+    return this.securityDeviceRepository.findOneBy({ deviceId });
   }
 
-  async removeDeviceSession(userId: string, deviceId: string): Promise<string> {
-    const [session]: SecurityDevice[] = await this.dataSource.query(
-      `DELETE FROM public.security_devices WHERE "userId" = $1 AND "deviceId" = $2 RETURNING id;`,
-      [userId, deviceId],
-    );
+  async removeDeviceSession(
+    userId: string,
+    deviceId: string,
+  ): Promise<boolean> {
+    const result: DeleteResult = await this.securityDeviceRepository.delete({
+      userId,
+      deviceId,
+    });
 
-    return session.id;
+    return (result.affected ?? 0) > 0;
   }
 
   async removeOtherDeviceSession(
     userId: string,
     deviceId: string,
   ): Promise<boolean> {
-    const session: SecurityDevice[] = await this.dataSource.query(
-      `DELETE FROM public.security_devices WHERE "userId" = $1 AND "deviceId" <> $2 RETURNING id;`,
-      [userId, deviceId],
-    );
+    const result: DeleteResult = await this.securityDeviceRepository.delete({
+      userId,
+      deviceId: Not(deviceId),
+    });
 
-    return session.length > 0;
+    return (result.affected ?? 0) > 0;
   }
 }
