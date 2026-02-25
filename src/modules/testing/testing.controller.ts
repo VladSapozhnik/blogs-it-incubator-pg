@@ -15,7 +15,6 @@ export class TestingController {
     try {
       await this.dataSource.query(`
       TRUNCATE TABLE 
-        "users_security_devices",
         "security_devices",
         "password_recoveries",
         "comment_likes",
