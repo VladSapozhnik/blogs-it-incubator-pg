@@ -104,7 +104,7 @@ export class User {
         errorsMessages: [
           {
             message: 'Email already confirmed',
-            field: 'User',
+            field: 'code',
           },
         ],
       });
