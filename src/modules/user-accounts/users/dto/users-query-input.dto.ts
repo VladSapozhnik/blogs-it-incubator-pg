@@ -1,19 +1,22 @@
 import { UserSortFieldEnum } from '../enums/user-sort-field.enum';
 import { BaseQueryParams } from '../../../../core/dto/base.query-params.input.dto';
+import { FindOptionsWhere, ILike } from 'typeorm';
+import { User } from '../entities/user.entity';
 
 export class GetUsersQueryParamsDto extends BaseQueryParams {
   sortBy: UserSortFieldEnum = UserSortFieldEnum.CreatedAt;
   searchLoginTerm: string | null = null;
   searchEmailTerm: string | null = null;
+
   buildUserFilter() {
-    const or: any[] = [];
+    const filters: FindOptionsWhere<User>[] = [];
 
     if (this.searchLoginTerm) {
-      or.push({ login: { $regex: this.searchLoginTerm, $options: 'i' } });
+      filters.push({ login: ILike(`%${this.searchLoginTerm}%`) });
     }
     if (this.searchEmailTerm)
-      or.push({ email: { $regex: this.searchEmailTerm, $options: 'i' } });
+      filters.push({ email: ILike(`%${this.searchEmailTerm}%`) });
 
-    return or.length ? { $or: or } : {};
+    return filters.length ? filters : {};
   }
 }
