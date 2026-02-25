@@ -13,22 +13,6 @@ export class TestingController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAll(): Promise<void> {
     try {
-      const entities = [
-        SecurityDevice,
-        PasswordRecovery,
-        // CommentLike,
-        // PostLike,
-        // Comment,
-        // Post,
-        // Blog,
-        User,
-      ];
-
-      for (const entity of entities) {
-        const repository = this.dataSource.getRepository(entity);
-        await repository.delete({});
-      }
-
       await this.dataSource.query(`
       TRUNCATE TABLE 
         "users_security_devices",
