@@ -104,9 +104,13 @@ export class UsersExternalRepository {
   }
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<User> {
-    const existUser: User | null = await this.userRepository.findOne({
-      where: [{ login: loginOrEmail }, { email: loginOrEmail }],
-    });
+    const existUser: User | null = await this.userRepository
+      .createQueryBuilder('u')
+      .where('u.login = :loginOrEmail OR u.email = :loginOrEmail', {
+        loginOrEmail,
+      })
+      .addSelect('u.password')
+      .getOne();
 
     if (!existUser) {
       throw new DomainException({
