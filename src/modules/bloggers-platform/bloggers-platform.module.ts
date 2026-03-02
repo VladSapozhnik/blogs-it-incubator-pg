@@ -39,6 +39,9 @@ import { CreateCommentUseCase } from './comments/application/usecases/create-com
 import { CreatePostForBlogUseCase } from './posts/application/usecases/create-post-for-blog.usecase';
 import { RemovePostUseCase } from './posts/application/usecases/remove-post.usecase';
 import { UpdatePostUseCase } from './posts/application/usecases/update-post.usecase';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Blog } from './blogs/entities/blog.entity';
+import { Post } from './posts/entities/post.entity';
 
 const useCases = [
   //blogs
@@ -66,7 +69,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [UserAccountsModule],
+  imports: [TypeOrmModule.forFeature([Blog, Post]), UserAccountsModule],
   controllers: [
     BlogsController,
     BlogsSaController,

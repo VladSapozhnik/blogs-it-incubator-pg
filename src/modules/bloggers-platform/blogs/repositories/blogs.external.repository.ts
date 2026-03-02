@@ -1,20 +1,19 @@
 import { Blog } from '../entities/blog.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BlogsExternalRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(Blog) private readonly blogRepository: Repository<Blog>,
+  ) {}
 
   async getBlogById(id: string): Promise<Blog> {
-    const [findBlog]: Blog[] = await this.dataSource.query(
-      `SELECT * FROM blogs WHERE id = $1`,
-      [id],
-    );
+    const existBlog: Blog | null = await this.blogRepository.findOneBy({ id });
 
-    if (!findBlog) {
+    if (!existBlog) {
       throw new DomainException({
         status: HttpStatus.NOT_FOUND,
         errorsMessages: [
@@ -26,6 +25,6 @@ export class BlogsExternalRepository {
       });
     }
 
-    return findBlog;
+    return existBlog;
   }
 }

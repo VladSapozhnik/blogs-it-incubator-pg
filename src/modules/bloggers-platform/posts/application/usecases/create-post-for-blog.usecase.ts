@@ -1,8 +1,8 @@
 import { CreatePostForBlogDto } from '../../dto/create-post-for-blog.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Blog } from '../../../blogs/entities/blog.entity';
 import { PostsExternalRepository } from '../../repositories/posts.external.repository';
 import { BlogsExternalRepository } from '../../../blogs/repositories/blogs.external.repository';
+import { Post } from '../../entities/post.entity';
 
 export class CreatePostForBlogCommand {
   constructor(
@@ -19,12 +19,10 @@ export class CreatePostForBlogUseCase implements ICommandHandler<CreatePostForBl
   ) {}
 
   async execute({ dto, blogId }: CreatePostForBlogCommand): Promise<string> {
-    const blog: Blog = await this.blogsExternalRepository.getBlogById(blogId);
+    await this.blogsExternalRepository.getBlogById(blogId);
 
-    return await this.postsExternalRepository.createPost(
-      dto,
-      blog.name,
-      blogId,
-    );
+    const post: Post = Post.createInstancePostForBlog(dto, blogId);
+
+    return this.postsExternalRepository.savePost(post);
   }
 }

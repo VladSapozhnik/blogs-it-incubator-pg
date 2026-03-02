@@ -8,6 +8,7 @@ export type NewestLikeRow = {
 };
 
 export type PostWithStatusRowType = Post & {
+  blogName: string;
   myStatus: LikeStatusEnum;
   likesCount: number;
   dislikesCount: number;
