@@ -31,7 +31,7 @@ export class PostsMapper {
     dto.title = row.title;
     dto.shortDescription = row.shortDescription;
     dto.content = row.content;
-    dto.blogId = row.blogId.toString();
+    dto.blogId = row.blogId;
     dto.blogName = row.blogName;
     dto.createdAt = row.createdAt.toISOString();
 

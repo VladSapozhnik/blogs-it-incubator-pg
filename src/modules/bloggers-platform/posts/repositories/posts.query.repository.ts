@@ -2,7 +2,7 @@ import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PostWithStatusRowType } from '../types/post-with-status-row.type';
 import { Post } from '../entities/post.entity';
 
@@ -29,6 +29,8 @@ export class PostsQueryRepository {
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
       .getRawMany();
+
+    console.log(posts);
 
     // const query = `SELECT p.*,
     //     b.name as "blogName",
