@@ -1,19 +1,16 @@
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { IsString, Length, Matches } from 'class-validator';
 import { Trim } from '../../../../core/decorators/trim.decorator';
 
 export class UpdateBlogDto {
   @Trim()
-  @IsNotEmpty()
   @IsString()
   @Length(1, 15)
   name: string;
   @Trim()
-  @IsNotEmpty()
   @IsString()
   @Length(1, 500)
   description: string;
   @Trim()
-  @IsNotEmpty()
   @IsString()
   @Length(1, 100)
   @Matches(
