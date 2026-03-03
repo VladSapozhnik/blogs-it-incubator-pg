@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 export enum SortDirection {
   Asc = 'ASC',
@@ -7,14 +7,17 @@ export enum SortDirection {
 }
 
 export class BaseQueryParams {
+  @IsOptional()
   @Type(() => Number)
   pageNumber: number = 1;
+  @IsOptional()
   @Type(() => Number)
   pageSize: number = 10;
   @Type(() => String)
+  @IsOptional()
   @Transform(({ value }) =>
     typeof value === 'string'
-      ? value.toUpperCase()
+      ? value.trim().toUpperCase()
       : SortDirection.Desc.toUpperCase(),
   )
   @IsEnum(SortDirection)

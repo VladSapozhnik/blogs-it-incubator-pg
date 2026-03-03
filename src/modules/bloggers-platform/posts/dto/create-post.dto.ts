@@ -1,11 +1,17 @@
-import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  Length,
+  MaxLength,
+} from 'class-validator';
 import { Trim } from '../../../../core/decorators/trim.decorator';
 
 export class CreatePostDto {
   @Trim()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(30)
+  @Length(1, 30)
   title: string;
   @Trim()
   @IsNotEmpty()

@@ -6,9 +6,9 @@ export function pipesSetup(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      stopAtFirstError: true,
-      // whitelist: true,
-      // forbidNonWhitelisted: true,
+      stopAtFirstError: false,
+      whitelist: true,
+      forbidNonWhitelisted: true,
       exceptionFactory: (errors) => {
         const errorsMessages = errors.map((err) => ({
           field: err.property,
