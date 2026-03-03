@@ -13,7 +13,6 @@ export class BaseQueryParams {
   @IsOptional()
   @Type(() => Number)
   pageSize: number = 10;
-  @Type(() => String)
   @IsOptional()
   @Transform(({ value }) => {
     if (typeof value === 'string' && value.toLowerCase() === 'asc') {
