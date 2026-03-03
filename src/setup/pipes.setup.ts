@@ -8,7 +8,6 @@ export function pipesSetup(app: INestApplication) {
       transform: true,
       stopAtFirstError: true,
       whitelist: true,
-      forbidNonWhitelisted: true,
       exceptionFactory: (errors) => {
         const errorsMessages = errors.map((err) => ({
           field: err.property,
