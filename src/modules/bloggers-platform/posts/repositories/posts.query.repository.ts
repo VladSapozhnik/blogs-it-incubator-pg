@@ -24,7 +24,7 @@ export class PostsQueryRepository {
 
     const totalCount: number = await query.getCount();
 
-    const posts = await query
+    const posts: PostWithStatusRowType[] = await query
       .orderBy(`p.${queryDto.sortBy}`, queryDto.sortDirection)
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
@@ -73,15 +73,13 @@ export class PostsQueryRepository {
     id: string,
     userId: string | null,
   ): Promise<PostWithStatusRowType> {
-    const existPost: PostWithStatusRowType | null | undefined =
-      await this.postRepository
-        .createQueryBuilder('p')
-        .innerJoin('p.blog', 'b')
-        .select('p.*')
-        .addSelect('b.name', 'blogName')
-        .where('p.id = :id', { id })
-        .getRawOne();
-
+    const existPost = (await this.postRepository
+      .createQueryBuilder('p')
+      .innerJoin('p.blog', 'b')
+      .select('p.*')
+      .addSelect('b.name', 'blogName')
+      .where('p.id = :id', { id })
+      .getRawOne()) as PostWithStatusRowType;
     // const query = `SELECT p.*,
     //     b.name as "blogName",
     //     (SELECT COUNT(*) FROM post_likes WHERE "postId" = p.id AND status = 'Like')::int as "likesCount",
