@@ -2,7 +2,7 @@ import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { PostWithStatusRowType } from '../types/post-with-status-row.type';
 import { Post } from '../entities/post.entity';
 
