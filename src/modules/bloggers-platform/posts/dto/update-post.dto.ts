@@ -1,21 +1,21 @@
-import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { Trim } from '../../../../core/decorators/trim.decorator';
 
 export class UpdatePostDto {
   @Trim()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(30)
+  @Length(1, 30)
   title: string;
   @Trim()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
+  @Length(1, 100)
   @Trim()
   shortDescription: string;
   @Trim()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(1000)
+  @Length(1, 1000)
   content: string;
 }

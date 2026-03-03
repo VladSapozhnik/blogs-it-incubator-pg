@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsUUID,
-  Length,
-  MaxLength,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 import { Trim } from '../../../../core/decorators/trim.decorator';
 
 export class CreatePostDto {
@@ -16,12 +10,12 @@ export class CreatePostDto {
   @Trim()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
+  @Length(1, 100)
   shortDescription: string;
   @Trim()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(1000)
+  @Length(1, 1000)
   content: string;
   @Trim()
   @IsNotEmpty()

@@ -15,11 +15,12 @@ export class BaseQueryParams {
   pageSize: number = 10;
   @Type(() => String)
   @IsOptional()
-  @Transform(({ value }) =>
-    typeof value === 'string'
-      ? value.trim().toUpperCase()
-      : SortDirection.Desc.toUpperCase(),
-  )
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && value.toLowerCase() === 'asc') {
+      return SortDirection.Asc;
+    }
+    return SortDirection.Desc;
+  })
   @IsEnum(SortDirection)
   sortDirection: SortDirection = SortDirection.Desc;
 
