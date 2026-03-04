@@ -25,7 +25,7 @@ export class PostsQueryRepository {
       .select('p.*')
       .addSelect('b.name', 'blogName');
 
-    const totalCount: number = await query.getCount();
+    const totalCount: number = await query.clone().getCount();
 
     const posts: PostWithStatusRowType[] = await query
       .orderBy(sortByMapPosts[queryDto.sortBy], queryDto.sortDirection)
