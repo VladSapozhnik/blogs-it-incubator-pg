@@ -1,4 +1,7 @@
-import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
+import {
+  GetPostsQueryParamsDto,
+  sortByMapPosts,
+} from '../dto/post-query-input.dto';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,12 +28,10 @@ export class PostsQueryRepository {
     const totalCount: number = await query.getCount();
 
     const posts: PostWithStatusRowType[] = await query
-      .orderBy(`p.${queryDto.sortBy}`, queryDto.sortDirection)
+      .orderBy(sortByMapPosts[queryDto.sortBy], queryDto.sortDirection)
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
       .getRawMany();
-
-    console.log(posts);
 
     // const query = `SELECT p.*,
     //     b.name as "blogName",

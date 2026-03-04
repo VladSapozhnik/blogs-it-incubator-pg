@@ -1,4 +1,7 @@
-import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
+import {
+  GetPostsQueryParamsDto,
+  sortByMapPosts,
+} from '../dto/post-query-input.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,7 +29,7 @@ export class PostsQueryExternalRepository {
     const totalCount: number = await query.getCount();
 
     const posts: PostWithStatusRowType[] = await query
-      .orderBy(`p.${queryDto.sortBy}`, queryDto.sortDirection)
+      .orderBy(sortByMapPosts[queryDto.sortBy], queryDto.sortDirection)
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
       .getRawMany();
