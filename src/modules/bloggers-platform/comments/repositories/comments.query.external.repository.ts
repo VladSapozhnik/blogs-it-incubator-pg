@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { GetCommentQueryParamsDto } from '../dto/comment-query-input.dto';
+import {
+  GetCommentQueryParamsDto,
+  sortByMapComment,
+} from '../dto/comment-query-input.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CommentWithStatusRowType } from '../types/comment-with-status-row.type';
 import { Comment } from '../entities/comment.entity';
-import { sortByMapPosts } from '../../posts/dto/post-query-input.dto';
-import { LikeStatusEnum } from '../../likes/enums/like-status.enum';
+import { CommentSortFieldEnum } from '../enums/comment-sort-field.enum';
 
 @Injectable()
 export class CommentsQueryExternalRepository {
@@ -21,7 +23,6 @@ export class CommentsQueryExternalRepository {
   ) {
     const query = this.commentRepository
       .createQueryBuilder('c')
-
       .innerJoin('users', 'u', 'c."userId" = u.id')
       .select('c.*')
       .addSelect('u.login', 'userLogin')
@@ -58,7 +59,7 @@ export class CommentsQueryExternalRepository {
     const totalCount: number = await query.clone().getCount();
 
     const comments: CommentWithStatusRowType[] = await query
-      .orderBy(sortByMapPosts[queryDto.sortBy], queryDto.sortDirection)
+      .orderBy(sortByMapComment[queryDto.sortBy], queryDto.sortDirection)
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
       .getRawMany();

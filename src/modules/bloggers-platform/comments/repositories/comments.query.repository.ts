@@ -1,10 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CommentWithStatusRowType } from '../types/comment-with-status-row.type';
 import { Comment } from '../entities/comment.entity';
-import { sortByMapPosts } from '../../posts/dto/post-query-input.dto';
 import { LikeStatusEnum } from '../../likes/enums/like-status.enum';
 
 @Injectable()
@@ -12,7 +11,6 @@ export class CommentsQueryRepository {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   async getCommentAndUserLikeStatus(
