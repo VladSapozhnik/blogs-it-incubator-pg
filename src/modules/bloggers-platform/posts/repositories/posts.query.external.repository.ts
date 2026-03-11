@@ -45,8 +45,8 @@ export class PostsQueryExternalRepository {
           .select('COUNT(*)::INT', 'dislikesCount')
           .from('post_likes', 'pl')
           .where('pl."postId" = p.id')
-          .andWhere('pl.status = :likeStatus', {
-            likeStatus: LikeStatusEnum.Dislike,
+          .andWhere('pl.status = :dislikeStatus', {
+            dislikeStatus: LikeStatusEnum.Dislike,
           });
       }, 'dislikesCount')
       .addSelect(
