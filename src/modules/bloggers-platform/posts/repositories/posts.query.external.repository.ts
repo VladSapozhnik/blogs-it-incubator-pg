@@ -70,7 +70,7 @@ export class PostsQueryExternalRepository {
       .addSelect('b.name', 'blogName')
       .where('p."blogId" = :blogId', { blogId });
 
-    const totalCount: number = await query.clone().getCount();
+    const totalCount: number = await query.getCount();
 
     const posts: PostWithStatusRowType[] = await query
       .orderBy(sortByMapPosts[queryDto.sortBy], queryDto.sortDirection)
