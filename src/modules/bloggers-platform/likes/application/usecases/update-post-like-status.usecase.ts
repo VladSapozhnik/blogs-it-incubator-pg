@@ -26,7 +26,7 @@ export class UpdatePostLikeStatusUseCase implements ICommandHandler<UpdatePostLi
     postId,
     dto,
   }: UpdatePostLikeStatusCommand): Promise<void> {
-    const findUser: User | null =
+    const findUser: User =
       await this.usersExternalRepository.getUserById(userId);
 
     await this.postsExternalRepository.findPostById(postId);
