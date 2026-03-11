@@ -33,6 +33,8 @@ export class UpdateCommentUseCase implements ICommandHandler<UpdateCommentComman
       });
     }
 
-    await this.commentsRepository.updateComment(id, userId, dto);
+    findComment.updateComment(dto, userId);
+
+    await this.commentsRepository.saveComment(findComment);
   }
 }

@@ -1,38 +1,37 @@
 import { LikeStatusEnum } from '../enums/like-status.enum';
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CommentLikes } from '../entities/comment-likes.entity';
+import { PostLikes } from '../entities/post-likes.entity';
 
 @Injectable()
 export class LikesExternalRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(CommentLikes)
+    private readonly commentLikesRepository: Repository<CommentLikes>,
+    @InjectRepository(PostLikes)
+    private readonly postLikesRepository: Repository<PostLikes>,
+  ) {}
   async updateCommentLikeStatus(
     userId: string,
     commentId: string,
     likeStatus: LikeStatusEnum,
-  ) {
-    const query = `
-        INSERT INTO public.comment_likes("userId", "commentId", "status") 
-        VALUES ($1, $2, $3) 
-        ON CONFLICT("userId", "commentId")
-        DO UPDATE SET "status" = $3;
-    `;
-
-    await this.dataSource.query(query, [userId, commentId, likeStatus]);
+  ): Promise<void> {
+    await this.commentLikesRepository.upsert(
+      { userId, commentId, status: likeStatus },
+      [userId, commentId],
+    );
   }
 
   async updatePostLikeStatus(
     userId: string,
     postId: string,
     likeStatus: LikeStatusEnum,
-  ) {
-    const query = `
-        INSERT INTO public.post_likes("userId", "postId", "status") 
-        VALUES ($1, $2, $3) 
-        ON CONFLICT("userId", "postId")
-        DO UPDATE SET "status" = $3;
-    `;
-
-    await this.dataSource.query(query, [userId, postId, likeStatus]);
+  ): Promise<void> {
+    await this.postLikesRepository.upsert(
+      { userId, postId, status: likeStatus },
+      [userId, postId],
+    );
   }
 }

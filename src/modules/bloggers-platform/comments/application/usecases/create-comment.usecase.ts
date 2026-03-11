@@ -1,10 +1,9 @@
 import { CreateCommentDto } from '../../dto/create-comment.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { User } from '../../../../user-accounts/users/entities/user.entity';
-import { Post } from '../../../posts/entities/post.entity';
 import { UsersExternalRepository } from '../../../../user-accounts/users/repositories/users.external.repository';
 import { PostsExternalRepository } from '../../../posts/repositories/posts.external.repository';
-import { CommentsExternalRepository } from '../../repositories/comments.external.repository';
+import { Comment } from '../../entities/comment.entity';
+import { CommentsRepository } from '../../repositories/comments.repository';
 
 export class CreateCommentCommand {
   constructor(
@@ -19,7 +18,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
   constructor(
     private readonly usersExternalRepository: UsersExternalRepository,
     private readonly postsExternalRepository: PostsExternalRepository,
-    private readonly commentsExternalRepository: CommentsExternalRepository,
+    private readonly commentsRepository: CommentsRepository,
   ) {}
 
   async execute({
@@ -27,16 +26,12 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     postId,
     dto,
   }: CreateCommentCommand): Promise<string> {
-    const existUser: User | null =
-      await this.usersExternalRepository.getUserById(userId);
+    await this.usersExternalRepository.getUserById(userId);
 
-    const existPost: Post =
-      await this.postsExternalRepository.findPostById(postId);
+    await this.postsExternalRepository.findPostById(postId);
 
-    return await this.commentsExternalRepository.createComment(
-      dto,
-      existPost.id,
-      existUser.id,
-    );
+    const comment: Comment = Comment.createInstance(dto, postId, userId);
+
+    return this.commentsRepository.saveComment(comment);
   }
 }

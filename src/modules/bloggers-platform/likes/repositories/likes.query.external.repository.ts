@@ -1,22 +1,29 @@
-import { CommentLikes, PostLikes } from '../entities/like.entity';
+import { CommentLikes } from '../entities/comment-likes.entity';
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PostLikes } from '../entities/post-likes.entity';
 
 @Injectable()
 export class LikesQueryExternalRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(CommentLikes)
+    private readonly commentLikesRepository: Repository<CommentLikes>,
+    @InjectRepository(PostLikes)
+    private readonly postLikesRepository: Repository<PostLikes>,
+  ) {}
 
   async getMyStatusLikeForComment(
     commentId: string,
     userId: string,
   ): Promise<CommentLikes | null> {
-    const [commentLike]: CommentLikes[] = await this.dataSource.query(
-      `SELECT * FROM comment_likes WHERE "userId" = $1 AND "commentId" = $2`,
-      [userId, commentId],
-    );
+    const commentLike: CommentLikes | null =
+      await this.commentLikesRepository.findOneBy({
+        commentId,
+        userId,
+      });
 
-    if (!commentLike.status) {
+    if (!commentLike?.status) {
       return null;
     }
 
@@ -27,12 +34,11 @@ export class LikesQueryExternalRepository {
     postId: string,
     userId: string,
   ): Promise<PostLikes | null> {
-    const [postLike]: PostLikes[] = await this.dataSource.query(
-      `SELECT * FROM post_likes WHERE "userId" = $1 AND "postId" = $2`,
-      [userId, postId],
+    const postLike: PostLikes | null = await this.postLikesRepository.findOneBy(
+      { postId, userId },
     );
 
-    if (!postLike.status) {
+    if (!postLike?.status) {
       return null;
     }
 

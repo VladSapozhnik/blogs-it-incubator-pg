@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PostWithStatusRowType } from '../types/post-with-status-row.type';
 import { Post } from '../entities/post.entity';
+import { LikeStatusEnum } from '../../likes/enums/like-status.enum';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -19,10 +20,65 @@ export class PostsQueryRepository {
     queryDto: GetPostsQueryParamsDto,
     userId: string | null,
   ) {
+    // const subQueryLikes = this.postLikesRepository
+    //   .createQueryBuilder('postLikes')
+    //   .select('COUNT(*)::INT')
+    //   .where('postLikes."postId" = p.id')
+    //   .andWhere('status = :status', { status: LikeStatusEnum.Like });
+    //
+    // const subQueryDislikes = this.postLikesRepository
+    //   .createQueryBuilder('postLikes')
+    //   .select('COUNT(*)::INT')
+    //   .where('postLikes."postId" = p.id')
+    //   .andWhere('status = :status', { status: LikeStatusEnum.Dislike });
+
     const query = this.postRepository
       .createQueryBuilder('p')
       .innerJoin('p.blog', 'b')
+      .leftJoin(
+        'post_likes',
+        'pl_user',
+        'p.id = pl_user."postId" AND pl_user."userId" = :userId',
+        { userId },
+      )
       .select('p.*')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(*)::INT', 'likesCount')
+          .from('post_likes', 'pl') // Имя таблицы лайков
+          .where('pl.postId = p.id')
+          .andWhere('pl.status = :likeStatus', {
+            likeStatus: LikeStatusEnum.Like,
+          });
+      }, 'likesCount')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(*)::INT', 'dislikesCount')
+          .from('post_likes', 'pl')
+          .where('pl.postId = p.id')
+          .andWhere('pl.status = :dislikeStatus', {
+            dislikeStatus: LikeStatusEnum.Dislike,
+          });
+      }, 'dislikesCount')
+      .addSelect(`COALESCE(pl_user.status, 'None')`, 'myStatus')
+      .addSelect(
+        `(
+              SELECT COALESCE(json_agg(last_likes), '[]')
+              FROM (
+                SELECT
+                  pl."createdAt" AS "addedAt",
+                  pl."userId",
+                  u.login
+                FROM post_likes pl
+                INNER JOIN users u ON pl."userId" = u.id
+                WHERE pl."postId" = p.id
+                AND pl.status = 'Like'
+                ORDER BY pl."createdAt" DESC
+                LIMIT 3
+              ) AS last_likes
+            )`,
+        'newestLikes',
+      )
       .addSelect('b.name', 'blogName');
 
     const totalCount: number = await query.clone().getCount();
@@ -79,8 +135,50 @@ export class PostsQueryRepository {
     const existPost = (await this.postRepository
       .createQueryBuilder('p')
       .innerJoin('p.blog', 'b')
+      .leftJoin(
+        'post_likes',
+        'pl_user',
+        'p.id = pl_user."postId" AND pl_user."userId" = :userId',
+        { userId },
+      )
       .select('p.*')
       .addSelect('b.name', 'blogName')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(*)::INT')
+          .from('post_likes', 'pl')
+          .where('pl."postId" = p.id')
+          .andWhere('status = :likeStatus', {
+            likeStatus: LikeStatusEnum.Like,
+          });
+      }, 'likesCount')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(*)::INT')
+          .from('post_likes', 'pl')
+          .where('pl."postId" = p.id')
+          .andWhere('status = :likeStatus', {
+            likeStatus: LikeStatusEnum.Dislike,
+          });
+      }, 'dislikesCount')
+      .addSelect(
+        `(
+              SELECT COALESCE(json_agg(last_likes), '[]')
+              FROM (
+                SELECT
+                  pl."createdAt" AS "addedAt",
+                  pl."userId",
+                  u.login
+                FROM post_likes pl
+                INNER JOIN users u ON pl."userId" = u.id
+                WHERE pl."postId" = p.id
+                AND pl.status = 'Like'
+                ORDER BY pl."createdAt" DESC
+                LIMIT 3
+              ) AS last_likes
+            )`,
+        'newestLikes',
+      )
       .where('p.id = :id', { id })
       .getRawOne()) as PostWithStatusRowType;
     // const query = `SELECT p.*,

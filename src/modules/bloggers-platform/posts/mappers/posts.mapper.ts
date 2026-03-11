@@ -34,12 +34,15 @@ export class PostsMapper {
     dto.blogId = row.blogId;
     dto.blogName = row.blogName;
     dto.createdAt = row.createdAt.toISOString();
-
     dto.extendedLikesInfo = {
-      likesCount: 0,
-      dislikesCount: 0,
-      myStatus: LikeStatusEnum.None,
-      newestLikes: [],
+      likesCount: row.likesCount,
+      dislikesCount: row.dislikesCount,
+      myStatus: row.myStatus,
+      newestLikes: row.newestLikes.map((like) => ({
+        addedAt: new Date(like.addedAt).toISOString(),
+        userId: like.userId,
+        login: like.login,
+      })),
     };
     // dto.extendedLikesInfo = {
     //   likesCount: row.likesCount,

@@ -42,6 +42,9 @@ import { UpdatePostUseCase } from './posts/application/usecases/update-post.usec
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blog } from './blogs/entities/blog.entity';
 import { Post } from './posts/entities/post.entity';
+import { Comment } from './comments/entities/comment.entity';
+import { CommentLikes } from './likes/entities/comment-likes.entity';
+import { PostLikes } from './likes/entities/post-likes.entity';
 
 const useCases = [
   //blogs
@@ -69,7 +72,10 @@ const useCases = [
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Blog, Post]), UserAccountsModule],
+  imports: [
+    TypeOrmModule.forFeature([Blog, Post, Comment, CommentLikes, PostLikes]),
+    UserAccountsModule,
+  ],
   controllers: [
     BlogsController,
     BlogsSaController,
