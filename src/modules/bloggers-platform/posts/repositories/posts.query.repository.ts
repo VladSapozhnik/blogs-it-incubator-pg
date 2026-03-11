@@ -142,6 +142,7 @@ export class PostsQueryRepository {
         { userId },
       )
       .select('p.*')
+      .addSelect(`COALESCE(pl_user.status, 'None')`, 'myStatus')
       .addSelect('b.name', 'blogName')
       .addSelect((subQuery) => {
         return subQuery
@@ -157,8 +158,8 @@ export class PostsQueryRepository {
           .select('COUNT(*)::INT')
           .from('post_likes', 'pl')
           .where('pl."postId" = p.id')
-          .andWhere('status = :likeStatus', {
-            likeStatus: LikeStatusEnum.Dislike,
+          .andWhere('status = :dislikeStatus', {
+            dislikeStatus: LikeStatusEnum.Dislike,
           });
       }, 'dislikesCount')
       .addSelect(
