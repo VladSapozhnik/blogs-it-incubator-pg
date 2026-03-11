@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CommentWithStatusRowType } from '../types/comment-with-status-row.type';
 import { Comment } from '../entities/comment.entity';
-import { CommentSortFieldEnum } from '../enums/comment-sort-field.enum';
 
 @Injectable()
 export class CommentsQueryExternalRepository {
@@ -63,6 +62,8 @@ export class CommentsQueryExternalRepository {
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
       .getRawMany();
+
+    console.log(sortByMapComment[queryDto.sortBy]);
 
     // const query = `
     //     SELECT c.*, u.login AS "userLogin",

@@ -3,10 +3,10 @@ import { CommentSortFieldEnum } from '../enums/comment-sort-field.enum';
 import { IsEnum, IsOptional } from 'class-validator';
 
 export const sortByMapComment: Record<string, string> = {
-  Content: 'c.content',
-  UserId: 'c.userId',
-  UserLogin: 'userLogin',
-  CreatedAt: 'c.createdAt',
+  content: 'c.content',
+  userId: 'c.userId',
+  userLogin: 'userLogin',
+  createdAt: 'c.createdAt',
 };
 
 export class GetCommentQueryParamsDto extends BaseQueryParams {
