@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { CreateCommentDto } from '../dto/create-comment.dto';
@@ -17,7 +16,6 @@ import { User } from '../../../user-accounts/users/entities/user.entity';
 import { CommentLikes } from '../../likes/entities/comment-likes.entity';
 
 @Entity('comments')
-@Unique(['userId', 'postId'])
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
