@@ -6,10 +6,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Blog } from '../../blogs/entities/blog.entity';
+import { Comment } from '../../comments/entities/comment.entity';
+import { PostLikes } from '../../likes/entities/post-likes.entity';
 
 @Entity({ name: 'posts' })
 export class Post {
@@ -25,11 +28,14 @@ export class Post {
   blog: Blog;
   @Column({ type: 'uuid' })
   blogId: string;
-  // blogName: string;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date;
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
+  @OneToMany(() => PostLikes, (pl) => pl.post)
+  postLikes: PostLikes[];
 
   static createInstance(dto: CreatePostDto): Post {
     const post = new this();

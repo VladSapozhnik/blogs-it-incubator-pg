@@ -12,6 +12,9 @@ import {
 } from 'typeorm';
 import { PasswordRecovery } from '../../password-recovery/entities/password-recovery.entity';
 import { SecurityDevice } from '../../security-devices/entities/security-device.entity';
+import { Comment } from '../../../bloggers-platform/comments/entities/comment.entity';
+import { PostLikes } from '../../../bloggers-platform/likes/entities/post-likes.entity';
+import { CommentLikes } from '../../../bloggers-platform/likes/entities/comment-likes.entity';
 
 export class EmailConfirmation {
   confirmationCode?: string;
@@ -54,6 +57,15 @@ export class User {
 
   @OneToMany(() => SecurityDevice, (securityDevice) => securityDevice.user)
   securityDevices: SecurityDevice[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
+
+  @OneToMany(() => PostLikes, (post) => post.user)
+  postLikes: PostLikes[];
+
+  @OneToMany(() => CommentLikes, (cl) => cl.user)
+  commentLikes: CommentLikes[];
 
   static createInstance(
     dto: CreateUserDto,
