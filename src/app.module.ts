@@ -18,7 +18,7 @@ import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-pla
         type: 'postgres',
         url: coreConfig.dbUrl,
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: true,
         // schema: 'public',
         logging: true,
         ssl:
