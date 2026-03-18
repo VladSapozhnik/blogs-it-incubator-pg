@@ -29,6 +29,8 @@ export class UpdateCommentLikeStatusUseCase implements ICommandHandler<UpdateCom
     const findUser: User =
       await this.usersExternalRepository.getUserById(userId);
 
+    console.log('findUser', findUser);
+
     await this.commentsExternalRepository.getCommentById(commentId);
 
     await this.likesExternalRepository.updateCommentLikeStatus(

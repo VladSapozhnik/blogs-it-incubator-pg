@@ -20,7 +20,7 @@ export class LikesExternalRepository {
   ): Promise<void> {
     await this.commentLikesRepository.upsert(
       { userId, commentId, status: likeStatus },
-      [userId, commentId],
+      ['userId', 'commentId'],
     );
   }
 
