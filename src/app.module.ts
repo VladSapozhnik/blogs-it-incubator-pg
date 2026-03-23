@@ -9,6 +9,7 @@ import { CoreConfig } from './core/core.config';
 import { TestingModule } from './modules/testing/testing.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
+import { QuizQuestionsModule } from './modules/quiz-questions/quiz-questions.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-pla
     BloggersPlatformModule,
     CoreModule,
     TestingModule,
+    QuizQuestionsModule,
   ],
   controllers: [AppController],
 })

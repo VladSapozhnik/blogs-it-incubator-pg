@@ -7,3 +7,12 @@ export const Trim = () =>
     }
     return value;
   });
+
+export const TrimArray = () =>
+  Transform(({ value }: TransformFnParams): string[] => {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value.map((item: string) => String(item).trim());
+  });
