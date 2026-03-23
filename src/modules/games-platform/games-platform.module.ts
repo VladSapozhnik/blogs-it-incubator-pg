@@ -7,7 +7,6 @@ import { RemoveQuestionUseCase } from './questions/application/usecases/remove-q
 import { GetQuestionByIdQueryHandler } from './questions/application/queries/get-question-by-id.query';
 import { GelAllQuestionsQueryHandler } from './questions/application/queries/gel-all-questions.query';
 import { QuizQuestion } from './questions/entities/quiz-question.entity';
-import { QuizQuestionsController } from './questions/quiz-questions.controller';
 import { QuizQuestionsSaController } from './questions/quiz-questions-sa.controller';
 import { QuizQuestionsService } from './questions/application/quiz-questions.service';
 import { QuizQuestionRepository } from './questions/repositories/quiz-question,repository';
@@ -24,7 +23,7 @@ const useCases = [
 
 @Module({
   imports: [TypeOrmModule.forFeature([QuizQuestion])],
-  controllers: [QuizQuestionsController, QuizQuestionsSaController],
+  controllers: [QuizQuestionsSaController],
   providers: [
     ...useCases,
     QuizQuestionsService,
