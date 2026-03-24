@@ -11,6 +11,14 @@ import { QuizQuestionsSaController } from './questions/quiz-questions-sa.control
 import { QuizQuestionsService } from './questions/application/quiz-questions.service';
 import { QuizQuestionRepository } from './questions/repositories/quiz-question,repository';
 import { QuizQuestionQueryRepository } from './questions/repositories/quiz-question.query,repository';
+import { PairGamesController } from './pair-games/pair-games.controller';
+import { PairGamesService } from './pair-games/application/pair-games.service';
+import { PairGamesRepository } from './pair-games/repositories/pair-games.repository';
+import { PairGamesQueryRepository } from './pair-games/repositories/pair-games.query.repository';
+import { ConnectCurrentUserUseCase } from './pair-games/application/usecases/connect-current-user.usecase';
+import { SendNextAnswerUseCase } from './pair-games/application/usecases/send-next-answer.usecase';
+import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-game-by-id.query';
+import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -19,16 +27,23 @@ const useCases = [
   RemoveQuestionUseCase,
   GetQuestionByIdQueryHandler,
   GelAllQuestionsQueryHandler,
+  ConnectCurrentUserUseCase,
+  SendNextAnswerUseCase,
+  GetGameByIdQueryHandler,
+  GetMyCurrentPairGameQueryHandler,
 ];
 
 @Module({
   imports: [TypeOrmModule.forFeature([QuizQuestion])],
-  controllers: [QuizQuestionsSaController],
+  controllers: [QuizQuestionsSaController, PairGamesController],
   providers: [
     ...useCases,
     QuizQuestionsService,
     QuizQuestionRepository,
     QuizQuestionQueryRepository,
+    PairGamesService,
+    PairGamesRepository,
+    PairGamesQueryRepository,
   ],
 })
 export class GamesPlatformModule {}
