@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../../user-accounts/users/entities/user.entity';
+import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
 
 @Entity()
 export class PairGame {
@@ -20,13 +21,8 @@ export class PairGame {
   secondPlayer: User;
   @Column({ nullable: true })
   secondPlayerId: string | null;
-  @Column({ type: 'jsonb', nullable: true })
-  questions:
-    | {
-        id: string;
-        body: string;
-      }[]
-    | null;
+  @Column({ array: true, type: 'jsonb', nullable: true })
+  questions: QuizQuestion[];
   @Column({ enum: GameStatusEnum, default: GameStatusEnum.PendingSecondPlayer })
   status: GameStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })

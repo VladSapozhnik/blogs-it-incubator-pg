@@ -20,6 +20,7 @@ import { SendNextAnswerUseCase } from './pair-games/application/usecases/send-ne
 import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-game-by-id.query';
 import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
 import { PairGame } from './pair-games/entities/pair-game.entity';
+import { PlayerProgress } from './pair-games/entities/player-progress.entity';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -35,7 +36,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuizQuestion, PairGame])],
+  imports: [TypeOrmModule.forFeature([QuizQuestion, PairGame, PlayerProgress])],
   controllers: [QuizQuestionsSaController, PairGamesController],
   providers: [
     ...useCases,

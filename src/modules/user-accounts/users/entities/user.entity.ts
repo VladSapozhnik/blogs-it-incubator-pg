@@ -16,6 +16,7 @@ import { Comment } from '../../../bloggers-platform/comments/entities/comment.en
 import { PostLikes } from '../../../bloggers-platform/likes/entities/post-likes.entity';
 import { CommentLikes } from '../../../bloggers-platform/likes/entities/comment-likes.entity';
 import { PairGame } from '../../../games-platform/pair-games/entities/pair-game.entity';
+import { PlayerProgress } from '../../../games-platform/pair-games/entities/player-progress.entity';
 
 export class EmailConfirmation {
   confirmationCode?: string;
@@ -74,6 +75,8 @@ export class User {
   @OneToMany(() => PairGame, (pg) => pg.secondPlayer)
   secondPlayers: PairGame[];
 
+  @OneToMany(() => PlayerProgress, (pp) => pp.user)
+  playerProgresses: PlayerProgress[];
   static createInstance(
     dto: CreateUserDto,
     hash: string,
