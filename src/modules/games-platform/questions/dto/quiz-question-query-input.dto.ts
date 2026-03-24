@@ -19,6 +19,14 @@ export class GetQuizQuestionQueryInputDto extends BaseQueryParams {
       filters.push({ body: ILike(`%${this.bodySearchTerm}%`) });
     }
 
+    if (this.publishedStatus === QuestionsStatusEnum.published) {
+      filters.push({ published: true });
+    }
+
+    if (this.publishedStatus === QuestionsStatusEnum.notPublished) {
+      filters.push({ published: false });
+    }
+
     return filters.length ? filters : {};
   }
 }

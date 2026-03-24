@@ -6,7 +6,7 @@ export class QuizQuestionMapper {
   correctAnswers: string[];
   published: boolean;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 
   static mapToView(this: void, quizQuestion: QuizQuestion): QuizQuestionMapper {
     const dto = new QuizQuestionMapper();
@@ -16,7 +16,7 @@ export class QuizQuestionMapper {
     dto.correctAnswers = quizQuestion.correctAnswers;
     dto.published = quizQuestion.published;
     dto.createdAt = quizQuestion.createdAt.toISOString();
-    dto.updatedAt = quizQuestion.updatedAt.toISOString();
+    dto.updatedAt = quizQuestion.updatedAt.toISOString() ?? null;
 
     return dto;
   }

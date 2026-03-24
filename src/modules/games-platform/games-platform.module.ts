@@ -19,6 +19,7 @@ import { ConnectCurrentUserUseCase } from './pair-games/application/usecases/con
 import { SendNextAnswerUseCase } from './pair-games/application/usecases/send-next-answer.usecase';
 import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-game-by-id.query';
 import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
+import { PairGame } from './pair-games/entities/pair-game.entity';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -34,7 +35,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuizQuestion])],
+  imports: [TypeOrmModule.forFeature([QuizQuestion, PairGame])],
   controllers: [QuizQuestionsSaController, PairGamesController],
   providers: [
     ...useCases,

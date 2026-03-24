@@ -25,6 +25,7 @@ import { GetAllQuestionsQuery } from './application/queries/gel-all-questions.qu
 import { GetQuizQuestionQueryInputDto } from './dto/quiz-question-query-input.dto';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 import { WithIdDto } from '../../../core/dto/with-id.dto';
+import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 
 @Controller('sa/quiz/questions')
 @UseGuards(SuperAdminAuthGuard)
@@ -37,10 +38,11 @@ export class QuizQuestionsSaController {
   @Get()
   async GelAllQuestions(
     @Query() queryDto: GetQuizQuestionQueryInputDto,
-  ): Promise<QuizQuestionMapper[]> {
-    return this.queryBus.execute<GetAllQuestionsQuery, QuizQuestionMapper[]>(
-      new GetAllQuestionsQuery(queryDto),
-    );
+  ): Promise<PaginatedViewDto<QuizQuestionMapper[]>> {
+    return this.queryBus.execute<
+      GetAllQuestionsQuery,
+      PaginatedViewDto<QuizQuestionMapper[]>
+    >(new GetAllQuestionsQuery(queryDto));
   }
 
   @Post()
