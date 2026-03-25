@@ -2,11 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CreateQuizQuestionDto } from '../dto/create-quiz-question.dto';
 import { UpdateQuizQuestionDto } from '../dto/update-quiz-question.dto';
+import { PairGame } from '../../pair-games/entities/pair-game.entity';
+import { PlayerAnswer } from '../../pair-games/entities/player-answer.entity';
 
 @Entity('quiz-questions')
 export class QuizQuestion {
@@ -16,12 +20,20 @@ export class QuizQuestion {
   body: string;
   @Column({ type: 'jsonb' })
   correctAnswers: string[];
+  @ManyToOne(() => PairGame, (pg) => pg.questions)
+  pairGame: PairGame;
+  @Column({ type: 'uuid' })
+  pairGameId: string;
   @Column({ type: 'boolean', default: false })
   published: boolean;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp with time zone', nullable: true })
   updatedAt: Date;
+
+  @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.question)
+  playerAnswers: PlayerAnswer[];
+
   static createInstance(dto: CreateQuizQuestionDto) {
     const question = new QuizQuestion();
 

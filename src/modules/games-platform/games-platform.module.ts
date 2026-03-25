@@ -21,6 +21,7 @@ import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-ga
 import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
 import { PairGame } from './pair-games/entities/pair-game.entity';
 import { PlayerProgress } from './pair-games/entities/player-progress.entity';
+import { PlayerAnswer } from './pair-games/entities/player-answer.entity';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -36,7 +37,14 @@ const useCases = [
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuizQuestion, PairGame, PlayerProgress])],
+  imports: [
+    TypeOrmModule.forFeature([
+      QuizQuestion,
+      PairGame,
+      PlayerProgress,
+      PlayerAnswer,
+    ]),
+  ],
   controllers: [QuizQuestionsSaController, PairGamesController],
   providers: [
     ...useCases,

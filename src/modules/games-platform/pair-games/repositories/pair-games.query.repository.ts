@@ -34,8 +34,28 @@ export class PairGamesQueryRepository {
         status: HttpStatus.NOT_FOUND,
         errorsMessages: [
           {
-            message: 'Pair game not found',
-            field: 'PairGame',
+            message: 'Game not found',
+            field: 'Game',
+          },
+        ],
+      });
+    }
+
+    return existGame;
+  }
+
+  async getGameById(id: string): Promise<PairGame> {
+    const existGame: PairGame | null = await this.pairGameRepository.findOneBy({
+      id,
+    });
+
+    if (!existGame) {
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Game not found',
+            field: 'Game',
           },
         ],
       });

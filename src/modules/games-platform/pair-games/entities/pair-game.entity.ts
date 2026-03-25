@@ -4,10 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../../user-accounts/users/entities/user.entity';
 import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
+import { PlayerProgress } from './player-progress.entity';
+import { PlayerAnswer } from './player-answer.entity';
 
 @Entity()
 export class PairGame {
@@ -21,7 +24,7 @@ export class PairGame {
   secondPlayer: User;
   @Column({ nullable: true })
   secondPlayerId: string | null;
-  @Column({ array: true, type: 'jsonb', nullable: true })
+  @OneToMany(() => QuizQuestion, (qq) => qq.pairGame)
   questions: QuizQuestion[];
   @Column({ enum: GameStatusEnum, default: GameStatusEnum.PendingSecondPlayer })
   status: GameStatusEnum;
@@ -31,6 +34,10 @@ export class PairGame {
   startGameDate: Date | null;
   @Column({ type: 'timestamp with time zone', nullable: true })
   finishGameDate: Date | null;
+  @ManyToOne(() => PlayerProgress, (pp) => pp.game)
+  playerProgresses: PlayerProgress[];
+  @ManyToOne(() => PlayerAnswer, (playerAnswer) => playerAnswer.game)
+  playerAnswers: PlayerAnswer[];
   static createInstance(userId: string): PairGame {
     const pairGame = new PairGame();
 

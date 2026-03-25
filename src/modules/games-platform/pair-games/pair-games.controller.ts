@@ -8,6 +8,7 @@ import { WithIdDto } from '../../../core/dto/with-id.dto';
 import { GetMyCurrentPairGameQuery } from './application/queries/get-my-current-pair-game.query';
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
+import { PairGame } from './entities/pair-game.entity';
 
 @Controller('pair-game-quiz/pairs')
 @UseGuards(JwtAuthGuard)
@@ -37,7 +38,7 @@ export class PairGamesController {
   @Get(':id')
   getGameById(@Param() params: WithIdDto, @User('userId') userId: string) {
     const { id } = params;
-    return this.queryBus.execute<GetGameByIdQuery, void>(
+    return this.queryBus.execute<GetGameByIdQuery, PairGame>(
       new GetGameByIdQuery(userId, id),
     );
   }
