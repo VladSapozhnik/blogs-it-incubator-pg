@@ -30,4 +30,19 @@ export class PlayerAnswer {
   answerStatus: AnswerStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   addedAt: Date;
+  static createInstance(
+    gameId: string,
+    playerId: string,
+    questionId: string,
+    answerStatus: AnswerStatusEnum,
+  ): PlayerAnswer {
+    const playerAnswer: PlayerAnswer = new PlayerAnswer();
+
+    playerAnswer.gameId = gameId;
+    playerAnswer.playerId = playerId;
+    playerAnswer.questionId = questionId;
+    playerAnswer.answerStatus = answerStatus;
+
+    return playerAnswer;
+  }
 }

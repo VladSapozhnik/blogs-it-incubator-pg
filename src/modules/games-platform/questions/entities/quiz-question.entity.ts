@@ -9,7 +9,6 @@ import {
 import { CreateQuizQuestionDto } from '../dto/create-quiz-question.dto';
 import { UpdateQuizQuestionDto } from '../dto/update-quiz-question.dto';
 import { PlayerAnswer } from '../../pair-games/entities/player-answer.entity';
-import { GameQuestion } from '../../pair-games/entities/game-question.entity';
 
 @Entity('quiz_questions')
 export class QuizQuestion {
@@ -32,8 +31,6 @@ export class QuizQuestion {
 
   @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.question)
   playerAnswers: PlayerAnswer[];
-  @OneToMany(() => GameQuestion, (gq) => gq.question)
-  gameQuestions: GameQuestion[];
   static createInstance(dto: CreateQuizQuestionDto) {
     const question = new QuizQuestion();
 

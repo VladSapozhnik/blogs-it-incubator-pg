@@ -16,8 +16,8 @@ import { Comment } from '../../../bloggers-platform/comments/entities/comment.en
 import { PostLikes } from '../../../bloggers-platform/likes/entities/post-likes.entity';
 import { CommentLikes } from '../../../bloggers-platform/likes/entities/comment-likes.entity';
 import { PairGame } from '../../../games-platform/pair-games/entities/pair-game.entity';
-import { PlayerProgress } from '../../../games-platform/pair-games/entities/player-progress.entity';
 import { PlayerAnswer } from '../../../games-platform/pair-games/entities/player-answer.entity';
+import { PlayerProgress } from '../../../games-platform/pair-games/entities/player-progress.entity';
 
 export class EmailConfirmation {
   confirmationCode?: string;
@@ -79,7 +79,7 @@ export class User {
   @OneToMany(() => PlayerAnswer, (pa) => pa.player)
   playerAnswers: PlayerAnswer[];
 
-  @OneToMany(() => PlayerProgress, (pp) => pp.player)
+  @OneToMany(() => PlayerProgress, (playerProgress) => playerProgress.player)
   playerProgresses: PlayerProgress[];
   static createInstance(
     dto: CreateUserDto,

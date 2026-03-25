@@ -20,9 +20,9 @@ import { SendNextAnswerUseCase } from './pair-games/application/usecases/send-ne
 import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-game-by-id.query';
 import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
 import { PairGame } from './pair-games/entities/pair-game.entity';
-import { PlayerProgress } from './pair-games/entities/player-progress.entity';
 import { PlayerAnswer } from './pair-games/entities/player-answer.entity';
-import { GameQuestion } from './pair-games/entities/game-question.entity';
+import { QuizQuestionExternalRepository } from './questions/repositories/quiz-question.external,repository';
+import { PlayerProgress } from './pair-games/entities/player-progress.entity';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -42,9 +42,8 @@ const useCases = [
     TypeOrmModule.forFeature([
       QuizQuestion,
       PairGame,
-      PlayerProgress,
       PlayerAnswer,
-      GameQuestion,
+      PlayerProgress,
     ]),
   ],
   controllers: [QuizQuestionsSaController, PairGamesController],
@@ -53,6 +52,7 @@ const useCases = [
     QuizQuestionsService,
     QuizQuestionRepository,
     QuizQuestionQueryRepository,
+    QuizQuestionExternalRepository,
     PairGamesService,
     PairGamesRepository,
     PairGamesQueryRepository,
