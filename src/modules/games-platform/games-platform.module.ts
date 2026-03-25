@@ -22,6 +22,7 @@ import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queri
 import { PairGame } from './pair-games/entities/pair-game.entity';
 import { PlayerProgress } from './pair-games/entities/player-progress.entity';
 import { PlayerAnswer } from './pair-games/entities/player-answer.entity';
+import { GameQuestion } from './pair-games/entities/game-question.entity';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -43,6 +44,7 @@ const useCases = [
       PairGame,
       PlayerProgress,
       PlayerAnswer,
+      GameQuestion,
     ]),
   ],
   controllers: [QuizQuestionsSaController, PairGamesController],
