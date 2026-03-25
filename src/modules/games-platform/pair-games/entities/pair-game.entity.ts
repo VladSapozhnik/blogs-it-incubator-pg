@@ -12,17 +12,17 @@ import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
 import { PlayerProgress } from './player-progress.entity';
 import { PlayerAnswer } from './player-answer.entity';
 
-@Entity()
+@Entity('pair_games')
 export class PairGame {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @ManyToOne(() => User, (u) => u.firstPlayers)
   firstPlayer: User;
-  @Column()
+  @Column({ type: 'uuid' })
   firstPlayerId: string;
   @ManyToOne(() => User, (u) => u.secondPlayers, { nullable: true })
   secondPlayer: User;
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   secondPlayerId: string | null;
   @OneToMany(() => QuizQuestion, (qq) => qq.pairGame)
   questions: QuizQuestion[];
@@ -34,9 +34,9 @@ export class PairGame {
   startGameDate: Date | null;
   @Column({ type: 'timestamp with time zone', nullable: true })
   finishGameDate: Date | null;
-  @ManyToOne(() => PlayerProgress, (pp) => pp.game)
+  @OneToMany(() => PlayerProgress, (pp) => pp.game)
   playerProgresses: PlayerProgress[];
-  @ManyToOne(() => PlayerAnswer, (playerAnswer) => playerAnswer.game)
+  @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.game)
   playerAnswers: PlayerAnswer[];
   static createInstance(userId: string): PairGame {
     const pairGame = new PairGame();

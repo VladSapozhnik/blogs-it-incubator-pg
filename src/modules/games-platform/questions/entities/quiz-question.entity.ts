@@ -12,7 +12,7 @@ import { UpdateQuizQuestionDto } from '../dto/update-quiz-question.dto';
 import { PairGame } from '../../pair-games/entities/pair-game.entity';
 import { PlayerAnswer } from '../../pair-games/entities/player-answer.entity';
 
-@Entity('quiz-questions')
+@Entity('quiz_questions')
 export class QuizQuestion {
   @PrimaryGeneratedColumn('uuid')
   id: string;

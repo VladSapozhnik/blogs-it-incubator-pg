@@ -10,7 +10,7 @@ import { PairGame } from './pair-game.entity';
 import { User } from '../../../user-accounts/users/entities/user.entity';
 import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
 
-@Entity()
+@Entity('player_answers')
 export class PlayerAnswer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -22,7 +22,7 @@ export class PlayerAnswer {
   player: User;
   @Column({ type: 'uuid' })
   playerId: string;
-  @ManyToOne(() => QuizQuestion, (qq) => qq.correctAnswers)
+  @ManyToOne(() => QuizQuestion, (qq) => qq.playerAnswers)
   question: QuizQuestion;
   @Column({ type: 'uuid' })
   questionId: string;

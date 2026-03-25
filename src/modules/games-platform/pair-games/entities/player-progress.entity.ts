@@ -8,7 +8,7 @@ import {
 import { User } from '../../../user-accounts/users/entities/user.entity';
 import { PairGame } from './pair-game.entity';
 
-@Entity()
+@Entity('player_progresses')
 export class PlayerProgress {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,7 +16,7 @@ export class PlayerProgress {
   player: User;
   @Column({ type: 'uuid' })
   playerId: string;
-  @ManyToOne(() => PairGame)
+  @ManyToOne(() => PairGame, (pg) => pg.playerProgresses)
   game: PairGame;
   @Column({ type: 'uuid' })
   gameId: string;
