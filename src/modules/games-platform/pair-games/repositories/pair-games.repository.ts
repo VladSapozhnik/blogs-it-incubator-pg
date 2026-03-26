@@ -11,8 +11,6 @@ export class PairGamesRepository {
   constructor(
     @InjectRepository(PairGame)
     private readonly pairGameRepository: Repository<PairGame>,
-    @InjectRepository(PlayerAnswer)
-    private readonly playerAnswerRepository: Repository<PlayerAnswer>,
   ) {}
 
   async savePairGame(game: PairGame): Promise<string> {
@@ -40,6 +38,17 @@ export class PairGamesRepository {
         },
       ],
     });
+  }
+
+  async getGameWaitingForPlayer(userId: string): Promise<PairGame | null> {
+    return this.pairGameRepository
+      .createQueryBuilder('g')
+      .setLock('pessimistic_write') // КРИТИЧНО: предотвращает одновременный захват одного слота двумя игроками
+      .where('g.status = :status', {
+        status: GameStatusEnum.PendingSecondPlayer,
+      })
+      .andWhere('g.firstPlayerId != :userId', { userId })
+      .getOne();
   }
 
   async getGameStatusActive(playerId: string): Promise<PairGame> {
@@ -76,19 +85,5 @@ export class PairGamesRepository {
         userId,
       })
       .getOne();
-  }
-
-  async getAllPlayerAnswer(
-    idsQuestions: string[],
-    gameId: string,
-    playerId: string,
-  ): Promise<PlayerAnswer[]> {
-    return this.playerAnswerRepository.find({
-      where: {
-        questionId: In(idsQuestions),
-        gameId,
-        playerId,
-      },
-    });
   }
 }

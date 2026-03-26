@@ -24,4 +24,17 @@ export class PlayerProgress {
   score: number;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   addedAt: Date;
+  static createInstance(playerId: string, gameId: string): PlayerProgress {
+    const playerProgress = new PlayerProgress();
+
+    playerProgress.score = 1;
+    playerProgress.playerId = playerId;
+    playerProgress.gameId = gameId;
+
+    return playerProgress;
+  }
+
+  incrementScore() {
+    this.score = this.score + 1;
+  }
 }

@@ -23,6 +23,11 @@ import { PairGame } from './pair-games/entities/pair-game.entity';
 import { PlayerAnswer } from './pair-games/entities/player-answer.entity';
 import { QuizQuestionExternalRepository } from './questions/repositories/quiz-question.external,repository';
 import { PlayerProgress } from './pair-games/entities/player-progress.entity';
+import { PlayerAnswerService } from './pair-games/application/player-answer.service';
+import { PlayerAnswerRepository } from './pair-games/repositories/player-answer.repository';
+import { PlayerProgressRepository } from './pair-games/repositories/player-progress.repository';
+import { GetPlayerAnswerByIdQueryHandler } from './pair-games/application/queries/get-player-answer-by-id.query';
+import { PlayerAnswerQueryRepository } from './pair-games/repositories/player-answer.query.repository';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -35,6 +40,7 @@ const useCases = [
   SendNextAnswerUseCase,
   GetGameByIdQueryHandler,
   GetMyCurrentPairGameQueryHandler,
+  GetPlayerAnswerByIdQueryHandler,
 ];
 
 @Module({
@@ -56,6 +62,10 @@ const useCases = [
     PairGamesService,
     PairGamesRepository,
     PairGamesQueryRepository,
+    PlayerAnswerService,
+    PlayerAnswerRepository,
+    PlayerAnswerQueryRepository,
+    PlayerProgressRepository,
   ],
 })
 export class GamesPlatformModule {}

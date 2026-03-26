@@ -9,6 +9,8 @@ import { GetMyCurrentPairGameQuery } from './application/queries/get-my-current-
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { PairGame } from './entities/pair-game.entity';
+import { GetPlayerAnswerByIdQuery } from './application/queries/get-player-answer-by-id.query';
+import { PlayerAnswersMapper } from './mappers/player-answers.mapper';
 
 @Controller('pair-game-quiz/pairs')
 @UseGuards(JwtAuthGuard)
@@ -26,12 +28,17 @@ export class PairGamesController {
   }
 
   @Post('my-current/answers')
-  sendNextAnswer(
+  async sendNextAnswer(
     @Body() sendNextAnswerDto: SendNextAnswerDto,
     @User('userId') userId: string,
-  ) {
-    return this.commandBus.execute<SendNextAnswerCommand, void>(
-      new SendNextAnswerCommand(userId, sendNextAnswerDto.answer),
+  ): Promise<PlayerAnswersMapper> {
+    const id: string = await this.commandBus.execute<
+      SendNextAnswerCommand,
+      string
+    >(new SendNextAnswerCommand(userId, sendNextAnswerDto.answer));
+
+    return this.queryBus.execute<GetPlayerAnswerByIdQuery, PlayerAnswersMapper>(
+      new GetPlayerAnswerByIdQuery(id),
     );
   }
 

@@ -54,4 +54,8 @@ export class PairGame {
   addQuestionsIds(questionIds: string[]) {
     this.questionsIds = questionIds;
   }
+  finishGame() {
+    this.finishGameDate = new Date();
+    this.status = GameStatusEnum.Finished;
+  }
 }

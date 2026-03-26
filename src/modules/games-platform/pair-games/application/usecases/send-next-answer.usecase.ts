@@ -6,6 +6,11 @@ import { QuizQuestion } from '../../../questions/entities/quiz-question.entity';
 import { PlayerAnswer } from '../../entities/player-answer.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 import { HttpStatus } from '@nestjs/common';
+import { AnswerStatusEnum } from '../../enums/answer-status.enum';
+import { PlayerAnswerRepository } from '../../repositories/player-answer.repository';
+import { PlayerProgressRepository } from '../../repositories/player-progress.repository';
+import { PlayerProgress } from '../../entities/player-progress.entity';
+import { PairGamesService } from '../pair-games.service';
 
 export class SendNextAnswerCommand {
   constructor(
@@ -19,9 +24,12 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
   constructor(
     private readonly pairGamesRepository: PairGamesRepository,
     private readonly quizQuestionExternalRepository: QuizQuestionExternalRepository,
+    private readonly playerAnswerRepository: PlayerAnswerRepository,
+    private readonly playerProgressRepository: PlayerProgressRepository,
+    private readonly pairGameService: PairGamesService,
   ) {}
 
-  async execute({ userId, answer }: SendNextAnswerCommand): Promise<void> {
+  async execute({ userId, answer }: SendNextAnswerCommand): Promise<string> {
     const activeGame: PairGame =
       await this.pairGamesRepository.getGameStatusActive(userId);
 
@@ -31,7 +39,7 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
       );
 
     const getAllAnswers: PlayerAnswer[] =
-      await this.pairGamesRepository.getAllPlayerAnswer(
+      await this.playerAnswerRepository.getAllPlayerAnswer(
         activeGame.questionsIds,
         activeGame.id,
         userId,
@@ -50,11 +58,54 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
       });
     }
 
-    // const playerAnswers: PlayerAnswer[] = PlayerAnswer.createInstance(
-    //   activeGame.id,
-    //   userId,
-    //   '123',
-    //   AnswerStatusEnum.Correct,
-    // );
+    const currentQuestion: QuizQuestion = questions[getAllAnswers.length];
+
+    const isCorrect: boolean = currentQuestion.correctAnswers.includes(answer);
+
+    const playerAnswers: PlayerAnswer = PlayerAnswer.createInstance(
+      activeGame.id,
+      userId,
+      currentQuestion.id,
+      isCorrect ? AnswerStatusEnum.Correct : AnswerStatusEnum.Incorrect,
+    );
+
+    const savedAnswerId: string =
+      await this.playerAnswerRepository.savePlayerAnswer(playerAnswers);
+
+    if (isCorrect) {
+      const getPlayerProgress: PlayerProgress | null =
+        await this.playerProgressRepository.getPlayerProgress(
+          activeGame.id,
+          userId,
+        );
+      if (getPlayerProgress) {
+        getPlayerProgress.incrementScore();
+        await this.playerProgressRepository.savePlayerProgress(
+          getPlayerProgress,
+        );
+      }
+    }
+
+    const userAnswersCount: number = getAllAnswers.length + 1;
+    const questionsCount: number = questions.length;
+
+    if (userAnswersCount === questionsCount) {
+      const opponentId: string =
+        activeGame.firstPlayerId === userId
+          ? activeGame.secondPlayerId!
+          : activeGame.firstPlayerId;
+
+      const opponentAnswersCount: number =
+        await this.playerAnswerRepository.getCountByGameAndUser(
+          activeGame.id,
+          opponentId,
+        );
+
+      if (opponentAnswersCount === questionsCount) {
+        await this.pairGameService.finishGameAndAssignBonus(activeGame);
+      }
+    }
+
+    return savedAnswerId;
   }
 }
