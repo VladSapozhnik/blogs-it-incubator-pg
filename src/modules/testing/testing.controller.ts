@@ -15,7 +15,7 @@ export class TestingController {
         "player_answers",
         "player_progresses",
         "pair_games",
-        "quiz_questions"
+        "quiz_questions",
         "security_devices",
         "password_recoveries",
         "comment_likes",
