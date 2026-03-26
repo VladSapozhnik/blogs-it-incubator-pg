@@ -7,7 +7,7 @@ export class CreateQuestionCommand {
   constructor(public readonly dto: CreateQuizQuestionDto) {}
 }
 
-@CommandHandler(CreateQuizQuestionDto)
+@CommandHandler(CreateQuestionCommand)
 export class CreateQuestionUseCase implements ICommandHandler<CreateQuestionCommand> {
   constructor(
     private readonly quizQuestionRepository: QuizQuestionRepository,
