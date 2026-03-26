@@ -1,9 +1,6 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { SecurityDevice } from '../user-accounts/security-devices/entities/security-device.entity';
-import { PasswordRecovery } from '../user-accounts/password-recovery/entities/password-recovery.entity';
-import { User } from '../user-accounts/users/entities/user.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -15,6 +12,10 @@ export class TestingController {
     try {
       await this.dataSource.query(`
       TRUNCATE TABLE 
+        "player_answers",
+        "player_progresses",
+        "pair_games",
+        "quiz_questions"
         "security_devices",
         "password_recoveries",
         "comment_likes",
