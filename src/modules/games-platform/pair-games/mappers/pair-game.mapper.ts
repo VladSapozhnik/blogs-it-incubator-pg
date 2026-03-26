@@ -1,16 +1,18 @@
 import { PairGame } from '../entities/pair-game.entity';
-import { AnswerStatusEnum } from '../enums/answer-status.enum';
-
-// Описываем под-структуры для типизации маппера
-export class PlayerViewDto {
-  id: string;
-  login: string;
-}
+import { PlayerAnswer } from '../entities/player-answer.entity';
+import { QuizQuestionMapper } from '../../questions/mappers/quiz-question.mapper';
+import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
+import { QuizQuestionForGameMapper } from '../../questions/mappers/quiz-question-for-game.mapper';
 
 export class AnswerViewDto {
   questionId: string;
-  answerStatus: AnswerStatusEnum;
+  answerStatus: string;
   addedAt: string;
+}
+
+export class PlayerViewDto {
+  id: string;
+  login: string;
 }
 
 export class PlayerProgressViewDto {
@@ -19,69 +21,64 @@ export class PlayerProgressViewDto {
   score: number;
 }
 
-export class QuestionViewDto {
-  id: string;
-  body: string;
-}
-
-export class PairGameViewDto {
+export class PairGameMapper {
   id: string;
   firstPlayerProgress: PlayerProgressViewDto;
   secondPlayerProgress: PlayerProgressViewDto | null;
-  questions: QuestionViewDto[] | null;
+  questions: QuizQuestionForGameMapper[];
   status: string;
   pairCreatedDate: string;
   startGameDate: string | null;
   finishGameDate: string | null;
 
-  static mapToView(pairGame: PairGame): PairGameViewDto {
-    const dto = new PairGameViewDto();
+  static mapToView(
+    game: PairGame,
+    questions: QuizQuestion[],
+    firstAnswers: PlayerAnswer[],
+    secondAnswers: PlayerAnswer[],
+    firstScore: number,
+    secondScore: number,
+    firstLogin: string,
+    secondLogin: string | null,
+  ): PairGameMapper {
+    const dto = new PairGameMapper();
 
-    dto.id = pairGame.id.toString();
+    dto.id = game.id;
 
-    // Маппинг первого игрока
-    // dto.firstPlayerProgress = {
-    //   answers:
-    //     pairGame.firstPlayerAnswers?.map((a) => ({
-    //       questionId: a.questionId,
-    //       answerStatus: a.status,
-    //       addedAt: a.addedAt.toISOString(),
-    //     })) || [],
-    //   player: {
-    //     id: pairGame.firstPlayerId,
-    //     login: pairGame.firstPlayerLogin,
-    //   },
-    //   score: pairGame.firstPlayerScore,
-    // };
-    //
-    // // Маппинг второго игрока (может быть null, если игра в ожидании)
-    // dto.secondPlayerProgress = pairGame.secondPlayerId
-    //   ? {
-    //       answers:
-    //         pairGame.secondPlayerAnswers?.map((a) => ({
-    //           questionId: a.questionId,
-    //           answerStatus: a.status,
-    //           addedAt: a.addedAt.toISOString(),
-    //         })) || [],
-    //       player: {
-    //         id: pairGame.secondPlayerId,
-    //         login: pairGame.secondPlayerLogin,
-    //       },
-    //       score: pairGame.secondPlayerScore,
-    //     }
-    //   : null;
-    //
-    // // Маппинг вопросов
-    // dto.questions =
-    //   pairGame.questions?.map((q) => ({
-    //     id: q.id,
-    //     body: q.body,
-    //   })) || null;
+    dto.firstPlayerProgress = {
+      answers: firstAnswers.map((a) => ({
+        questionId: a.questionId,
+        answerStatus: a.answerStatus,
+        addedAt: a.addedAt.toISOString(),
+      })),
+      player: {
+        id: game.firstPlayerId,
+        login: firstLogin,
+      },
+      score: firstScore,
+    };
 
-    dto.status = pairGame.status;
-    dto.pairCreatedDate = pairGame.pairCreatedDate.toISOString();
-    dto.startGameDate = pairGame.startGameDate?.toISOString() || null;
-    dto.finishGameDate = pairGame.finishGameDate?.toISOString() || null;
+    dto.secondPlayerProgress = game.secondPlayerId
+      ? {
+          answers: secondAnswers.map((a) => ({
+            questionId: a.questionId,
+            answerStatus: a.answerStatus,
+            addedAt: a.addedAt.toISOString(),
+          })),
+          player: {
+            id: game.secondPlayerId,
+            login: secondLogin!,
+          },
+          score: secondScore,
+        }
+      : null;
+
+    dto.questions = questions.map(QuizQuestionMapper.mapToView);
+
+    dto.status = game.status;
+    dto.pairCreatedDate = game.pairCreatedDate.toISOString();
+    dto.startGameDate = game.startGameDate?.toDateString() ?? null;
+    dto.finishGameDate = game.finishGameDate?.toDateString() ?? null;
 
     return dto;
   }
