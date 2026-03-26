@@ -16,12 +16,8 @@ export class QuizQuestion {
   id: string;
   @Column({ type: 'varchar' })
   body: string;
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'array', array: true })
   correctAnswers: string[];
-  // @ManyToOne(() => PairGame, (pg) => pg.questions)
-  // pairGame: PairGame;
-  // @Column({ type: 'uuid' })
-  // pairGameId: string;
   @Column({ type: 'boolean', default: false })
   published: boolean;
   @CreateDateColumn({ type: 'timestamp with time zone' })
