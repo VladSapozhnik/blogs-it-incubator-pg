@@ -21,13 +21,14 @@ import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-ga
 import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
 import { PairGame } from './pair-games/entities/pair-game.entity';
 import { PlayerAnswer } from './pair-games/entities/player-answer.entity';
-import { QuizQuestionExternalRepository } from './questions/repositories/quiz-question.external,repository';
+import { QuizQuestionQueryExternalRepository } from './questions/repositories/quiz-question.query.external,repository';
 import { PlayerProgress } from './pair-games/entities/player-progress.entity';
 import { PlayerAnswerService } from './pair-games/application/player-answer.service';
 import { PlayerAnswerRepository } from './pair-games/repositories/player-answer.repository';
 import { PlayerProgressRepository } from './pair-games/repositories/player-progress.repository';
 import { GetPlayerAnswerByIdQueryHandler } from './pair-games/application/queries/get-player-answer-by-id.query';
 import { PlayerAnswerQueryRepository } from './pair-games/repositories/player-answer.query.repository';
+import { PlayerProgressQueryRepository } from './pair-games/repositories/player-progress.query.repository';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -58,7 +59,7 @@ const useCases = [
     QuizQuestionsService,
     QuizQuestionRepository,
     QuizQuestionQueryRepository,
-    QuizQuestionExternalRepository,
+    QuizQuestionQueryExternalRepository,
     PairGamesService,
     PairGamesRepository,
     PairGamesQueryRepository,
@@ -66,6 +67,7 @@ const useCases = [
     PlayerAnswerRepository,
     PlayerAnswerQueryRepository,
     PlayerProgressRepository,
+    PlayerProgressQueryRepository,
   ],
 })
 export class GamesPlatformModule {}

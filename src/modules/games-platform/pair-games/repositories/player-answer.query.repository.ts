@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PlayerAnswer } from '../entities/player-answer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
@@ -30,5 +30,16 @@ export class PlayerAnswerQueryRepository {
     }
 
     return PlayerAnswersMapper.mapToView(playerAnswer);
+  }
+
+  async getAllPlayerAnswer(
+    questionsIds: string[],
+    gameId: string,
+    playerId: string,
+  ): Promise<PlayerAnswer[]> {
+    return this.playerAnswerRepository.find({
+      where: { questionId: In(questionsIds), gameId, playerId },
+      order: { addedAt: 'ASC' },
+    });
   }
 }

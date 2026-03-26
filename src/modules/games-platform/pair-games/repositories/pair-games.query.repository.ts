@@ -44,6 +44,39 @@ export class PairGamesQueryRepository {
     return existGame;
   }
 
+  async getMyActiveGame(userId: string): Promise<PairGame> {
+    const statusCondition = {
+      status: GameStatusEnum.Active,
+    };
+
+    const existGame: PairGame | null = await this.pairGameRepository.findOne({
+      where: [
+        {
+          ...statusCondition,
+          firstPlayerId: userId,
+        },
+        {
+          ...statusCondition,
+          secondPlayerId: userId,
+        },
+      ],
+    });
+
+    if (!existGame) {
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Game not found',
+            field: 'Game',
+          },
+        ],
+      });
+    }
+
+    return existGame;
+  }
+
   async getGameById(id: string): Promise<PairGame> {
     const existGame: PairGame | null = await this.pairGameRepository.findOneBy({
       id,

@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PairGamesRepository } from '../../repositories/pair-games.repository';
 import { PairGame } from '../../entities/pair-game.entity';
-import { QuizQuestionExternalRepository } from '../../../questions/repositories/quiz-question.external,repository';
+import { QuizQuestionQueryExternalRepository } from '../../../questions/repositories/quiz-question.query.external,repository';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 import { HttpStatus } from '@nestjs/common';
 import { PlayerProgress } from '../../entities/player-progress.entity';
@@ -15,7 +15,7 @@ export class ConnectCurrentUserCommand {
 export class ConnectCurrentUserUseCase implements ICommandHandler<ConnectCurrentUserCommand> {
   constructor(
     private readonly pairGamesRepository: PairGamesRepository,
-    private readonly quizQuestionExternalRepository: QuizQuestionExternalRepository,
+    private readonly quizQuestionExternalRepository: QuizQuestionQueryExternalRepository,
     private readonly playerProgressRepository: PlayerProgressRepository,
   ) {}
 

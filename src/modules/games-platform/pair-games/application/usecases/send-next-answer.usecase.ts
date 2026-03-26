@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PairGamesRepository } from '../../repositories/pair-games.repository';
 import { PairGame } from '../../entities/pair-game.entity';
-import { QuizQuestionExternalRepository } from '../../../questions/repositories/quiz-question.external,repository';
+import { QuizQuestionQueryExternalRepository } from '../../../questions/repositories/quiz-question.query.external,repository';
 import { QuizQuestion } from '../../../questions/entities/quiz-question.entity';
 import { PlayerAnswer } from '../../entities/player-answer.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
@@ -23,7 +23,7 @@ export class SendNextAnswerCommand {
 export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerCommand> {
   constructor(
     private readonly pairGamesRepository: PairGamesRepository,
-    private readonly quizQuestionExternalRepository: QuizQuestionExternalRepository,
+    private readonly quizQuestionExternalRepository: QuizQuestionQueryExternalRepository,
     private readonly playerAnswerRepository: PlayerAnswerRepository,
     private readonly playerProgressRepository: PlayerProgressRepository,
     private readonly pairGameService: PairGamesService,
