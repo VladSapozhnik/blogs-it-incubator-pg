@@ -16,7 +16,7 @@ export class QuizQuestion {
   id: string;
   @Column({ type: 'varchar' })
   body: string;
-  @Column('text', { array: true, nullable: true })
+  @Column({ type: 'simple-array' })
   correctAnswers: string[];
   @Column({ type: 'boolean', default: false })
   published: boolean;
