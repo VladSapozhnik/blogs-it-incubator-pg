@@ -22,44 +22,44 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
   ) {}
 
   async execute({ userId }: GetMyCurrentPairGameQuery) {
-    const correctGame: PairGame =
+    const currentGame: PairGame =
       await this.pairGamesQueryRepository.getMyActiveGame(userId);
 
     const quizQuestion: QuizQuestion[] =
       await this.quizQuestionQueryExternalRepository.getQuestionsByIds(
-        correctGame.questionsIds,
+        currentGame.questionsIds,
       );
 
     const firstAnswers: PlayerAnswer[] =
       await this.playerAnswerQueryRepository.getAllPlayerAnswer(
-        correctGame.questionsIds,
-        correctGame.id,
-        correctGame.firstPlayerId,
+        currentGame.questionsIds,
+        currentGame.id,
+        currentGame.firstPlayerId,
       );
 
-    const secondAnswers: PlayerAnswer[] = correctGame.secondPlayerId
+    const secondAnswers: PlayerAnswer[] = currentGame.secondPlayerId
       ? await this.playerAnswerQueryRepository.getAllPlayerAnswer(
-          correctGame.questionsIds,
-          correctGame.id,
-          correctGame.secondPlayerId,
+          currentGame.questionsIds,
+          currentGame.id,
+          currentGame.secondPlayerId,
         )
       : [];
 
     const firstProgress: PlayerProgress | null =
       await this.playerProgressQueryRepository.getPlayerProgress(
-        correctGame.id,
-        correctGame.firstPlayerId,
+        currentGame.id,
+        currentGame.firstPlayerId,
       );
 
-    const secondProgress: PlayerProgress | null = correctGame.secondPlayerId
+    const secondProgress: PlayerProgress | null = currentGame.secondPlayerId
       ? await this.playerProgressQueryRepository.getPlayerProgress(
-          correctGame.id,
-          correctGame.secondPlayerId,
+          currentGame.id,
+          currentGame.secondPlayerId,
         )
       : null;
 
     // return PairGameViewDto.mapToView(
-    //   correctGame,
+    //   currentGame,
     //   quizQuestion,
     //   firstAnswers,
     //   secondAnswers,
@@ -69,6 +69,6 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
     //   secondLogin,
     // );
 
-    return correctGame.id;
+    return currentGame.id;
   }
 }
