@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { QuizQuestionQueryRepository } from '../../repositories/quiz-question.query,repository';
+import { QuizQuestionQueryRepository } from '../../repositories/quiz-question.query.repository';
 import { QuizQuestionMapper } from '../../mappers/quiz-question.mapper';
 
 export class GetQuestionByIdQuery {

@@ -92,6 +92,6 @@ const useCases = [
     SecurityDevicesExternalRepository,
     SecurityDevicesService,
   ],
-  exports: [UsersExternalRepository],
+  exports: [UsersExternalRepository, UsersQueryExternalRepository],
 })
 export class UserAccountsModule {}

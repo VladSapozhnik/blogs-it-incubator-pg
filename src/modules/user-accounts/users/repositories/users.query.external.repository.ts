@@ -4,6 +4,7 @@ import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserLoginMapper } from '../mappers/user-login.mapper';
 
 @Injectable()
 export class UsersQueryExternalRepository {
@@ -27,5 +28,11 @@ export class UsersQueryExternalRepository {
     }
 
     return ProfileMapper.mapToView(user);
+  }
+
+  async getUserLogin(id: string): Promise<UserLoginMapper | null> {
+    const user: User | null = await this.userRepository.findOneBy({ id });
+
+    return user ? UserLoginMapper.mapToView(user) : null;
   }
 }

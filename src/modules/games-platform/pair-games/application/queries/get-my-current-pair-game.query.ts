@@ -7,6 +7,10 @@ import { PlayerAnswerQueryRepository } from '../../repositories/player-answer.qu
 import { PlayerAnswer } from '../../entities/player-answer.entity';
 import { PlayerProgressQueryRepository } from '../../repositories/player-progress.query.repository';
 import { PlayerProgress } from '../../entities/player-progress.entity';
+import { UsersQueryExternalRepository } from '../../../../user-accounts/users/repositories/users.query.external.repository';
+import { UserLoginMapper } from '../../../../user-accounts/users/mappers/user-login.mapper';
+import { PairGameMapper } from '../../mappers/pair-game.mapper';
+import { PairGamesQueryService } from '../pair-games.query.service';
 
 export class GetMyCurrentPairGameQuery {
   constructor(public readonly userId: string) {}
@@ -16,59 +20,15 @@ export class GetMyCurrentPairGameQuery {
 export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurrentPairGameQuery> {
   constructor(
     private readonly pairGamesQueryRepository: PairGamesQueryRepository,
-    private readonly quizQuestionQueryExternalRepository: QuizQuestionQueryExternalRepository,
-    private readonly playerAnswerQueryRepository: PlayerAnswerQueryRepository,
-    private readonly playerProgressQueryRepository: PlayerProgressQueryRepository,
+    private readonly pairGameQueryService: PairGamesQueryService,
   ) {}
 
-  async execute({ userId }: GetMyCurrentPairGameQuery) {
+  async execute({
+    userId,
+  }: GetMyCurrentPairGameQuery): Promise<PairGameMapper> {
     const currentGame: PairGame =
       await this.pairGamesQueryRepository.getMyActiveGame(userId);
 
-    const quizQuestion: QuizQuestion[] =
-      await this.quizQuestionQueryExternalRepository.getQuestionsByIds(
-        currentGame.questionsIds,
-      );
-
-    const firstAnswers: PlayerAnswer[] =
-      await this.playerAnswerQueryRepository.getAllPlayerAnswer(
-        currentGame.questionsIds,
-        currentGame.id,
-        currentGame.firstPlayerId,
-      );
-
-    const secondAnswers: PlayerAnswer[] = currentGame.secondPlayerId
-      ? await this.playerAnswerQueryRepository.getAllPlayerAnswer(
-          currentGame.questionsIds,
-          currentGame.id,
-          currentGame.secondPlayerId,
-        )
-      : [];
-
-    const firstProgress: PlayerProgress | null =
-      await this.playerProgressQueryRepository.getPlayerProgress(
-        currentGame.id,
-        currentGame.firstPlayerId,
-      );
-
-    const secondProgress: PlayerProgress | null = currentGame.secondPlayerId
-      ? await this.playerProgressQueryRepository.getPlayerProgress(
-          currentGame.id,
-          currentGame.secondPlayerId,
-        )
-      : null;
-
-    // return PairGameViewDto.mapToView(
-    //   currentGame,
-    //   quizQuestion,
-    //   firstAnswers,
-    //   secondAnswers,
-    //   firstProgress?.score ?? 0,
-    //   secondProgress?.score ?? 0,
-    //   firstLogin,
-    //   secondLogin,
-    // );
-
-    return currentGame.id;
+    return this.pairGameQueryService.getPairGameViewData(currentGame);
   }
 }

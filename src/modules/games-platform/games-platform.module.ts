@@ -10,7 +10,7 @@ import { QuizQuestion } from './questions/entities/quiz-question.entity';
 import { QuizQuestionsSaController } from './questions/quiz-questions-sa.controller';
 import { QuizQuestionsService } from './questions/application/quiz-questions.service';
 import { QuizQuestionRepository } from './questions/repositories/quiz-question,repository';
-import { QuizQuestionQueryRepository } from './questions/repositories/quiz-question.query,repository';
+import { QuizQuestionQueryRepository } from './questions/repositories/quiz-question.query.repository';
 import { PairGamesController } from './pair-games/pair-games.controller';
 import { PairGamesService } from './pair-games/application/pair-games.service';
 import { PairGamesRepository } from './pair-games/repositories/pair-games.repository';
@@ -29,6 +29,9 @@ import { PlayerProgressRepository } from './pair-games/repositories/player-progr
 import { GetPlayerAnswerByIdQueryHandler } from './pair-games/application/queries/get-player-answer-by-id.query';
 import { PlayerAnswerQueryRepository } from './pair-games/repositories/player-answer.query.repository';
 import { PlayerProgressQueryRepository } from './pair-games/repositories/player-progress.query.repository';
+import { PairGamesQueryService } from './pair-games/application/pair-games.query.service';
+import { UserAccountsModule } from '../user-accounts/user-accounts.module';
+import { GetGameQueryHandler } from './pair-games/application/queries/get-game.query';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -42,10 +45,12 @@ const useCases = [
   GetGameByIdQueryHandler,
   GetMyCurrentPairGameQueryHandler,
   GetPlayerAnswerByIdQueryHandler,
+  GetGameQueryHandler,
 ];
 
 @Module({
   imports: [
+    UserAccountsModule,
     TypeOrmModule.forFeature([
       QuizQuestion,
       PairGame,
@@ -61,6 +66,7 @@ const useCases = [
     QuizQuestionQueryRepository,
     QuizQuestionQueryExternalRepository,
     PairGamesService,
+    PairGamesQueryService,
     PairGamesRepository,
     PairGamesQueryRepository,
     PlayerAnswerService,
