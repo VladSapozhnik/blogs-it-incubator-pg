@@ -1,0 +1,38 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+@Entity('player_progresses')
+export class PlayerProgress {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  // @ManyToOne(() => User, (u) => u.playerProgresses)
+  // player: User;
+  @Column({ type: 'uuid' })
+  playerId: string;
+  // @ManyToOne(() => PairGame, (pg) => pg.playerProgresses)
+  // game: PairGame;
+  @Column({ type: 'uuid' })
+  gameId: string;
+  @Column({ type: 'int', default: 0 })
+  score: number;
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  addedAt: Date;
+  static createInstance(playerId: string, gameId: string): PlayerProgress {
+    const playerProgress = new PlayerProgress();
+
+    playerProgress.score = 1;
+    playerProgress.playerId = playerId;
+    playerProgress.gameId = gameId;
+
+    return playerProgress;
+  }
+
+  incrementScore() {
+    this.score = this.score + 1;
+  }
+}

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { QuizQuestion } from '../../entities/quiz-question.entity';
-import { QuizQuestionRepository } from '../../repositories/quiz-question,repository';
+import { QuizQuestionRepository } from '../../repositories/quiz-question.repository';
 
 export class UpdatePublishCommand {
   constructor(

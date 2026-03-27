@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { QuizQuestionRepository } from '../../repositories/quiz-question,repository';
+import { QuizQuestionRepository } from '../../repositories/quiz-question.repository';
 
 export class RemoveQuestionCommand {
   constructor(public readonly id: string) {}

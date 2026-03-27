@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { QuizQuestionRepository } from '../../repositories/quiz-question,repository';
+import { QuizQuestionRepository } from '../../repositories/quiz-question.repository';
 import { QuizQuestion } from '../../entities/quiz-question.entity';
 import { UpdateQuizQuestionDto } from '../../dto/update-quiz-question.dto';
 
