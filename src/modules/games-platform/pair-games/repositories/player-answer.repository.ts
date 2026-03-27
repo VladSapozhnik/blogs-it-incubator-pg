@@ -58,10 +58,13 @@ export class PlayerAnswerRepository {
   }
 
   async hasCorrectAnswers(gameId: string, playerId: string): Promise<boolean> {
-    const count: number = await this.playerAnswerRepository.count({
-      where: { gameId, playerId, answerStatus: AnswerStatusEnum.Correct },
+    const count = await this.playerAnswerRepository.count({
+      where: {
+        gameId,
+        playerId,
+        answerStatus: AnswerStatusEnum.Correct,
+      },
     });
-
     return count > 0;
   }
 
@@ -78,15 +81,13 @@ export class PlayerAnswerRepository {
     gameId: string,
     playerId: string,
   ): Promise<PlayerAnswer | null> {
-    return await this.playerAnswerRepository
-      .createQueryBuilder('a')
-      .where('a.gameId = :gameId AND a.playerId = :playerId', {
-        gameId,
-        playerId,
-      })
-      .orderBy('a.addedAt', 'ASC')
-      .skip(4) // Пропускаем первые 4 ответа
-      .take(1) // Берем 5-й
-      .getOne();
+    const answers: PlayerAnswer[] = await this.playerAnswerRepository.find({
+      where: { gameId, playerId },
+      order: { addedAt: 'ASC' },
+      skip: 4,
+      take: 1,
+    });
+
+    return answers[0] ?? null;
   }
 }

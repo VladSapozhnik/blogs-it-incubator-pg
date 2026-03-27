@@ -13,60 +13,51 @@ export class PairGamesService {
     private readonly playerProgressRepository: PlayerProgressRepository,
   ) {}
   async finishGameAndAssignBonus(game: PairGame) {
-    // 1. Получаем количество ответов для каждого
-    const countP1 = await this.playerAnswerRepository.countAnswers(
+    // 1. Атомарная проверка: если игра уже Finished, выходим
+    // (Это защитит от двойного вызова из UseCase)
+    if (game.status === GameStatusEnum.Finished) return;
+
+    // 2. Достаем ПЯТЫЕ ответы (используй тот метод с skip: 4, который мы обсудили)
+    const fifthP1 = await this.playerAnswerRepository.getFifthAnswer(
       game.id,
       game.firstPlayerId,
     );
-    const countP2 = await this.playerAnswerRepository.countAnswers(
+    const fifthP2 = await this.playerAnswerRepository.getFifthAnswer(
       game.id,
       game.secondPlayerId!,
     );
 
-    // Если оба ответили по 5 раз — игру ПОРА ЗАКРЫВАТЬ
-    if (countP1 === 5 && countP2 === 5) {
-      // Вычисляем, кто закончил серию ПЕРВЫМ
-      // Нам нужно время ПЯТОГО ответа каждого игрока
-      const fifthAnswerP1 = await this.playerAnswerRepository.getFifthAnswer(
+    if (fifthP1 && fifthP2) {
+      // Сравниваем время завершения
+      const p1FinishedFirst =
+        fifthP1.addedAt.getTime() < fifthP2.addedAt.getTime();
+      const fastPlayerId = p1FinishedFirst
+        ? game.firstPlayerId
+        : game.secondPlayerId!;
+
+      // 3. Проверка на наличие правильных ответов
+      const hasCorrect = await this.playerAnswerRepository.hasCorrectAnswers(
         game.id,
-        game.firstPlayerId,
-      );
-      const fifthAnswerP2 = await this.playerAnswerRepository.getFifthAnswer(
-        game.id,
-        game.secondPlayerId!,
+        fastPlayerId,
       );
 
-      if (fifthAnswerP1 && fifthAnswerP2) {
-        const p1FinishedFirst = fifthAnswerP1.addedAt < fifthAnswerP2.addedAt;
-        const fastPlayerId = p1FinishedFirst
-          ? game.firstPlayerId
-          : game.secondPlayerId!;
-
-        // Проверяем наличие правильных ответов у "быстрого"
-        const hasCorrect = await this.playerAnswerRepository.hasCorrectAnswers(
+      if (hasCorrect) {
+        const progress = await this.playerProgressRepository.getPlayerProgress(
           game.id,
           fastPlayerId,
         );
-
-        if (hasCorrect) {
-          // Начисляем +1 балл в прогресс
-          const progress =
-            await this.playerProgressRepository.getPlayerProgress(
-              game.id,
-              fastPlayerId,
-            );
-          if (progress) {
-            progress.incrementScore();
-            await this.playerProgressRepository.savePlayerProgress(progress);
-          }
+        if (progress) {
+          progress.score += 1; // +1 бонусный балл
+          await this.playerProgressRepository.savePlayerProgress(progress);
         }
       }
-
-      // ЗАКРЫВАЕМ ИГРУ
-      game.status = GameStatusEnum.Finished;
-      game.finishGameDate = new Date();
-      await this.pairGameRepository.savePairGame(game);
     }
+
+    // 4. ЗАКРЫВАЕМ ИГРУ
+    game.finishGame();
+
+    // Сохраняем статус в базу
+    await this.pairGameRepository.savePairGame(game);
   }
 
   // async finishGameAndAssignBonus(game: PairGame) {
