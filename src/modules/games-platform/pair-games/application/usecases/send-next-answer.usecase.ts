@@ -38,13 +38,13 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
         activeGame.questionsIds,
       );
 
-    const answersCount: number =
-      await this.playerAnswerRepository.getCountByGameAndUser(
-        userId,
+    const getAllAnswers: PlayerAnswer[] =
+      await this.playerAnswerRepository.getAllPlayerAnswer(
         activeGame.id,
+        userId,
       );
 
-    if (answersCount >= questions.length) {
+    if (getAllAnswers.length === questions.length) {
       throw new DomainException({
         status: HttpStatus.FORBIDDEN,
         errorsMessages: [
@@ -57,7 +57,7 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
       });
     }
 
-    const currentQuestion: QuizQuestion = questions[answersCount];
+    const currentQuestion: QuizQuestion = questions[getAllAnswers.length];
 
     const isCorrect: boolean = currentQuestion.correctAnswers.includes(answer);
 
@@ -85,7 +85,7 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
       }
     }
 
-    const userAnswersCount: number = answersCount + 1;
+    const userAnswersCount: number = getAllAnswers.length + 1;
     const questionsCount: number = questions.length;
 
     if (userAnswersCount === questionsCount) {
@@ -128,14 +128,13 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
 //         activeGame.questionsIds,
 //       );
 //
-//     const getAllAnswers: PlayerAnswer[] =
-//       await this.playerAnswerRepository.getAllPlayerAnswer(
-//         activeGame.questionsIds,
-//         activeGame.id,
+//     const answersCount: number =
+//       await this.playerAnswerRepository.getCountByGameAndUser(
 //         userId,
+//         activeGame.id,
 //       );
 //
-//     if (getAllAnswers.length === questions.length) {
+//     if (answersCount >= questions.length) {
 //       throw new DomainException({
 //         status: HttpStatus.FORBIDDEN,
 //         errorsMessages: [
@@ -148,7 +147,7 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
 //       });
 //     }
 //
-//     const currentQuestion: QuizQuestion = questions[getAllAnswers.length];
+//     const currentQuestion: QuizQuestion = questions[answersCount];
 //
 //     const isCorrect: boolean = currentQuestion.correctAnswers.includes(answer);
 //
@@ -176,7 +175,7 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
 //       }
 //     }
 //
-//     const userAnswersCount: number = getAllAnswers.length + 1;
+//     const userAnswersCount: number = answersCount + 1;
 //     const questionsCount: number = questions.length;
 //
 //     if (userAnswersCount === questionsCount) {

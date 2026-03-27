@@ -18,15 +18,16 @@ export class PlayerAnswerRepository {
   }
 
   async getAllPlayerAnswer(
-    idsQuestions: string[],
     gameId: string,
     playerId: string,
   ): Promise<PlayerAnswer[]> {
     return this.playerAnswerRepository.find({
       where: {
-        questionId: In(idsQuestions),
         gameId,
         playerId,
+      },
+      order: {
+        addedAt: 'ASC',
       },
     });
   }

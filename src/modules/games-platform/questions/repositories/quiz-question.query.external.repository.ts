@@ -23,7 +23,6 @@ export class QuizQuestionQueryExternalRepository {
   }
 
   async getQuestionsByIds(ids: string[]): Promise<QuizQuestion[]> {
-    if (!Array.isArray(ids) || ids.length === 0) return [];
     return this.quizQuestionRepository.findBy({ id: In(ids) });
   }
 }
