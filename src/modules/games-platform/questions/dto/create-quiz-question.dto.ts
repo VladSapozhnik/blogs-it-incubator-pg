@@ -1,4 +1,10 @@
-import { ArrayMinSize, IsArray, IsString, Length } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsString,
+  Length,
+  MinLength,
+} from 'class-validator';
 import { Trim, TrimArray } from '../../../../core/decorators/trim.decorator';
 
 export class CreateQuizQuestionDto {
@@ -10,5 +16,6 @@ export class CreateQuizQuestionDto {
   @IsString({ each: true })
   @ArrayMinSize(1)
   @TrimArray()
+  @MinLength(1, { each: true })
   correctAnswers: string[];
 }
