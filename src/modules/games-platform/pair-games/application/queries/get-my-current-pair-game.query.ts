@@ -19,7 +19,7 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
     userId,
   }: GetMyCurrentPairGameQuery): Promise<PairGameMapper> {
     const currentGame: PairGame =
-      await this.pairGamesQueryRepository.getMyActiveGame(userId);
+      await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
 
     return this.pairGameQueryService.getPairGameViewData(currentGame);
   }

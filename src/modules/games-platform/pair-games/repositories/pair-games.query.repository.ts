@@ -44,20 +44,15 @@ export class PairGamesQueryRepository {
     return existGame;
   }
 
-  async getMyActiveGame(userId: string): Promise<PairGame> {
-    const statusCondition = {
-      status: GameStatusEnum.Active,
-    };
-
+  async getMyActiveOrPendingGame(playerId: string): Promise<PairGame> {
     const existGame: PairGame | null = await this.pairGameRepository.findOne({
       where: [
+        { firstPlayerId: playerId, status: GameStatusEnum.Active },
+        { secondPlayerId: playerId, status: GameStatusEnum.Active },
+        { firstPlayerId: playerId, status: GameStatusEnum.PendingSecondPlayer },
         {
-          ...statusCondition,
-          firstPlayerId: userId,
-        },
-        {
-          ...statusCondition,
-          secondPlayerId: userId,
+          secondPlayerId: playerId,
+          status: GameStatusEnum.PendingSecondPlayer,
         },
       ],
     });
