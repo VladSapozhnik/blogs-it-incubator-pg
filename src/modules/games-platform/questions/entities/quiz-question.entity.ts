@@ -43,5 +43,6 @@ export class QuizQuestion {
 
   updatePublished(isPublished: boolean) {
     this.published = isPublished;
+    this.updatedAt = new Date();
   }
 }

@@ -41,6 +41,11 @@ export class QuizQuestionQueryRepository {
     const [questions, totalCount] =
       await this.quizQuestionRepository.findAndCount({
         where,
+        skip: queryDto.calculateSkip(),
+        take: queryDto.pageSize,
+        order: {
+          [queryDto.sortBy]: queryDto.sortDirection,
+        },
       });
 
     const items: QuizQuestionMapper[] = questions.map(
