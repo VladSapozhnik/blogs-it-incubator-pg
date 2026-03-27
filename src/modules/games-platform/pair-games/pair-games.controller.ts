@@ -21,7 +21,6 @@ import { GetPlayerAnswerByIdQuery } from './application/queries/get-player-answe
 import { PlayerAnswersMapper } from './mappers/player-answers.mapper';
 import { PairGameMapper } from './mappers/pair-game.mapper';
 import { GetGameQuery } from './application/queries/get-game.query';
-import { QuizQuestionQueryExternalRepository } from '../questions/repositories/quiz-question.query.external.repository';
 
 @Controller('pair-game-quiz/pairs')
 @UseGuards(JwtAuthGuard)
@@ -29,13 +28,7 @@ export class PairGamesController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
-    private readonly quizQuestionQueryExternalRepository: QuizQuestionQueryExternalRepository,
   ) {}
-
-  @Get('gamno')
-  async gamno() {
-    return this.quizQuestionQueryExternalRepository.getRandomQuestionsId();
-  }
 
   @Post('connection')
   @HttpCode(HttpStatus.OK)
