@@ -53,7 +53,7 @@ export class PairGameMapper {
       })),
       player: {
         id: game.firstPlayerId,
-        login: firstLogin,
+        login: firstLogin ?? '',
       },
       score: firstScore,
     };
@@ -67,7 +67,7 @@ export class PairGameMapper {
           })),
           player: {
             id: game.secondPlayerId,
-            login: secondLogin!,
+            login: secondLogin ? secondLogin : '',
           },
           score: secondScore,
         }
@@ -77,8 +77,13 @@ export class PairGameMapper {
 
     dto.status = game.status;
     dto.pairCreatedDate = game.pairCreatedDate.toISOString();
-    dto.startGameDate = game.startGameDate?.toDateString() ?? null;
-    dto.finishGameDate = game.finishGameDate?.toDateString() ?? null;
+    dto.startGameDate = game.startGameDate
+      ? game.startGameDate.toISOString()
+      : null;
+
+    dto.finishGameDate = game.finishGameDate
+      ? game.finishGameDate.toISOString()
+      : null;
 
     return dto;
   }
