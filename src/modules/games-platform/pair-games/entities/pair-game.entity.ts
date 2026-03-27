@@ -23,9 +23,8 @@ export class PairGame {
   secondPlayer: User;
   @Column({ type: 'uuid', nullable: true })
   secondPlayerId: string | null;
-  // @Column({ type: 'text', array: true })
-  @Column({ type: 'jsonb' })
-  questionsIds: string[];
+  @Column({ type: 'jsonb', nullable: true })
+  questionsIds: string[] | null;
   @Column({
     enum: GameStatusEnum,
     default: GameStatusEnum.PendingSecondPlayer,

@@ -1,14 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PairGame } from '../entities/pair-game.entity';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { GameStatusEnum } from '../enums/game-status.enum';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { PlayerAnswer } from '../entities/player-answer.entity';
 
 @Injectable()
 export class PairGamesRepository {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(PairGame)
     private readonly pairGameRepository: Repository<PairGame>,
   ) {}
@@ -41,14 +41,17 @@ export class PairGamesRepository {
   }
 
   async getGameWaitingForPlayer(userId: string): Promise<PairGame | null> {
-    return this.pairGameRepository
-      .createQueryBuilder('g')
-      .setLock('pessimistic_write') // КРИТИЧНО: предотвращает одновременный захват одного слота двумя игроками
-      .where('g.status = :status', {
-        status: GameStatusEnum.PendingSecondPlayer,
-      })
-      .andWhere('g.firstPlayerId != :userId', { userId })
-      .getOne();
+    return this.dataSource.transaction(async (manager) => {
+      return await manager
+        .getRepository(PairGame)
+        .createQueryBuilder('g')
+        .setLock('pessimistic_write') // блокировка записи
+        .where('g.status = :status', {
+          status: GameStatusEnum.PendingSecondPlayer,
+        })
+        .andWhere('g.firstPlayerId != :userId', { userId })
+        .getOne();
+    });
   }
 
   async getGameStatusActive(playerId: string): Promise<PairGame> {
