@@ -46,6 +46,7 @@ export class PairGamesController {
   }
 
   @Post('my-current/answers')
+  @HttpCode(HttpStatus.OK)
   async sendNextAnswer(
     @Body() sendNextAnswerDto: SendNextAnswerDto,
     @User('userId') userId: string,
