@@ -15,9 +15,9 @@ import { SecurityDevice } from '../../security-devices/entities/security-device.
 import { Comment } from '../../../bloggers-platform/comments/entities/comment.entity';
 import { PostLikes } from '../../../bloggers-platform/likes/entities/post-likes.entity';
 import { CommentLikes } from '../../../bloggers-platform/likes/entities/comment-likes.entity';
-import { PairGame } from '../../../games-platform/pair-games/entities/pair-game.entity';
-import { PlayerAnswer } from '../../../games-platform/pair-games/entities/player-answer.entity';
-import { PlayerProgress } from '../../../games-platform/pair-games/entities/player-progress.entity';
+// import { PairGame } from '../../../games-platform/pair-games/entities/pair-game.entity';
+// import { PlayerAnswer } from '../../../games-platform/pair-games/entities/player-answer.entity';
+// import { PlayerProgress } from '../../../games-platform/pair-games/entities/player-progress.entity';
 
 export class EmailConfirmation {
   confirmationCode?: string;
@@ -70,17 +70,17 @@ export class User {
   @OneToMany(() => CommentLikes, (cl) => cl.user)
   commentLikes: CommentLikes[];
 
-  @OneToMany(() => PairGame, (pg) => pg.firstPlayer)
-  firstPlayers: PairGame[];
-
-  @OneToMany(() => PairGame, (pg) => pg.secondPlayer)
-  secondPlayers: PairGame[];
-
-  @OneToMany(() => PlayerAnswer, (pa) => pa.player)
-  playerAnswers: PlayerAnswer[];
-
-  @OneToMany(() => PlayerProgress, (playerProgress) => playerProgress.player)
-  playerProgresses: PlayerProgress[];
+  // @OneToMany(() => PairGame, (pg) => pg.firstPlayer)
+  // firstPlayers: PairGame[];
+  //
+  // @OneToMany(() => PairGame, (pg) => pg.secondPlayer)
+  // secondPlayers: PairGame[];
+  //
+  // @OneToMany(() => PlayerAnswer, (pa) => pa.player)
+  // playerAnswers: PlayerAnswer[];
+  //
+  // @OneToMany(() => PlayerProgress, (playerProgress) => playerProgress.player)
+  // playerProgresses: PlayerProgress[];
   static createInstance(
     dto: CreateUserDto,
     hash: string,
