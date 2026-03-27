@@ -20,7 +20,7 @@ export class PairGame {
   // secondPlayer: User;
   @Column({ type: 'uuid', nullable: true })
   secondPlayerId: string | null;
-  @Column({ type: 'uuid', array: true })
+  @Column({ type: 'text', array: true })
   questionsIds: string[];
   @Column({
     enum: GameStatusEnum,
