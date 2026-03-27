@@ -1,8 +1,9 @@
 import { PairGame } from '../entities/pair-game.entity';
 import { PlayerAnswer } from '../entities/player-answer.entity';
-import { QuizQuestionMapper } from '../../questions/mappers/quiz-question.mapper';
 import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
 import { QuizQuestionForGameMapper } from '../../questions/mappers/quiz-question-for-game.mapper';
+import { GameStatusEnum } from '../enums/game-status.enum';
+import { QuizQuestionMapper } from '../../questions/mappers/quiz-question.mapper';
 
 export class AnswerViewDto {
   questionId: string;
@@ -73,7 +74,10 @@ export class PairGameMapper {
         }
       : null;
 
-    dto.questions = questions.length ? questions : null;
+    dto.questions =
+      game.status === GameStatusEnum.PendingSecondPlayer
+        ? null
+        : questions.map(QuizQuestionMapper.mapToView);
 
     dto.status = game.status;
     dto.pairCreatedDate = game.pairCreatedDate.toISOString();

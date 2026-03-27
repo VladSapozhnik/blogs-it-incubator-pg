@@ -25,7 +25,7 @@ export class GetGameByIdQueryHandler implements IQueryHandler<GetGameByIdQuery> 
       await this.pairGamesQueryRepository.getGameById(id);
 
     if (
-      currentGame.firstPlayerId !== userId ||
+      currentGame.firstPlayerId !== userId &&
       currentGame.secondPlayerId !== userId
     ) {
       throw new DomainException({
