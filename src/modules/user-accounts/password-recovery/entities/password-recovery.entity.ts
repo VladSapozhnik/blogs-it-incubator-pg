@@ -16,7 +16,6 @@ export class PasswordRecovery {
   id: string;
 
   @ManyToOne(() => User, (user) => user.passwordRecoveries)
-  // @JoinColumn({ name: 'userId' })
   user: User;
 
   @Column({ type: 'uuid' })
