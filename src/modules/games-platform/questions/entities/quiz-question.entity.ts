@@ -4,7 +4,6 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { CreateQuizQuestionDto } from '../dto/create-quiz-question.dto';
 import { UpdateQuizQuestionDto } from '../dto/update-quiz-question.dto';
@@ -22,7 +21,7 @@ export class QuizQuestion {
   published: boolean;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
-  @UpdateDateColumn({ type: 'timestamp with time zone', nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   updatedAt: Date;
   @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.question)
   playerAnswers: PlayerAnswer[];
@@ -39,6 +38,7 @@ export class QuizQuestion {
   updateQuestion(dto: UpdateQuizQuestionDto) {
     this.body = dto.body;
     this.correctAnswers = dto.correctAnswers;
+    this.updatedAt = new Date();
   }
 
   updatePublished(isPublished: boolean) {
