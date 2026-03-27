@@ -64,4 +64,29 @@ export class PlayerAnswerRepository {
 
     return count > 0;
   }
+
+  async countAnswers(gameId: string, playerId: string): Promise<number> {
+    return await this.playerAnswerRepository.count({
+      where: {
+        gameId: gameId,
+        playerId: playerId,
+      },
+    });
+  }
+
+  async getFifthAnswer(
+    gameId: string,
+    playerId: string,
+  ): Promise<PlayerAnswer | null> {
+    return await this.playerAnswerRepository
+      .createQueryBuilder('a')
+      .where('a.gameId = :gameId AND a.playerId = :playerId', {
+        gameId,
+        playerId,
+      })
+      .orderBy('a.addedAt', 'ASC')
+      .skip(4) // Пропускаем первые 4 ответа
+      .take(1) // Берем 5-й
+      .getOne();
+  }
 }
