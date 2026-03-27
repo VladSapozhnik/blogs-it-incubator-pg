@@ -16,7 +16,8 @@ export class Game {
   secondPlayerId: string | null;
   // @Column({ type: 'text', array: true })
   // questionsIds: string[];
-  // status: GameStatusEnum;
+  @Column({ enum: GameStatusEnum })
+  status: GameStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   pairCreatedDate: Date;
   @Column({ type: 'timestamp with time zone', nullable: true })
