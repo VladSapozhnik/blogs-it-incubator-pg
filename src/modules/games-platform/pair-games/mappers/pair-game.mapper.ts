@@ -25,7 +25,7 @@ export class PairGameMapper {
   id: string;
   firstPlayerProgress: PlayerProgressViewDto;
   secondPlayerProgress: PlayerProgressViewDto | null;
-  questions: QuizQuestionForGameMapper[];
+  questions: QuizQuestionForGameMapper[] | null;
   status: string;
   pairCreatedDate: string;
   startGameDate: string | null;
@@ -73,7 +73,9 @@ export class PairGameMapper {
         }
       : null;
 
-    dto.questions = questions.map(QuizQuestionMapper.mapToView);
+    dto.questions = questions
+      ? questions.map(QuizQuestionMapper.mapToView)
+      : null;
 
     dto.status = game.status;
     dto.pairCreatedDate = game.pairCreatedDate.toISOString();

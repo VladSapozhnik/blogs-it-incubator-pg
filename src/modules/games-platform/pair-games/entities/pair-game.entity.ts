@@ -23,7 +23,7 @@ export class PairGame {
   secondPlayer: User;
   @Column({ type: 'uuid', nullable: true })
   secondPlayerId: string | null;
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', default: () => "'[]'" })
   questionsIds: string[];
   @Column({
     enum: GameStatusEnum,
