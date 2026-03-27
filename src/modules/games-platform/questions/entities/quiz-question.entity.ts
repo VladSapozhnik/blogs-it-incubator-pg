@@ -31,14 +31,14 @@ export class QuizQuestion {
     const question = new QuizQuestion();
 
     question.body = dto.body;
-    // question.correctAnswers = dto.correctAnswers;
+    question.correctAnswers = dto.correctAnswers;
 
     return question;
   }
 
   updateQuestion(dto: UpdateQuizQuestionDto) {
     this.body = dto.body;
-    // this.correctAnswers = dto.correctAnswers;
+    this.correctAnswers = dto.correctAnswers;
   }
 
   updatePublished(isPublished: boolean) {
