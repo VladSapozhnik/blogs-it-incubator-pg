@@ -73,9 +73,7 @@ export class PairGameMapper {
         }
       : null;
 
-    dto.questions = questions
-      ? questions.map(QuizQuestionMapper.mapToView)
-      : null;
+    dto.questions = questions.length ? questions : null;
 
     dto.status = game.status;
     dto.pairCreatedDate = game.pairCreatedDate.toISOString();

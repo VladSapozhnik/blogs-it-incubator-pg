@@ -50,20 +50,21 @@ export class PairGamesController {
     );
   }
 
+  @Get('my-current')
+  GetMyCurrentPairGame(
+    @User('userId') userId: string,
+  ): Promise<PairGameMapper> {
+    console.log(userId);
+    return this.queryBus.execute<GetMyCurrentPairGameQuery, PairGameMapper>(
+      new GetMyCurrentPairGameQuery(userId),
+    );
+  }
+
   @Get(':id')
   getGameById(@Param() params: WithIdDto, @User('userId') userId: string) {
     const { id } = params;
     return this.queryBus.execute<GetGameByIdQuery, PairGameMapper>(
       new GetGameByIdQuery(userId, id),
-    );
-  }
-
-  @Get('my-current')
-  GetMyCurrentPairGame(
-    @User('userId') userId: string,
-  ): Promise<PairGameMapper> {
-    return this.queryBus.execute<GetMyCurrentPairGameQuery, PairGameMapper>(
-      new GetMyCurrentPairGameQuery(userId),
     );
   }
 }
