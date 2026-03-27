@@ -6,21 +6,24 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { PairGame } from './pair-game.entity';
+import { User } from '../../../user-accounts/users/entities/user.entity';
+import { QuizQuestion } from '../../questions/entities/quiz-question.entity';
 
 @Entity('player_answers')
 export class PlayerAnswer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  // @ManyToOne(() => PairGame, (game) => game.playerAnswers)
-  // game: PairGame;
+  @ManyToOne(() => PairGame, (game) => game.playerAnswers)
+  game: PairGame;
   @Column({ type: 'uuid' })
   gameId: string;
-  // @ManyToOne(() => User, (u) => u.playerAnswers)
-  // player: User;
+  @ManyToOne(() => User, (u) => u.playerAnswers)
+  player: User;
   @Column({ type: 'uuid' })
   playerId: string;
-  // @ManyToOne(() => QuizQuestion, (qq) => qq.playerAnswers)
-  // question: QuizQuestion;
+  @ManyToOne(() => QuizQuestion, (qq) => qq.playerAnswers)
+  question: QuizQuestion;
   @Column({ type: 'uuid' })
   questionId: string;
   @Column({ enum: AnswerStatusEnum })
