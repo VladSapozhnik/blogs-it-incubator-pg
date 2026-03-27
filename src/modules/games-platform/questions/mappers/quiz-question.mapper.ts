@@ -6,17 +6,19 @@ export class QuizQuestionMapper {
   correctAnswers: string[];
   published: boolean;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt?: string | null;
 
   static mapToView(this: void, quizQuestion: QuizQuestion): QuizQuestionMapper {
     const dto = new QuizQuestionMapper();
 
     dto.id = quizQuestion.id;
     dto.body = quizQuestion.body;
-    // dto.correctAnswers = quizQuestion.correctAnswers;
+    dto.correctAnswers = quizQuestion.correctAnswers;
     dto.published = quizQuestion.published;
     dto.createdAt = quizQuestion.createdAt.toISOString();
-    dto.updatedAt = quizQuestion.updatedAt.toISOString() ?? null;
+    dto.updatedAt = quizQuestion?.updatedAt
+      ? quizQuestion?.updatedAt.toISOString()
+      : null;
 
     return dto;
   }
