@@ -25,7 +25,11 @@ export class PairGame {
   secondPlayerId: string | null;
   @Column({ type: 'uuid', array: true })
   questionsIds: string[];
-  @Column({ enum: GameStatusEnum, default: GameStatusEnum.PendingSecondPlayer })
+  @Column({
+    type: 'enum',
+    enum: GameStatusEnum,
+    default: GameStatusEnum.PendingSecondPlayer,
+  })
   status: GameStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   pairCreatedDate: Date;
