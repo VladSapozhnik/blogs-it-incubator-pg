@@ -23,7 +23,7 @@ import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 // import { PlayerProgressRepository } from './pair-games/repositories/player-progress.repository';
 // import { PlayerProgressQueryRepository } from './pair-games/repositories/player-progress.query.repository';
 // import { PairGamesController } from './pair-games/pair-games.controller';
-// import { PairGame } from './pair-games/entities/pair-game.entity';
+import { PairGame } from './pair-games/entities/pair-game.entity';
 import { PlayerProgress } from './pair-games/entities/player-progress.entity';
 // import { PlayerAnswer } from './pair-games/entities/player-answer.entity';
 // import { ConnectCurrentUserUseCase } from './pair-games/application/usecases/connect-current-user.usecase';
@@ -53,7 +53,7 @@ const useCases = [
     UserAccountsModule,
     TypeOrmModule.forFeature([
       QuizQuestion,
-      // PairGame,
+      PairGame,
       PlayerProgress,
       // PlayerAnswer,
     ]),
