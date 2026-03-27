@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { CreateQuizQuestionDto } from '../dto/create-quiz-question.dto';
 import { UpdateQuizQuestionDto } from '../dto/update-quiz-question.dto';
-// import { PlayerAnswer } from '../../pair-games/entities/player-answer.entity';
+import { PlayerAnswer } from '../../pair-games/entities/player-answer.entity';
 
 @Entity('quiz_questions')
 export class QuizQuestion {
@@ -24,9 +24,9 @@ export class QuizQuestion {
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp with time zone', nullable: true })
   updatedAt: Date;
+  @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.question)
+  playerAnswers: PlayerAnswer[];
 
-  // @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.question)
-  // playerAnswers: PlayerAnswer[];
   static createInstance(dto: CreateQuizQuestionDto) {
     const question = new QuizQuestion();
 
