@@ -12,9 +12,8 @@ export class QuizQuestionQueryExternalRepository {
 
   async getRandomQuestionsId(): Promise<string[]> {
     const questions: QuizQuestion[] = await this.quizQuestionRepository
-      .createQueryBuilder('question')
-      .select('question.id AS id')
-      .where('published = :published', { published: true })
+      .createQueryBuilder('q')
+      .where('q.published = :published', { published: true })
       .orderBy('RANDOM()')
       .take(5)
       .getMany();
