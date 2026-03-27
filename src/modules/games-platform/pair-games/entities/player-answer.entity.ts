@@ -23,7 +23,7 @@ export class PlayerAnswer {
   // question: QuizQuestion;
   @Column({ type: 'uuid' })
   questionId: string;
-  @Column({ enum: AnswerStatusEnum })
+  @Column({ type: 'enum', enum: AnswerStatusEnum })
   answerStatus: AnswerStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   addedAt: Date;
