@@ -18,7 +18,8 @@ export class QuizQuestion {
   body: string;
   // @Column({ type: 'varchar' })
   // @Column({ type: 'simple-array' })
-  // correctAnswers: string[];
+  @Column({ type: 'uuid', array: true, nullable: true })
+  correctAnswers: string[];
   @Column({ type: 'boolean', default: false })
   published: boolean;
   @CreateDateColumn({ type: 'timestamp with time zone' })
