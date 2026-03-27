@@ -27,7 +27,6 @@ export class PlayerProgress {
   static createInstance(playerId: string, gameId: string): PlayerProgress {
     const playerProgress = new PlayerProgress();
 
-    playerProgress.score = 1;
     playerProgress.playerId = playerId;
     playerProgress.gameId = gameId;
 
