@@ -23,7 +23,6 @@ export class PairGame {
   @Column({ type: 'uuid', array: true })
   questionsIds: string[];
   @Column({
-    type: 'enum',
     enum: GameStatusEnum,
     default: GameStatusEnum.PendingSecondPlayer,
   })
