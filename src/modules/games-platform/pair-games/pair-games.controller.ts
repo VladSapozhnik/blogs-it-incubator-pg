@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
 import { SendNextAnswerDto } from './dto/send-next-answer.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ConnectCurrentUserCommand } from './application/usecases/connect-current-user.usecase';
@@ -22,6 +31,7 @@ export class PairGamesController {
   ) {}
 
   @Post('connection')
+  @HttpCode(HttpStatus.OK)
   async connectCurrentUser(
     @User('userId') userId: string,
   ): Promise<PairGameMapper> {

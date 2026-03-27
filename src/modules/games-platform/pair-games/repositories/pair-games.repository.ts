@@ -55,7 +55,7 @@ export class PairGamesRepository {
   }
 
   async getGameStatusActive(playerId: string): Promise<PairGame> {
-    const existGame = await this.pairGameRepository.findOne({
+    const existGame: PairGame | null = await this.pairGameRepository.findOne({
       where: [
         { firstPlayerId: playerId, status: GameStatusEnum.Active },
         { secondPlayerId: playerId, status: GameStatusEnum.Active },
