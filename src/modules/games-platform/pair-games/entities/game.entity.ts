@@ -14,7 +14,7 @@ export class Game {
   firstPlayerId: string;
   @Column({ type: 'uuid', nullable: true })
   secondPlayerId: string | null;
-  @Column({ type: 'text', array: true })
+  // @Column({ type: 'text', array: true })
   questionIds: string[];
   // @Column({ type: 'text', array: true })
   // questionsIds: string[];
