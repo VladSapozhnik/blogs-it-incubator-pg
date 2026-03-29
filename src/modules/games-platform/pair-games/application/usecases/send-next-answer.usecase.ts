@@ -100,11 +100,11 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
 
     const opponentCount: number =
       await this.playerAnswerRepository.getCountByGameAndUser(
-        activeGame.id,
         opponentId,
+        activeGame.id,
       );
 
-    if (myCount === questionsCount && opponentCount === questionsCount) {
+    if (myCount >= questionsCount && opponentCount >= questionsCount) {
       await this.pairGameService.finishGameAndAssignBonus(activeGame);
     }
 
