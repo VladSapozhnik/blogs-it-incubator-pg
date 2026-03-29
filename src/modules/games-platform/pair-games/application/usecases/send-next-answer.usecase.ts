@@ -85,25 +85,51 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
       }
     }
 
-    const userAnswersCount: number = getAllAnswers.length + 1;
     const questionsCount: number = questions.length;
 
-    if (userAnswersCount === questionsCount) {
-      const opponentId: string =
-        activeGame.firstPlayerId === userId
-          ? activeGame.secondPlayerId!
-          : activeGame.firstPlayerId;
+    const myCount: number =
+      await this.playerAnswerRepository.getCountByGameAndUser(
+        activeGame.id,
+        userId,
+      );
 
-      const opponentAnswersCount: number =
-        await this.playerAnswerRepository.getCountByGameAndUser(
-          activeGame.id,
-          opponentId,
-        );
+    const opponentId: string =
+      activeGame.firstPlayerId === userId
+        ? activeGame.secondPlayerId!
+        : activeGame.firstPlayerId;
 
-      if (opponentAnswersCount === questionsCount) {
-        await this.pairGameService.finishGameAndAssignBonus(activeGame);
-      }
+    const opponentCount: number =
+      await this.playerAnswerRepository.getCountByGameAndUser(
+        activeGame.id,
+        opponentId,
+      );
+
+    if (myCount === questionsCount && opponentCount === questionsCount) {
+      await this.pairGameService.finishGameAndAssignBonus(activeGame);
     }
+
+    // const userAnswersCount: number = getAllAnswers.length + 1;
+    //   const questionsCount: number = questions.length;
+    //
+    //   if (userAnswersCount === questionsCount) {
+    //     const opponentId: string =
+    //       activeGame.firstPlayerId === userId
+    //         ? activeGame.secondPlayerId!
+    //         : activeGame.firstPlayerId;
+    //
+    //     const opponentAnswersCount: number =
+    //       await this.playerAnswerRepository.getCountByGameAndUser(
+    //         activeGame.id,
+    //         opponentId,
+    //       );
+    //
+    //     if (opponentAnswersCount === questionsCount) {
+    //       await this.pairGameService.finishGameAndAssignBonus(activeGame);
+    //     }
+    //   }
+    //
+    //   return savedAnswerId;
+    // }
 
     return savedAnswerId;
   }
