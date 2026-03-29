@@ -89,8 +89,8 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
 
     const myCount: number =
       await this.playerAnswerRepository.getCountByGameAndUser(
-        activeGame.id,
         userId,
+        activeGame.id,
       );
 
     const opponentId: string =
