@@ -1,9 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PairGame } from '../entities/pair-game.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { GameStatusEnum } from '../enums/game-status.enum';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { UserGameHistoryQueryInputDto } from '../dto/user-game-history-query-input.dto';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
+import { PairGameMapper } from '../mappers/pair-game.mapper';
 
 @Injectable()
 export class PairGamesQueryRepository {
@@ -11,39 +14,6 @@ export class PairGamesQueryRepository {
     @InjectRepository(PairGame)
     private readonly pairGameRepository: Repository<PairGame>,
   ) {}
-  async getMyGame(userId: string): Promise<PairGame> {
-    const statusCondition = {
-      status: In([GameStatusEnum.Active, GameStatusEnum.PendingSecondPlayer]),
-    };
-
-    const existGame: PairGame | null = await this.pairGameRepository.findOne({
-      where: [
-        {
-          ...statusCondition,
-          firstPlayerId: userId,
-        },
-        {
-          ...statusCondition,
-          secondPlayerId: userId,
-        },
-      ],
-    });
-
-    if (!existGame) {
-      throw new DomainException({
-        status: HttpStatus.NOT_FOUND,
-        errorsMessages: [
-          {
-            message: 'Game not found',
-            field: 'Game',
-          },
-        ],
-      });
-    }
-
-    return existGame;
-  }
-
   async getMyActiveOrPendingGame(playerId: string): Promise<PairGame> {
     const existGame: PairGame | null = await this.pairGameRepository.findOne({
       where: [
@@ -90,5 +60,36 @@ export class PairGamesQueryRepository {
     }
 
     return existGame;
+  }
+
+  async getUserGameHistory(
+    userId: string,
+    queryDto: UserGameHistoryQueryInputDto,
+  ) {
+    const [userGameHistory, totalCount] =
+      await this.pairGameRepository.findAndCount({
+        where: [
+          {
+            firstPlayerId: userId,
+          },
+          {
+            secondPlayerId: userId,
+          },
+        ],
+        skip: queryDto.calculateSkip(),
+        take: queryDto.pageSize,
+        order: {
+          [queryDto.sortBy]: queryDto.sortDirection,
+        },
+      });
+
+    // const items = userGameHistory.map(PairGameMapper.mapToView);
+    //
+    // return PaginatedViewDto.mapToView({
+    //   items,
+    //   totalCount,
+    //   page: queryDto.pageNumber,
+    //   size: queryDto.pageSize,
+    // });
   }
 }

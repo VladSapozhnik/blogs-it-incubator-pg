@@ -39,8 +39,6 @@ export class QuizQuestionsSaController {
   async GelAllQuestions(
     @Query() queryDto: GetQuizQuestionQueryInputDto,
   ): Promise<PaginatedViewDto<QuizQuestionMapper[]>> {
-    console.log(queryDto.sortBy, queryDto.sortDirection);
-
     return this.queryBus.execute<
       GetAllQuestionsQuery,
       PaginatedViewDto<QuizQuestionMapper[]>

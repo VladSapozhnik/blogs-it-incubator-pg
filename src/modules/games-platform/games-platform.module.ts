@@ -32,6 +32,9 @@ import { GetGameQueryHandler } from './pair-games/application/queries/get-game.q
 import { GetGameByIdQueryHandler } from './pair-games/application/queries/get-game-by-id.query';
 import { GetMyCurrentPairGameQueryHandler } from './pair-games/application/queries/get-my-current-pair-game.query';
 import { GetPlayerAnswerByIdQueryHandler } from './pair-games/application/queries/get-player-answer-by-id.query';
+import { GetUserGameHistoryQueryHandler } from './pair-games/application/queries/get-user-game-history.query';
+import { GetUserGameStatisticsQueryHandler } from './pair-games/application/queries/get-user-game-statistics.query';
+import { GameStatisticController } from './pair-games/game-statistic.controller';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -46,6 +49,8 @@ const useCases = [
   GetGameByIdQueryHandler,
   GetMyCurrentPairGameQueryHandler,
   GetPlayerAnswerByIdQueryHandler,
+  GetUserGameHistoryQueryHandler,
+  GetUserGameStatisticsQueryHandler,
 ];
 
 @Module({
@@ -58,7 +63,11 @@ const useCases = [
       PlayerAnswer,
     ]),
   ],
-  controllers: [QuizQuestionsSaController, PairGamesController],
+  controllers: [
+    QuizQuestionsSaController,
+    PairGamesController,
+    GameStatisticController,
+  ],
   providers: [
     ...useCases,
     QuizQuestionsService,

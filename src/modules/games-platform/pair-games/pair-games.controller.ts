@@ -7,6 +7,7 @@ import {
   UseGuards,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { SendNextAnswerDto } from './dto/send-next-answer.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -21,6 +22,8 @@ import { GetPlayerAnswerByIdQuery } from './application/queries/get-player-answe
 import { PlayerAnswersMapper } from './mappers/player-answers.mapper';
 import { PairGameMapper } from './mappers/pair-game.mapper';
 import { GetGameQuery } from './application/queries/get-game.query';
+import { GetUserGameHistoryQuery } from './application/queries/get-user-game-history.query';
+import { UserGameHistoryQueryInputDto } from './dto/user-game-history-query-input.dto';
 
 @Controller('pair-game-quiz/pairs')
 @UseGuards(JwtAuthGuard)
@@ -61,11 +64,20 @@ export class PairGamesController {
     );
   }
 
+  @Get('my')
+  GetUserGameHistory(
+    @User('userId') userId: string,
+    @Query() queryDto: UserGameHistoryQueryInputDto,
+  ) {
+    return this.queryBus.execute<GetUserGameHistoryQuery, void>(
+      new GetUserGameHistoryQuery(userId, queryDto),
+    );
+  }
+
   @Get('my-current')
   GetMyCurrentPairGame(
     @User('userId') userId: string,
   ): Promise<PairGameMapper> {
-    console.log(userId);
     return this.queryBus.execute<GetMyCurrentPairGameQuery, PairGameMapper>(
       new GetMyCurrentPairGameQuery(userId),
     );
