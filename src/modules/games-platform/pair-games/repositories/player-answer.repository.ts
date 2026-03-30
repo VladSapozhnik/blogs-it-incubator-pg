@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PlayerAnswer } from '../entities/player-answer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnswerStatusEnum } from '../enums/answer-status.enum';
@@ -17,7 +17,7 @@ export class PlayerAnswerRepository {
     return playerAnswer.id;
   }
 
-  async getAllPlayerAnswer(
+  async getPlayerAnswer(
     gameId: string,
     playerId: string,
   ): Promise<PlayerAnswer[]> {
@@ -58,7 +58,7 @@ export class PlayerAnswerRepository {
   }
 
   async hasCorrectAnswers(gameId: string, playerId: string): Promise<boolean> {
-    const count = await this.playerAnswerRepository.count({
+    const count: number = await this.playerAnswerRepository.count({
       where: {
         gameId,
         playerId,

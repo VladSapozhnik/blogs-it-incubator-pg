@@ -13,11 +13,8 @@ export class PairGamesService {
     private readonly playerProgressRepository: PlayerProgressRepository,
   ) {}
   async finishGameAndAssignBonus(game: PairGame) {
-    // 1. Атомарная проверка: если игра уже Finished, выходим
-    // (Это защитит от двойного вызова из UseCase)
     if (game.status === GameStatusEnum.Finished) return;
 
-    // 2. Достаем ПЯТЫЕ ответы (используй тот метод с skip: 4, который мы обсудили)
     const fifthP1 = await this.playerAnswerRepository.getFifthAnswer(
       game.id,
       game.firstPlayerId,
@@ -28,18 +25,17 @@ export class PairGamesService {
     );
 
     if (fifthP1 && fifthP2) {
-      // Сравниваем время завершения
-      const p1FinishedFirst =
+      const p1FinishedFirst: boolean =
         fifthP1.addedAt.getTime() < fifthP2.addedAt.getTime();
-      const fastPlayerId = p1FinishedFirst
+      const fastPlayerId: string = p1FinishedFirst
         ? game.firstPlayerId
         : game.secondPlayerId!;
 
-      // 3. Проверка на наличие правильных ответов
-      const hasCorrect = await this.playerAnswerRepository.hasCorrectAnswers(
-        game.id,
-        fastPlayerId,
-      );
+      const hasCorrect: boolean =
+        await this.playerAnswerRepository.hasCorrectAnswers(
+          game.id,
+          fastPlayerId,
+        );
 
       if (hasCorrect) {
         const progress = await this.playerProgressRepository.getPlayerProgress(
@@ -47,16 +43,14 @@ export class PairGamesService {
           fastPlayerId,
         );
         if (progress) {
-          progress.score += 1; // +1 бонусный балл
+          progress.incrementScore();
           await this.playerProgressRepository.savePlayerProgress(progress);
         }
       }
     }
 
-    // 4. ЗАКРЫВАЕМ ИГРУ
     game.finishGame();
 
-    // Сохраняем статус в базу
     await this.pairGameRepository.savePairGame(game);
   }
 }
