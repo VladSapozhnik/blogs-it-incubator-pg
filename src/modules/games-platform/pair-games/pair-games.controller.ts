@@ -65,7 +65,7 @@ export class PairGamesController {
   }
 
   @Get('my')
-  GetUserGameHistory(
+  async GetUserGameHistory(
     @User('userId') userId: string,
     @Query() queryDto: UserGameHistoryQueryInputDto,
   ) {
@@ -75,7 +75,7 @@ export class PairGamesController {
   }
 
   @Get('my-current')
-  GetMyCurrentPairGame(
+  async GetMyCurrentPairGame(
     @User('userId') userId: string,
   ): Promise<PairGameMapper> {
     return this.queryBus.execute<GetMyCurrentPairGameQuery, PairGameMapper>(
@@ -84,7 +84,10 @@ export class PairGamesController {
   }
 
   @Get(':id')
-  getGameById(@Param() params: WithIdDto, @User('userId') userId: string) {
+  async getGameById(
+    @Param() params: WithIdDto,
+    @User('userId') userId: string,
+  ) {
     const { id } = params;
     return this.queryBus.execute<GetGameByIdQuery, PairGameMapper>(
       new GetGameByIdQuery(userId, id),

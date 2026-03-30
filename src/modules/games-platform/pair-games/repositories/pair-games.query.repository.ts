@@ -5,8 +5,7 @@ import { Repository } from 'typeorm';
 import { GameStatusEnum } from '../enums/game-status.enum';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { UserGameHistoryQueryInputDto } from '../dto/user-game-history-query-input.dto';
-import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
-import { PairGameMapper } from '../mappers/pair-game.mapper';
+import { StatisticsMapper } from '../mappers/statistics.mapper';
 
 @Injectable()
 export class PairGamesQueryRepository {
@@ -91,5 +90,29 @@ export class PairGamesQueryRepository {
     //   page: queryDto.pageNumber,
     //   size: queryDto.pageSize,
     // });
+  }
+
+  async getUserGameStatistics(userId: string): Promise<StatisticsMapper> {
+    const result = (await this.pairGameRepository
+      .createQueryBuilder('pg')
+      .innerJoin('pg.playerProgresses', 'pp')
+      .innerJoin(
+        'pg.playerProgresses',
+        'opp',
+        'opp."gameId" = pp."gameId" AND opp."playerId" != pp."playerId"',
+      )
+      .select([
+        `COUNT(DISTINCT pg.id)::int AS "gamesCount"`,
+        `COALESCE(SUM(pp.score), 0)::int AS "sumScore"`,
+        `COALESCE(AVG(pp.score), 0)::float AS "avgScores"`,
+        `COUNT(*) FILTER (WHERE pp.score > opp.score)::int AS "winsCount"`,
+        `COUNT(*) FILTER (WHERE pp.score < opp.score)::int AS "lossesCount"`,
+        `COUNT(*) FILTER (WHERE pp.score = opp.score)::int AS "drawsCount"`,
+      ])
+      .where(`pp."playerId" = :playerId`, { playerId: userId })
+      .andWhere(`pg.status = :status`, { status: GameStatusEnum.Finished })
+      .getRawOne()) as StatisticsMapper;
+
+    return StatisticsMapper.mapToView(result);
   }
 }
