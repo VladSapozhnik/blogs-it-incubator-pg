@@ -3,7 +3,7 @@ import { ProfileMapper } from '../../auth/mappers/profile.mapper';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserLoginMapper } from '../mappers/user-login.mapper';
 
 @Injectable()
@@ -34,5 +34,12 @@ export class UsersQueryExternalRepository {
     const user: User | null = await this.userRepository.findOneBy({ id });
 
     return user ? UserLoginMapper.mapToView(user) : null;
+  }
+  async getUsersLoginById(userIds: string[]): Promise<UserLoginMapper[]> {
+    const users: User[] = await this.userRepository.findBy({
+      id: In(userIds),
+    });
+
+    return users.map(UserLoginMapper.mapToView);
   }
 }

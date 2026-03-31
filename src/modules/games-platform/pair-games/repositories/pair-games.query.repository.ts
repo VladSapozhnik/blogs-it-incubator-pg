@@ -6,6 +6,7 @@ import { GameStatusEnum } from '../enums/game-status.enum';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { UserGameHistoryQueryInputDto } from '../dto/user-game-history-query-input.dto';
 import { StatisticsMapper } from '../mappers/statistics.mapper';
+import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
 
 @Injectable()
 export class PairGamesQueryRepository {
@@ -61,35 +62,25 @@ export class PairGamesQueryRepository {
     return existGame;
   }
 
-  async getUserGameHistory(
+  async getUserGameHistoryAndTotal(
     userId: string,
     queryDto: UserGameHistoryQueryInputDto,
   ) {
-    const [userGameHistory, totalCount] =
-      await this.pairGameRepository.findAndCount({
-        where: [
-          {
-            firstPlayerId: userId,
-          },
-          {
-            secondPlayerId: userId,
-          },
-        ],
-        skip: queryDto.calculateSkip(),
-        take: queryDto.pageSize,
-        order: {
-          [queryDto.sortBy]: queryDto.sortDirection,
+    return this.pairGameRepository.findAndCount({
+      where: [
+        {
+          firstPlayerId: userId,
         },
-      });
-
-    // const items = userGameHistory.map(PairGameMapper.mapToView);
-    //
-    // return PaginatedViewDto.mapToView({
-    //   items,
-    //   totalCount,
-    //   page: queryDto.pageNumber,
-    //   size: queryDto.pageSize,
-    // });
+        {
+          secondPlayerId: userId,
+        },
+      ],
+      skip: queryDto.calculateSkip(),
+      take: queryDto.pageSize,
+      order: {
+        [queryDto.sortBy]: queryDto.sortDirection,
+      },
+    });
   }
 
   async getUserGameStatistics(userId: string): Promise<StatisticsMapper> {

@@ -32,13 +32,20 @@ export class PlayerAnswerQueryRepository {
     return PlayerAnswersMapper.mapToView(playerAnswer);
   }
 
-  async getAllPlayerAnswer(
+  async getAnswerByPlayerId(
     questionsIds: string[],
     gameId: string,
     playerId: string,
   ): Promise<PlayerAnswer[]> {
     return this.playerAnswerRepository.find({
       where: { questionId: In(questionsIds), gameId, playerId },
+      order: { addedAt: 'ASC' },
+    });
+  }
+
+  async getAnswersByIds(gameIds: string[]): Promise<PlayerAnswer[]> {
+    return await this.playerAnswerRepository.find({
+      where: { gameId: In(gameIds) },
       order: { addedAt: 'ASC' },
     });
   }

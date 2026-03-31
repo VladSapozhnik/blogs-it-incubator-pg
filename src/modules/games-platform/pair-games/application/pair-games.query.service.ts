@@ -26,14 +26,14 @@ export class PairGamesQueryService {
       );
 
     const firstAnswers: PlayerAnswer[] =
-      await this.playerAnswerQueryRepository.getAllPlayerAnswer(
+      await this.playerAnswerQueryRepository.getAnswerByPlayerId(
         currentGame.questionsIds,
         currentGame.id,
         currentGame.firstPlayerId,
       );
 
     const secondAnswers: PlayerAnswer[] = currentGame.secondPlayerId
-      ? await this.playerAnswerQueryRepository.getAllPlayerAnswer(
+      ? await this.playerAnswerQueryRepository.getAnswerByPlayerId(
           currentGame.questionsIds,
           currentGame.id,
           currentGame.secondPlayerId,
