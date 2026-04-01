@@ -5,6 +5,5 @@ import { UserGameHistorySortFieldEnum } from '../enums/user-game-history-sort-fi
 
 export class UserGameHistoryQueryInputDto extends BaseQueryParams {
   @IsOptional()
-  sortBy: UserGameHistorySortFieldEnum =
-    UserGameHistorySortFieldEnum.PairCreatedDate;
+  sortBy: UserGameHistorySortFieldEnum;
 }

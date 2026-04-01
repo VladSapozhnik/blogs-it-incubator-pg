@@ -72,10 +72,10 @@ export class GetUserGameHistoryQueryHandler implements ICommandHandler<GetUserGa
         game.questionsIds.includes(q.id),
       );
 
-      const firstAnswers = answers.filter(
+      const firstAnswers: PlayerAnswer[] = answers.filter(
         (a) => a.gameId === game.id && a.playerId === game.firstPlayerId,
       );
-      const secondAnswers = game.secondPlayerId
+      const secondAnswers: PlayerAnswer[] = game.secondPlayerId
         ? answers.filter(
             (a) => a.gameId === game.id && a.playerId === game.secondPlayerId,
           )

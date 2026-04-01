@@ -1,3 +1,3 @@
 export enum UserGameHistorySortFieldEnum {
-  PairCreatedDate = 'pairCreatedDate',
+  Status = 'status',
 }

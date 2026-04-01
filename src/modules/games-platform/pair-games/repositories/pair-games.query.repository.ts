@@ -6,7 +6,7 @@ import { GameStatusEnum } from '../enums/game-status.enum';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { UserGameHistoryQueryInputDto } from '../dto/user-game-history-query-input.dto';
 import { StatisticsMapper } from '../mappers/statistics.mapper';
-import { WithTotalCountType } from '../../../../core/types/with-total-count.type';
+import { SortDirection } from '../../../../core/dto/base.query-params.input.dto';
 
 @Injectable()
 export class PairGamesQueryRepository {
@@ -79,6 +79,7 @@ export class PairGamesQueryRepository {
       take: queryDto.pageSize,
       order: {
         [queryDto.sortBy]: queryDto.sortDirection,
+        pairCreatedDate: SortDirection.Desc,
       },
     });
   }
