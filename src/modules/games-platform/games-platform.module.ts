@@ -35,6 +35,7 @@ import { GetPlayerAnswerByIdQueryHandler } from './pair-games/application/querie
 import { GetUserGameHistoryQueryHandler } from './pair-games/application/queries/get-user-game-history.query';
 import { GetUserGameStatisticsQueryHandler } from './pair-games/application/queries/get-user-game-statistics.query';
 import { GameStatisticController } from './pair-games/game-statistic.controller';
+import { GetTopUsersQueryHandler } from './pair-games/application/queries/get-top-users.query';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -51,6 +52,7 @@ const useCases = [
   GetPlayerAnswerByIdQueryHandler,
   GetUserGameHistoryQueryHandler,
   GetUserGameStatisticsQueryHandler,
+  GetTopUsersQueryHandler,
 ];
 
 @Module({

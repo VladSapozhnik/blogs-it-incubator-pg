@@ -20,18 +20,6 @@ export class PostsQueryRepository {
     queryDto: GetPostsQueryParamsDto,
     userId: string | null,
   ) {
-    // const subQueryLikes = this.postLikesRepository
-    //   .createQueryBuilder('postLikes')
-    //   .select('COUNT(*)::INT')
-    //   .where('postLikes."postId" = p.id')
-    //   .andWhere('status = :status', { status: LikeStatusEnum.Like });
-    //
-    // const subQueryDislikes = this.postLikesRepository
-    //   .createQueryBuilder('postLikes')
-    //   .select('COUNT(*)::INT')
-    //   .where('postLikes."postId" = p.id')
-    //   .andWhere('status = :status', { status: LikeStatusEnum.Dislike });
-
     const query = this.postRepository
       .createQueryBuilder('p')
       .innerJoin('p.blog', 'b')

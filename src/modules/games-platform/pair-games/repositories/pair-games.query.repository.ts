@@ -7,6 +7,8 @@ import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { UserGameHistoryQueryInputDto } from '../dto/user-game-history-query-input.dto';
 import { StatisticsMapper } from '../mappers/statistics.mapper';
 import { SortDirection } from '../../../../core/dto/base.query-params.input.dto';
+import { TopUsersQueryInputDto } from '../dto/top-users-query-input.dto';
+import { PostWithStatusRowType } from '../../../bloggers-platform/posts/types/post-with-status-row.type';
 
 @Injectable()
 export class PairGamesQueryRepository {
@@ -106,5 +108,40 @@ export class PairGamesQueryRepository {
       .getRawOne()) as StatisticsMapper;
 
     return StatisticsMapper.mapToView(result);
+  }
+
+  async getTopUsers(queryDto: TopUsersQueryInputDto) {
+    const sort = queryDto.parseSortParams();
+
+    const query = this.pairGameRepository
+      .createQueryBuilder('pg')
+      .innerJoin('pg.playerProgresses', 'pp')
+      .innerJoin('users', 'u', 'u.id = pp.playerId')
+      .innerJoin(
+        'pg.playerProgresses',
+        'opp',
+        'opp."gameId" = pp."gameId" AND opp."playerId" != pp."playerId"',
+      )
+      .select([
+        'u.id AS "userId"',
+        'u.login AS "userLogin"',
+        `COUNT(DISTINCT pg.id)::int AS "gamesCount"`,
+        `COALESCE(SUM(pp.score), 0)::int AS "sumScore"`,
+        `COALESCE(AVG(pp.score), 0)::float AS "avgScores"`,
+        `COUNT(*) FILTER (WHERE pp.score > opp.score)::int AS "winsCount"`,
+        `COUNT(*) FILTER (WHERE pp.score < opp.score)::int AS "lossesCount"`,
+        `COUNT(*) FILTER (WHERE pp.score = opp.score)::int AS "drawsCount"`,
+      ])
+      .andWhere(`pg.status = :status`, { status: GameStatusEnum.Finished })
+      .groupBy('u.id')
+      .addGroupBy('u.login');
+
+    const totalCount: number = await query.clone().getCount();
+
+    const topUsers: PostWithStatusRowType[] = await query
+      .orderBy(sort)
+      .limit(queryDto.pageSize)
+      .offset(queryDto.calculateSkip())
+      .getRawMany();
   }
 }
