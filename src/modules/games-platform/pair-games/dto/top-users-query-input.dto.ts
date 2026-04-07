@@ -6,16 +6,13 @@ import {
 } from '../../../../core/dto/base.query-params.input.dto';
 import { Transform, TransformFnParams } from 'class-transformer';
 import { TopUsersEnum } from '../enums/top-users.enum';
-import { OmitType } from '@nestjs/mapped-types';
 
 const DEFAULT_SORT: string[] = [
   `${TopUsersEnum.AvgScores} ${SortDirection.Desc}`,
   `${TopUsersEnum.SumScore} ${SortDirection.Desc}`,
 ];
 
-export class TopUsersQueryInputDto extends OmitType(BaseQueryParams, [
-  'sortDirection',
-] as const) {
+export class TopUsersQueryInputDto extends BaseQueryParams {
   @IsOptional()
   @Transform(({ value }: TransformFnParams): string[] => {
     if (!value) {
