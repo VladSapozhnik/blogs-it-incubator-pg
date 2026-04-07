@@ -139,7 +139,12 @@ export class PairGamesQueryRepository {
 
     // .select('COUNT(DISTINCT u.id)', 'count')
 
-    const totalCount: number = await query.clone().getCount();
+    const totalCountRaw = (await query
+      .clone()
+      .select('COALESCE(COUNT(DISTINCT u.id), 0)::int', 'count')
+      .getRawOne()) as { count: string };
+
+    const totalCount: number = Number(totalCountRaw?.count ?? 0);
 
     const topUsers: TopUsersRowType[] = await query
       .orderBy(sort)
