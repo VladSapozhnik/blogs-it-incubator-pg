@@ -142,7 +142,7 @@ export class PairGamesQueryRepository {
     const totalCountRaw = (await query
       .clone()
       .groupBy()
-      .select('COALESCE(COUNT(DISTINCT u.id), 0)::int', 'count')
+      .select('COUNT(DISTINCT u.id)::int', 'count')
       .getRawOne()) as { count: string };
 
     const totalCount: number = Number(totalCountRaw?.count ?? 0);
