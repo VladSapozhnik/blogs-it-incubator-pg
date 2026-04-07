@@ -9,6 +9,7 @@ import { StatisticsMapper } from '../mappers/statistics.mapper';
 import { SortDirection } from '../../../../core/dto/base.query-params.input.dto';
 import { TopUsersQueryInputDto } from '../dto/top-users-query-input.dto';
 import { PostWithStatusRowType } from '../../../bloggers-platform/posts/types/post-with-status-row.type';
+import { TopUsersRowType } from '../types/top-users-row.type';
 
 @Injectable()
 export class PairGamesQueryRepository {
@@ -136,12 +137,19 @@ export class PairGamesQueryRepository {
       .groupBy('u.id')
       .addGroupBy('u.login');
 
+    // .select('COUNT(DISTINCT u.id)', 'count')
+
     const totalCount: number = await query.clone().getCount();
 
-    const topUsers: PostWithStatusRowType[] = await query
+    const topUsers: TopUsersRowType[] = await query
       .orderBy(sort)
       .limit(queryDto.pageSize)
       .offset(queryDto.calculateSkip())
       .getRawMany();
+
+    return {
+      topUsers,
+      totalCount,
+    };
   }
 }

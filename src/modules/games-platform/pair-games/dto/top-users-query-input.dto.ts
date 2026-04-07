@@ -43,7 +43,7 @@ export class TopUsersQueryInputDto extends OmitType(BaseQueryParams, [
 
       const upperDir: string = direction?.toUpperCase();
 
-      acc[field] = Object.values(SortDirection).includes(
+      acc[`"${field}"`] = Object.values(SortDirection).includes(
         upperDir as SortDirection,
       )
         ? (upperDir as SortDirection)

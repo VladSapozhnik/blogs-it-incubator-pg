@@ -1,3 +1,5 @@
+import { TopUsersRowType } from '../types/top-users-row.type';
+
 export class TopUsersMapper {
   sumScore: number;
   avgScores: number;
@@ -10,7 +12,7 @@ export class TopUsersMapper {
     login: string;
   };
 
-  static mapToView(result: TopUsersMapper): TopUsersMapper {
+  static mapToView(this: void, result: TopUsersRowType): TopUsersMapper {
     const dto = new TopUsersMapper();
 
     dto.sumScore = Number(result.sumScore);
@@ -20,10 +22,10 @@ export class TopUsersMapper {
     dto.lossesCount = Number(result.lossesCount);
     dto.drawsCount = Number(result.drawsCount);
 
-    // dto.player = {
-    //   id: result.player.userId, // убедись, что в .select() алиас такой же
-    //   login: result.player.userLogin, // и здесь тоже
-    // };
+    dto.player = {
+      id: result.userId,
+      login: result.userLogin,
+    };
 
     return dto;
   }

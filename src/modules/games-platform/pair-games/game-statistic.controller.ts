@@ -6,6 +6,8 @@ import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { StatisticsMapper } from './mappers/statistics.mapper';
 import { GetTopUsersQuery } from './application/queries/get-top-users.query';
 import { TopUsersQueryInputDto } from './dto/top-users-query-input.dto';
+import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
+import { TopUsersMapper } from './mappers/top-users.mapper';
 
 @Controller('pair-game-quiz/users')
 export class GameStatisticController {
@@ -22,9 +24,12 @@ export class GameStatisticController {
   }
 
   @Get('top')
-  async getTopUsers(@Query() queryDto: TopUsersQueryInputDto) {
-    return this.queryBus.execute<GetTopUsersQuery, void>(
-      new GetTopUsersQuery(queryDto),
-    );
+  async getTopUsers(
+    @Query() queryDto: TopUsersQueryInputDto,
+  ): Promise<PaginatedViewDto<TopUsersMapper[]>> {
+    return this.queryBus.execute<
+      GetTopUsersQuery,
+      PaginatedViewDto<TopUsersMapper[]>
+    >(new GetTopUsersQuery(queryDto));
   }
 }
