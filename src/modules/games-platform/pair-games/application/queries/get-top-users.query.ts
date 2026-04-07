@@ -17,23 +17,16 @@ export class GetTopUsersQueryHandler implements IQueryHandler<GetTopUsersQuery> 
   async execute({
     queryDto,
   }: GetTopUsersQuery): Promise<PaginatedViewDto<TopUsersMapper[]>> {
-    try {
-      const { topUsers, totalCount } =
-        await this.pairGamesQueryRepository.getTopUsers(queryDto);
+    const { topUsers, totalCount } =
+      await this.pairGamesQueryRepository.getTopUsers(queryDto);
 
-      const items: TopUsersMapper[] = topUsers.map(TopUsersMapper.mapToView);
+    const items: TopUsersMapper[] = topUsers.map(TopUsersMapper.mapToView);
 
-      return PaginatedViewDto.mapToView({
-        items,
-        totalCount,
-        page: queryDto.pageNumber,
-        size: queryDto.pageSize,
-      });
-    } catch (e) {
-      console.error('!!! ТЕСТЫ УПАЛИ ТУТ:', e.message);
-      console.error('SQL:', e.query); // Выведет сам запрос
-      console.error('PARAMETERS:', e.parameters); // Выведет параметры (status и т.д.)
-      throw e; // Пробрасываем 500 дальше, чтобы тест зафиксировал падение
-    }
+    return PaginatedViewDto.mapToView({
+      items,
+      totalCount,
+      page: queryDto.pageNumber,
+      size: queryDto.pageSize,
+    });
   }
 }
