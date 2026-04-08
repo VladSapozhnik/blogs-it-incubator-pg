@@ -26,7 +26,7 @@ export class PairGame {
   @Column({ type: 'jsonb', default: () => "'[]'" })
   questionsIds: string[];
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: GameStatusEnum,
     default: GameStatusEnum.PendingSecondPlayer,
   })
