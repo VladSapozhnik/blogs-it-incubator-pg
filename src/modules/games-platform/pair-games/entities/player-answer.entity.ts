@@ -26,7 +26,11 @@ export class PlayerAnswer {
   question: QuizQuestion;
   @Column({ type: 'uuid' })
   questionId: string;
-  @Column({ type: 'enum', enum: AnswerStatusEnum })
+  @Column({
+    type: 'enum',
+    enum: AnswerStatusEnum,
+    default: AnswerStatusEnum.Incorrect,
+  })
   answerStatus: AnswerStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })
   addedAt: Date;
