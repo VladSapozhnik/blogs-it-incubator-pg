@@ -8,6 +8,57 @@ import { deleteAllData } from './helpers/delete-all-data';
 import { constantHelper } from './helpers/constant.helper';
 import { errorMessageHelper } from './helpers/error-message.helper';
 
+function getGameDate(
+  numberOfPlayers: number = 1,
+  user1Login: string,
+  user2Login: string | null = null,
+  finishGame: boolean = false,
+) {
+  if (numberOfPlayers === 1) {
+    return {
+      id: expect.any(String) as string,
+      firstPlayerProgress: {
+        answers: expect.any(Array) as [],
+        player: {
+          id: expect.any(String) as string,
+          login: user1Login,
+        },
+        score: expect.any(Number) as number,
+      },
+      secondPlayerProgress: null,
+      questions: null,
+      status: 'PendingSecondPlayer',
+      pairCreatedDate: expect.any(String) as string,
+      startGameDate: null,
+      finishGameDate: null,
+    };
+  }
+  return {
+    id: expect.any(String) as string,
+    firstPlayerProgress: {
+      answers: expect.any(Array) as [],
+      player: {
+        id: expect.any(String) as string,
+        login: user1Login,
+      },
+      score: expect.any(Number) as number,
+    },
+    secondPlayerProgress: {
+      answers: expect.any(Array) as [],
+      player: {
+        id: expect.any(String) as string,
+        login: user2Login,
+      },
+      score: expect.any(Number) as number,
+    },
+    questions: expect.any(Array) as [],
+    status: 'PendingSecondPlayer',
+    pairCreatedDate: expect.any(String) as string,
+    startGameDate: expect.any(String) as string,
+    finishGameDate: finishGame ? (expect.any(String) as string) : null,
+  };
+}
+
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;
   let token: string;
@@ -64,6 +115,7 @@ describe('AuthController (e2e)', () => {
     for (const item of constantHelper.questions) {
       await request(app.getHttpServer())
         .post('/sa/quiz/questions')
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
         .send(item)
         .expect(HttpStatus.CREATED);
     }
@@ -83,11 +135,37 @@ describe('AuthController (e2e)', () => {
 
   it('pair-game-quiz/pairs/connection (POST) should return', async () => {
     const response = await request(app.getHttpServer())
-      .post('pair-game-quiz/pairs/connection')
+      .post('/pair-game-quiz/pairs/connection')
+      .set('Authorization', `Bearer ${constantHelper.invalidToken}`)
+      .expect(HttpStatus.UNAUTHORIZED);
+
+    expect(response.body).toEqual(errorMessageHelper());
+  });
+
+  it('pair-game-quiz/pairs/connection (POST) should return', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/pair-game-quiz/pairs/connection')
       .set('Authorization', `Bearer ${token}`)
       .expect(HttpStatus.OK);
 
-    console.log(response.body);
+    expect(response.body).toEqual(
+      getGameDate(1, constantHelper.users[0].login),
+    );
+  });
+
+  it('pair-game-quiz/pairs/connection (POST) should return', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/pair-game-quiz/pairs/connection')
+      .set('Authorization', `Bearer ${tokenUser2}`)
+      .expect(HttpStatus.OK);
+
+    // expect(response.body).toEqual(
+    //   getGameDate(
+    //     2,
+    //     constantHelper.users[0].login,
+    //     constantHelper.users[1].login,
+    //   ),
+    // );
   });
 
   // it('/auth/login (POST) should return access token for valid credentials', async () => {

@@ -35,7 +35,7 @@ export class CoreConfig {
     message:
       'Set Env variable THROTTLE_ON, available values: true, false, 0, 1',
   })
-  isThrottleEnabled: boolean;
+  isThrottleOn: boolean;
   // # время для лимита запросов
   @IsNotEmpty({ message: 'Set env variable THROTTLE_TTL' })
   @IsNumber({}, { message: 'Set env variable THROTTLE_TTL as number' })
@@ -56,7 +56,7 @@ export class CoreConfig {
 
     this.env = this.configService.get('NODE_ENV') as string;
 
-    this.isThrottleEnabled = configValidationUtility.convertToBoolean(
+    this.isThrottleOn = configValidationUtility.convertToBoolean(
       this.configService.get('THROTTLE_ON') as string,
     ) as boolean;
 

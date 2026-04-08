@@ -35,7 +35,8 @@ import { GamesPlatformModule } from './modules/games-platform/games-platform.mod
     ThrottlerModule.forRootAsync({
       useFactory: (coreConfig: CoreConfig) => {
         return {
-          disabled: !coreConfig.isThrottleEnabled,
+          skipIf: (): boolean => !coreConfig.isThrottleOn,
+
           throttlers: [
             {
               ttl: coreConfig.throttleTtl,

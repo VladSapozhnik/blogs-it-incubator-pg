@@ -37,25 +37,32 @@ export const constantHelper = {
     },
   ],
 
+  questionBad: [
+    {
+      body: 'string',
+      correctAnswers: ['string'],
+    },
+  ],
+
   questions: [
     {
-      body: 'string1',
+      body: 'stringStr1',
       correctAnswers: ['string1', 'stringOne'],
     },
     {
-      body: 'string2',
+      body: 'stringStr2',
       correctAnswers: ['string2', 'stringTwo'],
     },
     {
-      body: 'string3',
+      body: 'stringStr3',
       correctAnswers: ['string3', 'stringThree'],
     },
     {
-      body: 'string4',
+      body: 'stringStr4',
       correctAnswers: ['string4', 'stringFour'],
     },
     {
-      body: 'string5',
+      body: 'stringStr5',
       correctAnswers: ['string5', 'stringFive'],
     },
   ],
