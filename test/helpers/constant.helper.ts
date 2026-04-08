@@ -36,4 +36,27 @@ export const constantHelper = {
       password: 'string4',
     },
   ],
+
+  questions: [
+    {
+      body: 'string1',
+      correctAnswers: ['string1', 'stringOne'],
+    },
+    {
+      body: 'string2',
+      correctAnswers: ['string2', 'stringTwo'],
+    },
+    {
+      body: 'string3',
+      correctAnswers: ['string3', 'stringThree'],
+    },
+    {
+      body: 'string4',
+      correctAnswers: ['string4', 'stringFour'],
+    },
+    {
+      body: 'string5',
+      correctAnswers: ['string5', 'stringFive'],
+    },
+  ],
 };

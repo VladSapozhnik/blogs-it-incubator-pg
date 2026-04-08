@@ -22,6 +22,7 @@ import { GamesPlatformModule } from './modules/games-platform/games-platform.mod
         synchronize: true,
         // schema: 'public',
         logging: true,
+        // ssl: false,
         ssl:
           coreConfig.env !== 'testing'
             ? {
