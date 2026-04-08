@@ -27,7 +27,7 @@ export class PlayerAnswer {
   @Column({ type: 'uuid' })
   questionId: string;
   @Column({
-    type: 'simple-enum',
+    type: 'varchar',
     enum: AnswerStatusEnum,
   })
   answerStatus: AnswerStatusEnum;
