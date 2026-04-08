@@ -27,8 +27,9 @@ export class PlayerAnswer {
   @Column({ type: 'uuid' })
   questionId: string;
   @Column({
-    type: 'varchar',
+    type: 'simple-enum',
     enum: AnswerStatusEnum,
+    enumName: 'answer_status_enum',
   })
   answerStatus: AnswerStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })

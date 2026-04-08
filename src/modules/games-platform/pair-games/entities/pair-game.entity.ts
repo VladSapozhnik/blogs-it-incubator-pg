@@ -26,9 +26,10 @@ export class PairGame {
   @Column({ type: 'jsonb', default: () => "'[]'" })
   questionsIds: string[];
   @Column({
-    type: 'varchar',
+    type: 'simple-enum',
     enum: GameStatusEnum,
     default: GameStatusEnum.PendingSecondPlayer,
+    enumName: 'game_status_enum',
   })
   status: GameStatusEnum;
   @CreateDateColumn({ type: 'timestamp with time zone' })
