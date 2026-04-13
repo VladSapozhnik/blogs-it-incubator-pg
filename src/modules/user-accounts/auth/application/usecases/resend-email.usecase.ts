@@ -1,7 +1,5 @@
 import { add } from 'date-fns/add';
 import { generateId } from '../../../../../core/helpers/generate-id';
-import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { HttpStatus } from '@nestjs/common';
 import { emailExamples } from '../../../../../core/adapters/email.examples';
 import { UsersExternalRepository } from '../../../users/repositories/users.external.repository';
 import { EmailAdapter } from '../../../../../core/adapters/email.adapter';

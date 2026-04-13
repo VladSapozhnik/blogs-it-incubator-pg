@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PairGame } from '../entities/pair-game.entity';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, In, LessThanOrEqual, Repository } from 'typeorm';
 import { GameStatusEnum } from '../enums/game-status.enum';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
@@ -76,6 +76,15 @@ export class PairGamesRepository {
     }
 
     return existGame;
+  }
+
+  async findExpiredActiveGames(): Promise<PairGame[]> {
+    return this.pairGameRepository.find({
+      where: {
+        status: GameStatusEnum.Active,
+        finishGameDate: LessThanOrEqual(new Date()),
+      },
+    });
   }
 
   async getGameWithAllData(userId: string) {

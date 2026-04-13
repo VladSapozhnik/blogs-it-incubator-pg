@@ -36,6 +36,7 @@ import { GetUserGameHistoryQueryHandler } from './pair-games/application/queries
 import { GetUserGameStatisticsQueryHandler } from './pair-games/application/queries/get-user-game-statistics.query';
 import { GameStatisticController } from './pair-games/game-statistic.controller';
 import { GetTopUsersQueryHandler } from './pair-games/application/queries/get-top-users.query';
+import { PairGamesCronService } from './pair-games/application/pair-games.cron.service';
 
 const useCases = [
   CreateQuestionUseCase,
@@ -77,6 +78,7 @@ const useCases = [
     QuizQuestionQueryRepository,
     QuizQuestionQueryExternalRepository,
     PairGamesService,
+    PairGamesCronService,
     PairGamesQueryService,
     PlayerAnswerService,
     PairGamesQueryRepository,

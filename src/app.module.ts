@@ -10,10 +10,12 @@ import { TestingModule } from './modules/testing/testing.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
 import { GamesPlatformModule } from './modules/games-platform/games-platform.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     configModule,
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       useFactory: (coreConfig: CoreConfig) => ({
         type: 'postgres',

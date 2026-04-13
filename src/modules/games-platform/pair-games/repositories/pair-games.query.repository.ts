@@ -8,7 +8,6 @@ import { UserGameHistoryQueryInputDto } from '../dto/user-game-history-query-inp
 import { StatisticsMapper } from '../mappers/statistics.mapper';
 import { SortDirection } from '../../../../core/dto/base.query-params.input.dto';
 import { TopUsersQueryInputDto } from '../dto/top-users-query-input.dto';
-import { PostWithStatusRowType } from '../../../bloggers-platform/posts/types/post-with-status-row.type';
 import { TopUsersRowType } from '../types/top-users-row.type';
 
 @Injectable()

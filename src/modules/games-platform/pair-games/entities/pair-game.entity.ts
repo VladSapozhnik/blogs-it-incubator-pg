@@ -10,6 +10,7 @@ import {
 import { User } from '../../../user-accounts/users/entities/user.entity';
 import { PlayerAnswer } from './player-answer.entity';
 import { PlayerProgress } from './player-progress.entity';
+import { addSeconds } from 'date-fns/addSeconds';
 
 @Entity('pair_games')
 export class PairGame {
@@ -58,6 +59,12 @@ export class PairGame {
   addQuestionsIds(questionIds: string[]) {
     this.questionsIds = questionIds;
   }
+
+  setAnswerDeadline() {
+    // ANSWER_DEADLINE_SECONDS;
+    this.finishGameDate = addSeconds(new Date(), 10);
+  }
+
   finishGame() {
     this.finishGameDate = new Date();
     this.status = GameStatusEnum.Finished;
