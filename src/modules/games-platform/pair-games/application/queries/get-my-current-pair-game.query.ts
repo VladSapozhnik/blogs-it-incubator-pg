@@ -39,7 +39,9 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
     ) {
       await this.pairGamesService.finishGameAndAssignBonus(game);
 
-      game = await this.pairGamesQueryRepository.getGameById(game.id);
+      game = await this.pairGamesQueryRepository.getMyActiveOrPendingGame(
+        game.id,
+      );
     }
 
     return this.pairGameQueryService.getPairGameViewData(game);
