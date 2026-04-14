@@ -59,6 +59,10 @@ export class PairGamesService {
   async finishGameAndAssignBonus(game: PairGame) {
     if (game.status === GameStatusEnum.Finished) return;
 
+    game.finishGame();
+
+    await this.pairGameRepository.savePairGame(game);
+
     const fifthP1: PlayerAnswer | null =
       await this.playerAnswerRepository.getFifthAnswer(
         game.id,
@@ -77,9 +81,9 @@ export class PairGamesService {
         fifthP1.addedAt.getTime() < fifthP2.addedAt.getTime()
           ? game.firstPlayerId
           : game.secondPlayerId!;
-    } else if (fifthP1 && game.expiredActiveGame) {
+    } else if (fifthP1 && !fifthP2) {
       fastPlayerId = game.firstPlayerId;
-    } else if (fifthP2 && game.expiredActiveGame) {
+    } else if (fifthP2 && !fifthP1) {
       fastPlayerId = game.secondPlayerId;
     }
 
@@ -102,9 +106,5 @@ export class PairGamesService {
         }
       }
     }
-
-    game.finishGame();
-
-    return this.pairGameRepository.savePairGame(game);
   }
 }
