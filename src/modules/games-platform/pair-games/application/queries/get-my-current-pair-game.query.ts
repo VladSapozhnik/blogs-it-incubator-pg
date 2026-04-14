@@ -18,6 +18,14 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
     private readonly pairGamesService: PairGamesService,
   ) {}
 
+  // async execute({
+  //   userId,
+  // }: GetMyCurrentPairGameQuery): Promise<PairGameMapper> {
+  //   const currentGame: PairGame =
+  //     await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
+  //
+  //   return this.pairGameQueryService.getPairGameViewData(currentGame);
+  // }
   async execute({
     userId,
   }: GetMyCurrentPairGameQuery): Promise<PairGameMapper> {
@@ -31,8 +39,7 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
     ) {
       await this.pairGamesService.finishGameAndAssignBonus(game);
 
-      game =
-        await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
+      game = await this.pairGamesQueryRepository.getGameById(game.id);
     }
 
     return this.pairGameQueryService.getPairGameViewData(game);

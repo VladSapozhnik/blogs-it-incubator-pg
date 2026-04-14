@@ -68,8 +68,7 @@ export class GetGameByIdQueryHandler implements IQueryHandler<GetGameByIdQuery> 
     ) {
       await this.pairGamesService.finishGameAndAssignBonus(game);
 
-      game =
-        await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
+      game = await this.pairGamesQueryRepository.getGameById(id);
     }
 
     return this.pairGameQueryService.getPairGameViewData(game);

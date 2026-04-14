@@ -105,6 +105,6 @@ export class PairGamesService {
 
     game.finishGame();
 
-    await this.pairGameRepository.savePairGame(game);
+    return this.pairGameRepository.savePairGame(game);
   }
 }
