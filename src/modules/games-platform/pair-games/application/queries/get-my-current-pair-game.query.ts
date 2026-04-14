@@ -5,6 +5,8 @@ import { PairGameMapper } from '../../mappers/pair-game.mapper';
 import { PairGamesQueryService } from '../pair-games.query.service';
 import { GameStatusEnum } from '../../enums/game-status.enum';
 import { PairGamesService } from '../pair-games.service';
+import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
+import { HttpStatus } from '@nestjs/common';
 
 export class GetMyCurrentPairGameQuery {
   constructor(public readonly userId: string) {}
@@ -29,7 +31,7 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
   async execute({
     userId,
   }: GetMyCurrentPairGameQuery): Promise<PairGameMapper> {
-    let game: PairGame =
+    const game: PairGame =
       await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
 
     if (
@@ -39,9 +41,15 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
     ) {
       await this.pairGamesService.finishGameAndAssignBonus(game);
 
-      game = await this.pairGamesQueryRepository.getMyActiveOrPendingGame(
-        game.id,
-      );
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Game not found',
+            field: 'Game',
+          },
+        ],
+      });
     }
 
     return this.pairGameQueryService.getPairGameViewData(game);
