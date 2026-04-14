@@ -12,18 +12,10 @@ export class PairGamesCronService {
   ) {}
   @Cron('* * * * * *')
   async finishExpiredGames(): Promise<void> {
-    const now = new Date();
-    const expiredGames =
+    const expiredGames: PairGame[] =
       await this.pairGamesRepository.findExpiredActiveGames();
 
-    console.log(
-      `[CRON] Found ${expiredGames.length} games to finish at ${now.toISOString()}`,
-    );
-
     for (const game of expiredGames) {
-      console.log(
-        `[CRON] Finishing game ${game.id}. Deadline was: ${game.finishGameDate?.toISOString()}`,
-      );
       await this.pairGamesService.finishGameAndAssignBonus(game);
     }
   }
