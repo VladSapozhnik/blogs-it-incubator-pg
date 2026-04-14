@@ -38,6 +38,8 @@ export class PairGame {
   startGameDate: Date | null;
   @Column({ type: 'timestamp with time zone', nullable: true })
   finishGameDate: Date | null;
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  expiredActiveGame: Date | null;
   @OneToMany(() => PlayerAnswer, (playerAnswer) => playerAnswer.game)
   playerAnswers: PlayerAnswer[];
   @OneToMany(() => PlayerProgress, (playerProgress) => playerProgress.game)
@@ -62,7 +64,7 @@ export class PairGame {
 
   setAnswerDeadline() {
     // ANSWER_DEADLINE_SECONDS;
-    this.finishGameDate = addSeconds(new Date(), 8);
+    this.expiredActiveGame = addSeconds(new Date(), 10);
   }
 
   finishGame() {

@@ -106,7 +106,7 @@ export class SendNextAnswerUseCase implements ICommandHandler<SendNextAnswerComm
     } else if (
       myCount >= questionsCount &&
       opponentCount < questionsCount &&
-      !activeGame.finishGameDate
+      !activeGame.expiredActiveGame
     ) {
       activeGame.setAnswerDeadline();
       await this.pairGamesRepository.savePairGame(activeGame);

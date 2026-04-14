@@ -82,7 +82,7 @@ export class PairGamesRepository {
     return this.pairGameRepository.find({
       where: {
         status: GameStatusEnum.Active,
-        finishGameDate: LessThanOrEqual(new Date(Date.now() + 1000)),
+        expiredActiveGame: LessThanOrEqual(new Date(Date.now() + 1000)),
       },
     });
   }
