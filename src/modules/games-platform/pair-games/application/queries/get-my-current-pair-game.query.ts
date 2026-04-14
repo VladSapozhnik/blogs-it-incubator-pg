@@ -34,8 +34,8 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
 
     if (
       game.status === GameStatusEnum.Active &&
-      game.finishGameDate &&
-      game.finishGameDate <= new Date()
+      game.expiredActiveGame &&
+      game.expiredActiveGame <= new Date()
     ) {
       await this.pairGamesService.finishGameAndAssignBonus(game);
 
