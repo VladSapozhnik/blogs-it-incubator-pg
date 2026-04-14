@@ -23,6 +23,28 @@ export class GetGameByIdQueryHandler implements IQueryHandler<GetGameByIdQuery> 
     private readonly pairGamesService: PairGamesService,
   ) {}
 
+  // async execute({ userId, id }: GetGameByIdQuery): Promise<PairGameMapper> {
+  //   const currentGame: PairGame =
+  //     await this.pairGamesQueryRepository.getGameById(id);
+  //
+  //   if (
+  //     currentGame.firstPlayerId !== userId &&
+  //     currentGame.secondPlayerId !== userId
+  //   ) {
+  //     throw new DomainException({
+  //       status: HttpStatus.FORBIDDEN,
+  //       errorsMessages: [
+  //         {
+  //           message:
+  //             'Access denied: current user is not a participant of the requested game',
+  //           field: 'Game',
+  //         },
+  //       ],
+  //     });
+  //   }
+  //
+  //   return this.pairGameQueryService.getPairGameViewData(currentGame);
+  // }
   async execute({ userId, id }: GetGameByIdQuery): Promise<PairGameMapper> {
     let game: PairGame = await this.pairGamesQueryRepository.getGameById(id);
 
