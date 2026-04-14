@@ -3,6 +3,8 @@ import { PairGamesQueryRepository } from '../../repositories/pair-games.query.re
 import { PairGame } from '../../entities/pair-game.entity';
 import { PairGameMapper } from '../../mappers/pair-game.mapper';
 import { PairGamesQueryService } from '../pair-games.query.service';
+import { GameStatusEnum } from '../../enums/game-status.enum';
+import { PairGamesService } from '../pair-games.service';
 
 export class GetMyCurrentPairGameQuery {
   constructor(public readonly userId: string) {}
@@ -13,14 +15,26 @@ export class GetMyCurrentPairGameQueryHandler implements IQueryHandler<GetMyCurr
   constructor(
     private readonly pairGamesQueryRepository: PairGamesQueryRepository,
     private readonly pairGameQueryService: PairGamesQueryService,
+    private readonly pairGamesService: PairGamesService,
   ) {}
 
   async execute({
     userId,
   }: GetMyCurrentPairGameQuery): Promise<PairGameMapper> {
-    const currentGame: PairGame =
+    let game: PairGame =
       await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
 
-    return this.pairGameQueryService.getPairGameViewData(currentGame);
+    if (
+      game.status === GameStatusEnum.Active &&
+      game.finishGameDate &&
+      game.finishGameDate <= new Date()
+    ) {
+      await this.pairGamesService.finishGameAndAssignBonus(game);
+
+      game =
+        await this.pairGamesQueryRepository.getMyActiveOrPendingGame(userId);
+    }
+
+    return this.pairGameQueryService.getPairGameViewData(game);
   }
 }
