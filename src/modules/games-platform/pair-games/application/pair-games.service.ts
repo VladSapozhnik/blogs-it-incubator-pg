@@ -77,9 +77,9 @@ export class PairGamesService {
         fifthP1.addedAt.getTime() < fifthP2.addedAt.getTime()
           ? game.firstPlayerId
           : game.secondPlayerId!;
-    } else if (fifthP1) {
+    } else if (fifthP1 && game.expiredActiveGame) {
       fastPlayerId = game.firstPlayerId;
-    } else if (fifthP2) {
+    } else if (fifthP2 && game.expiredActiveGame) {
       fastPlayerId = game.secondPlayerId;
     }
 
