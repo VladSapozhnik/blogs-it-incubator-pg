@@ -66,7 +66,7 @@ export class PairGame {
   }
 
   finishGame() {
-    this.finishGameDate = new Date();
+    this.finishGameDate = this.finishGameDate || new Date();
     this.status = GameStatusEnum.Finished;
   }
 }
