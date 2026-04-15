@@ -118,15 +118,15 @@ export class PairGamesService {
     const allAnswers: PlayerAnswer[] =
       await this.playerAnswerRepository.getAllAnswers(game.id);
 
-    const p1Answers = allAnswers.filter(
+    const p1Answers: PlayerAnswer[] = allAnswers.filter(
       (a) => a.playerId === game.firstPlayerId,
     );
-    const p2Answers = allAnswers.filter(
+    const p2Answers: PlayerAnswer[] = allAnswers.filter(
       (a) => a.playerId === game.secondPlayerId,
     );
 
-    const p1Finished = p1Answers.length === 5;
-    const p2Finished = p2Answers.length === 5;
+    const p1Finished: boolean = p1Answers.length === 5;
+    const p2Finished: boolean = p2Answers.length === 5;
 
     let winnerId: string | null = null;
 
@@ -145,9 +145,11 @@ export class PairGamesService {
     if (!winnerId) return;
 
     // есть ли хотя бы 1 правильный
-    const winnerAnswers = allAnswers.filter((a) => a.playerId === winnerId);
+    const winnerAnswers: PlayerAnswer[] = allAnswers.filter(
+      (a) => a.playerId === winnerId,
+    );
 
-    const hasCorrect = winnerAnswers.some(
+    const hasCorrect: boolean = winnerAnswers.some(
       (a) => a.answerStatus === AnswerStatusEnum.Correct,
     );
 
