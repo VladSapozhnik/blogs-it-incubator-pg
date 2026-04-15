@@ -60,7 +60,6 @@ export class PairGamesService {
     if (game.status === GameStatusEnum.Finished) return;
 
     game.finishGame();
-
     await this.pairGameRepository.savePairGame(game);
 
     const fifthP1: PlayerAnswer | null =
@@ -68,6 +67,7 @@ export class PairGamesService {
         game.id,
         game.firstPlayerId,
       );
+
     const fifthP2: PlayerAnswer | null =
       await this.playerAnswerRepository.getFifthAnswer(
         game.id,
@@ -81,9 +81,9 @@ export class PairGamesService {
         fifthP1.addedAt.getTime() < fifthP2.addedAt.getTime()
           ? game.firstPlayerId
           : game.secondPlayerId!;
-    } else if (fifthP1) {
+    } else if (fifthP1 && !fifthP2) {
       fastPlayerId = game.firstPlayerId;
-    } else if (fifthP2) {
+    } else if (fifthP2 && !fifthP1) {
       fastPlayerId = game.secondPlayerId!;
     }
 
@@ -100,6 +100,7 @@ export class PairGamesService {
             game.id,
             fastPlayerId,
           );
+
         if (progress) {
           progress.incrementScore();
           await this.playerProgressRepository.savePlayerProgress(progress);

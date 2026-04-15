@@ -64,7 +64,9 @@ export class PairGame {
 
   setAnswerDeadline() {
     // ANSWER_DEADLINE_SECONDS;
-    this.expiredActiveGame = addSeconds(new Date(), 10);
+    if (!this.expiredActiveGame) {
+      this.expiredActiveGame = addSeconds(new Date(), 10);
+    }
   }
 
   finishGame() {
