@@ -62,28 +62,41 @@ export class PairGamesService {
     game.finishGame();
     await this.pairGameRepository.savePairGame(game);
 
-    const fifthP1: PlayerAnswer | null =
-      await this.playerAnswerRepository.getFifthAnswer(
-        game.id,
-        game.firstPlayerId,
-      );
+    // const fifthP1: PlayerAnswer | null =
+    //   await this.playerAnswerRepository.getFifthAnswer(
+    //     game.id,
+    //     game.firstPlayerId,
+    //   );
+    //
+    // const fifthP2: PlayerAnswer | null =
+    //   await this.playerAnswerRepository.getFifthAnswer(
+    //     game.id,
+    //     game.secondPlayerId!,
+    //   );
 
-    const fifthP2: PlayerAnswer | null =
-      await this.playerAnswerRepository.getFifthAnswer(
-        game.id,
-        game.secondPlayerId!,
-      );
+    const allAnswers: PlayerAnswer[] =
+      await this.playerAnswerRepository.getAllAnswers(game.id);
+
+    const p1Answers: PlayerAnswer[] = allAnswers.filter(
+      (a) => a.playerId === game.firstPlayerId,
+    );
+    const p2Answers: PlayerAnswer[] = allAnswers.filter(
+      (a) => a.playerId === game.secondPlayerId,
+    );
+
+    const p1Finished: boolean = p1Answers.length === 5;
+    const p2Finished: boolean = p2Answers.length === 5;
 
     let fastPlayerId: string | null = null;
 
-    if (fifthP1 && fifthP2) {
+    if (p1Finished && p2Finished) {
       fastPlayerId =
-        fifthP1.addedAt.getTime() < fifthP2.addedAt.getTime()
+        p1Answers[4].addedAt.getTime() < p2Answers[4].addedAt.getTime()
           ? game.firstPlayerId
           : game.secondPlayerId!;
-    } else if (fifthP1 && !fifthP2) {
+    } else if (p1Finished) {
       fastPlayerId = game.firstPlayerId;
-    } else if (fifthP2 && !fifthP1) {
+    } else if (p2Finished) {
       fastPlayerId = game.secondPlayerId!;
     }
 
@@ -96,7 +109,7 @@ export class PairGamesService {
 
       if (hasCorrect) {
         const progress: PlayerProgress | null =
-          await this.playerProgressRepository.getPlayerProgress(
+          await this.playerProgressRepository.getPlayerProgressLock(
             game.id,
             fastPlayerId,
           );

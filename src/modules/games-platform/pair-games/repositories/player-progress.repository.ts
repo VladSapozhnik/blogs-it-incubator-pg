@@ -31,4 +31,15 @@ export class PlayerProgressRepository {
       },
     });
   }
+
+  async getPlayerProgressLock(gameId: string, fastPlayerId: string) {
+    return this.playerProgressRepository
+      .createQueryBuilder('p')
+      .setLock('pessimistic_write')
+      .where('p.gameId = :gameId AND p.playerId = :playerId', {
+        gameId: gameId,
+        playerId: fastPlayerId,
+      })
+      .getOne();
+  }
 }

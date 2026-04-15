@@ -41,22 +41,6 @@ export class PlayerAnswerRepository {
     });
   }
 
-  async countCorrectAnswers(gameId: string, userId: string): Promise<number> {
-    return this.playerAnswerRepository.count({
-      where: { gameId, playerId: userId },
-    });
-  }
-
-  async getLastAnswer(
-    gameId: string,
-    userId: string,
-  ): Promise<PlayerAnswer | null> {
-    return this.playerAnswerRepository.findOne({
-      where: { gameId, playerId: userId },
-      order: { addedAt: 'DESC' },
-    });
-  }
-
   async hasCorrectAnswers(gameId: string, playerId: string): Promise<boolean> {
     const count: number = await this.playerAnswerRepository.count({
       where: {
@@ -75,6 +59,14 @@ export class PlayerAnswerRepository {
         playerId: playerId,
       },
     });
+  }
+
+  async getAllAnswers(gameId: string): Promise<PlayerAnswer[]> {
+    return this.playerAnswerRepository
+      .createQueryBuilder('a')
+      .where('a.gameId = :gameId', { gameId: gameId })
+      .orderBy('a.addedAt', 'ASC')
+      .getMany();
   }
 
   async getFifthAnswer(
