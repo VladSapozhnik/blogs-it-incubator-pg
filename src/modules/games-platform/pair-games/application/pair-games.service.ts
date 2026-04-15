@@ -109,7 +109,7 @@ export class PairGamesService {
 
       if (hasCorrect) {
         const progress: PlayerProgress | null =
-          await this.playerProgressRepository.getPlayerProgressLock(
+          await this.playerProgressRepository.getPlayerProgress(
             game.id,
             fastPlayerId,
           );
